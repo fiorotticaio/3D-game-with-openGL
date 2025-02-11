@@ -1,0 +1,113 @@
+#ifndef ARENA_H
+#define ARENA_H
+
+
+
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include "player.h"
+#include "obstacle.h"
+#include "opponent.h"
+#include <vector>
+#include "tinyxml2.h"
+#include <string>
+#include "shot.h"
+
+
+class Arena {
+    GLfloat gX;
+    GLfloat gY;
+
+    GLfloat gWidth;
+    GLfloat gHeight;
+
+    GLfloat gRed;
+    GLfloat gGreen;
+    GLfloat gBlue;
+    
+    Player* gPlayer;
+    std::vector<Obstacle*> gObstacles;
+    std::vector<Opponent*> gOpponents;
+
+
+private:
+    void LoadArena(const char* svg_file_path);
+    void DrawArena();
+    void DrawRect(GLfloat width, GLfloat height, GLfloat R, GLfloat G, GLfloat B);
+    bool PlayerCollidesWithObstacle(Player* player, Obstacle* obstacle, GLfloat dx, GLfloat dy);
+    bool PlayerLandsInObstacle(Player* player, Obstacle* obstacle, GLfloat dx, GLfloat dy);
+    bool PlayerCollidesWithOpponent(Player* player, Opponent* opponent, GLfloat dx, GLfloat dy);
+    bool PlayerLandsInOpponent(Player* player, Opponent* opponent, GLfloat dx, GLfloat dy);
+    bool PlayerCollidesWithGround(Player* player, GLfloat dx, GLfloat dy);
+    bool OpponentCollidesWithObstacle(Opponent* opponent, Obstacle* obstacle, GLfloat dx, GLfloat dy);
+    bool OpponentLandsInObstacle(Opponent* opponent, Obstacle* obstacle, GLfloat dx, GLfloat dy);
+    bool OpponentCollidesWithGround(Opponent* opponent, GLfloat dx, GLfloat dy);
+    bool ObstacleCollidesWithShot(Obstacle* obstacle, Shot* shot);
+    bool OpponentCollidesWithShot(Opponent* opponent, Shot* shot);
+
+
+public:
+    Arena(const char* svg_file_path) {
+        LoadArena(svg_file_path);
+    }
+
+    void Draw() {
+        DrawArena();
+    }
+
+    GLfloat GetWidth();
+    GLfloat GetHeight();
+    GLfloat GetPlayerGx();
+    GLfloat GetPlayerGy();
+    void MovePlayerInX(GLdouble timeDifference);
+    void MovePlayerInY(GLdouble timeDifference);
+    void RotatePlayerArm(GLfloat y, GLfloat WindowHeight, GLdouble timeDifference);
+    void SetPlayerXDirection(GLint xDirection);
+    GLint GetPlayerXDirection();
+    void SetPlayerYDirection(GLint yDirection);
+    GLint GetPlayerYDirection();
+    GLfloat GetPlayerFrontThighAngle();
+    GLfloat GetPlayerBackThighAngle();
+    GLfloat GetPlayerFrontShinAngle();
+    GLfloat GetPlayerBackShinAngle();
+    void RotatePlayerFrontThigh(GLfloat angle, GLdouble timeDifference);
+    void RotatePlayerBackThigh(GLfloat angle, GLdouble timeDifference);
+    void RotatePlayerFrontShin(GLfloat angle, GLdouble timeDifference);
+    void RotatePlayerBackShin(GLfloat angle, GLdouble timeDifference);
+    void SetPlayerFrontShinAngle(GLfloat angle);
+    void SetPlayerBackShinAngle(GLfloat angle);
+    Shot* PlayerShoot(GLfloat maxDist);
+    void PlayerJump();
+    GLfloat GetPlayerMaxJumpHeight();
+    GLfloat GetPlayerJumpHeight();
+    GLfloat GetPlayerThighHeight();
+    GLfloat GetPlayerShinHeight();
+    bool PlayerReachedMaximumJumpHeight();
+    bool PlayerLanded();
+    bool OpponentLanded(Opponent* opponent);
+    std::vector<Obstacle*> GetObstacles();
+    std::vector<Opponent*> GetOpponents();
+    void EraseOpponent(Opponent* opponent);
+    void MoveOpponentsInY(GLdouble timeDifference);
+	void MoveOpponentsInX(GLdouble timeDifference);
+    bool ObstaclesCollidesWithShot(Shot* shot);
+    bool OpponentsCollidesWithShot(Shot* shot);
+    void MoveOpponentsArms(GLdouble timeDifference);
+    void UpdateOpponentsShots(std::vector<Shot*>& opponentsShots, GLfloat maxDist, GLdouble timeDifference);
+    bool PlayerCollidesWithShot(Shot* shot);
+    bool PlayerHitsHead();
+    bool PlayerHitsHeadRoof(Player* player, GLfloat dx, GLfloat dy);
+    bool PlayerHitsHeadObstacle(Player* player, Obstacle* obstacle, GLfloat dx, GLfloat dy);
+    bool PlayerHitsHeadOpponent(Player* player, Opponent* opponent, GLfloat dx, GLfloat dy);
+    bool PlayerWon();
+    void Delete();
+    void AnimatePlayerLegs(GLdouble timeDifference);
+    void AnimateOpponentsLegs(GLdouble timeDifference);
+    bool OpponentLandsInPlayer(Opponent* opponent, Player* player, GLfloat dx, GLfloat dy);
+    bool OpponentCollidesWithOtherOpponent(Opponent* opponent, Opponent* otherOpponent, GLfloat dx, GLfloat dy);
+    bool OpponentLandsInOtherOpponent(Opponent* opponent, Opponent* otherOpponent, GLfloat dx, GLfloat dy);
+};
+
+
+
+#endif // ARENA_H
