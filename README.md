@@ -3,6 +3,7 @@
 - Mudar o modo de visualização para perspectiva e ir mudando a posição da câmera para ver a arena achatada
 
 # Requisitos
+- [ ] A janela de visualização deverá ter 500x500 pixels
 - [ ] Carregar arena agora com com a coordenada z com metade do tamanho da y
 - [ ] Personagens devem ser iniciados na coordenada x,y fornecida no arquivo svg e coordenada z aleatória (desde que dentro da arena)
 - [ ] Desenhar o jogador (e oponentes) em 3D (usar criatividade)

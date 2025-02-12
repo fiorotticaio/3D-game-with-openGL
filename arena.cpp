@@ -79,10 +79,23 @@ void Arena::LoadArena(const char* svg_file_path) {
 
 
 void Arena::DrawArena() {
+    GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0};
+    GLfloat materialColor[] = { 1.0, 1.0, 0.0, 1.0};
+    GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0};
+    GLfloat mat_shininess[] = { 128 };
+
     glPushMatrix();
+        // glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
+        // glMaterialfv(GL_FRONT, GL_AMBIENT, materialColor);
+        // glMaterialfv(GL_FRONT, GL_DIFFUSE, materialColor);
+        // glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+        // glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+        // glColor3f(1,0,0);
+
         // Draw arena background
         glTranslatef(gX, gY, 0);
         DrawRect(gWidth, gHeight, gRed, gGreen, gBlue);
+        // glutSolidCube(20);
     glPopMatrix();
 
     for (Obstacle* obstacle : gObstacles) {

@@ -25,8 +25,8 @@ using namespace tinyxml2;
 int keyStatus[256];
 
 // Window dimensions
-const GLint Width = 500;
-const GLint Height = 500;
+int Width = 500;
+int Height = 500;
 
 // Viewing dimensions
 GLfloat viewingWidth = 0;
@@ -39,6 +39,11 @@ GLfloat viewPortLeft = 0;
 GLfloat viewPortRight = 0;
 GLfloat viewPortBottom = 0;
 GLfloat viewPortTop = 0;
+
+// Camera
+GLfloat cameraX = xPositionArena, cameraY = yPositionArena, cameraZ = 30;
+GLfloat lookAtX = 0, lookAtY = 0, lookAtZ = 0;
+GLfloat upX = 0, upY = 1, upZ = 0;
 
 // Components of the virtual world
 Arena* arena = NULL;
@@ -169,7 +174,18 @@ bool loadViewportSizeFromSvg(const char* svg_file_path) {
 
 void renderScene(void) {
 	// Clear the screen
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Put the camera in the correct position
+	glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluLookAt(cameraX, cameraY, cameraZ, lookAtX, lookAtY, lookAtZ, upX, upY, upZ);
+	
+	// Set the light 0 position
+	// GLfloat light_position[] = {xPositionArena, yPositionArena, 0.0, 1.0};
+	// glPushMatrix();
+	// 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	// glPopMatrix();
     
 	arena->Draw();
 
@@ -279,22 +295,35 @@ void ResetKeyStatus() {
 }
 
 
-void init(void) {
+void init(int windowSize) {
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_CULL_FACE);
+    // glEnable(GL_LIGHTING);
+    // glEnable(GL_LIGHT0);
+    glEnable(GL_DEPTH_TEST);
+    glViewport(0, 0, (GLsizei) windowSize, (GLsizei) windowSize);
+
+	// Defining camera parameters
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(90, (GLfloat) windowSize / (GLfloat) windowSize, 1, 300);
+
 	ResetKeyStatus();
 
 	// The color the windows will redraw. Its done to erase the previous frame
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Black, no opacity (alpha)
+	// glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Black, no opacity (alpha)
 
-	glMatrixMode(GL_PROJECTION); // Select the projection matrix    
-	glOrtho(xPositionArena,                 // X coordinate of left edge             
-			xPositionArena + viewingWidth,  // X coordinate of right edge            
-			yPositionArena,                 // Y coordinate of bottom edge             
-			yPositionArena + viewingHeight, // Y coordinate of top edge             
-			-100,                           // Z coordinate of the “near” plane            
-			100);                           // Z coordinate of the “far” plane
-	glMatrixMode(GL_MODELVIEW); // Select the projection matrix    
+	// glMatrixMode(GL_PROJECTION); // Select the projection matrix    
+	// glOrtho(xPositionArena,                 // X coordinate of left edge             
+	// 		xPositionArena + viewingWidth,  // X coordinate of right edge            
+	// 		yPositionArena,                 // Y coordinate of bottom edge             
+	// 		yPositionArena + viewingHeight, // Y coordinate of top edge             
+	// 		-100,                           // Z coordinate of the “near” plane            
+	// 		100);                           // Z coordinate of the “far” plane
+	// glMatrixMode(GL_MODELVIEW); // Select the projection matrix    
 
-	glLoadIdentity();
+	// glLoadIdentity();
 }
 
 
@@ -368,6 +397,13 @@ void ResetGame() {
 
 
 void idle(void) {
+	if (keyStatus[(int)('y')]) {
+		cameraX += 1;
+	}
+	if (keyStatus[(int)('h')]) {
+		cameraX -= 1;
+	}
+
 	if (simulateSlowProcessingUbuntu) for (int i = 0; i < 9000000; i++);
 	if (simulateSlowProcessingWindows) for (int i = 0; i < 90000000; i++);
 
@@ -409,10 +445,10 @@ void idle(void) {
 		timeAccumulator = 0.0f;
 	}
 
-	UpdateViewport(arena->GetPlayerGx(), arena->GetPlayerGy(), 
-				   xPositionArena, yPositionArena,
-				   arena->GetWidth(), arena->GetHeight(),
-				   viewingWidth, viewingHeight);
+	// UpdateViewport(arena->GetPlayerGx(), arena->GetPlayerGy(), 
+	// 			   xPositionArena, yPositionArena,
+	// 			   arena->GetWidth(), arena->GetHeight(),
+	// 			   viewingWidth, viewingHeight);
 	
 	if (arena->PlayerReachedMaximumJumpHeight() || arena->PlayerHitsHead()) {
 		arena->SetPlayerYDirection(-1);
@@ -515,12 +551,12 @@ int main(int argc, char *argv[]) {
 	// Initialize openGL with Double buffer and RGB color without transparency.
 	// Its interesting to try GLUT_SINGLE instead of GLUT_DOUBLE.
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
 	// Create the window
 	glutInitWindowSize(Width, Height);
 	glutInitWindowPosition(150, 50);
-	glutCreateWindow("Trabalho 2D");
+	glutCreateWindow("Trabalho 3D");
 
 	// Define callbacks
 	glutDisplayFunc(renderScene);
@@ -530,7 +566,7 @@ int main(int argc, char *argv[]) {
 	glutPassiveMotionFunc(passiveMotion);
 	glutMouseFunc(mouseClick);
 	
-	init();
+	init(Width);
 
 	glutMainLoop();
 
