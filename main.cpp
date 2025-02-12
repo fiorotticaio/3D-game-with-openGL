@@ -41,7 +41,7 @@ GLfloat viewPortBottom = 0;
 GLfloat viewPortTop = 0;
 
 // Camera
-GLfloat cameraX = xPositionArena, cameraY = yPositionArena, cameraZ = 30;
+GLfloat cameraX = xPositionArena, cameraY = yPositionArena, cameraZ = 100;
 GLfloat lookAtX = 0, lookAtY = 0, lookAtZ = 0;
 GLfloat upX = 0, upY = 1, upZ = 0;
 
@@ -176,16 +176,25 @@ void renderScene(void) {
 	// Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	// Center the camera in the player
+	lookAtX = arena->GetPlayerGx();
+	lookAtY = arena->GetPlayerGy();
+	lookAtZ = 0;
+	cameraX = lookAtX;
+	cameraY = lookAtY;
+	// cameraZ = 100;
+
+
 	// Put the camera in the correct position
 	glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(cameraX, cameraY, cameraZ, lookAtX, lookAtY, lookAtZ, upX, upY, upZ);
 	
 	// Set the light 0 position
-	// GLfloat light_position[] = {xPositionArena, yPositionArena, 0.0, 1.0};
-	// glPushMatrix();
-	// 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-	// glPopMatrix();
+	GLfloat light_position[] = {arena->GetPlayerGx(), arena->GetPlayerGy()+10, 0.0, 1.0};
+	glPushMatrix();
+		glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	glPopMatrix();
     
 	arena->Draw();
 
@@ -299,15 +308,15 @@ void init(int windowSize) {
 	glClearColor(0.0, 0.0, 0.0, 0.0);
     glShadeModel(GL_SMOOTH);
     glEnable(GL_CULL_FACE);
-    // glEnable(GL_LIGHTING);
-    // glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, (GLsizei) windowSize, (GLsizei) windowSize);
 
 	// Defining camera parameters
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(90, (GLfloat) windowSize / (GLfloat) windowSize, 1, 300);
+    gluPerspective(90, (GLfloat) windowSize / (GLfloat) windowSize, 1, 200);
 
 	ResetKeyStatus();
 
@@ -389,19 +398,19 @@ void ResetGame() {
     
 	arena = new Arena(svgFilePath);
 
-    UpdateViewport(arena->GetPlayerGx(), arena->GetPlayerGy(), 
-                   xPositionArena, yPositionArena, 
-                   arenaWidth, arenaHeight, 
-                   viewingWidth, viewingHeight);
+    // UpdateViewport(arena->GetPlayerGx(), arena->GetPlayerGy(), 
+    //                xPositionArena, yPositionArena, 
+    //                arenaWidth, arenaHeight, 
+    //                viewingWidth, viewingHeight);
 }
 
 
 void idle(void) {
 	if (keyStatus[(int)('y')]) {
-		cameraX += 1;
+		cameraZ += 0.5;
 	}
 	if (keyStatus[(int)('h')]) {
-		cameraX -= 1;
+		cameraZ -= 0.5;
 	}
 
 	if (simulateSlowProcessingUbuntu) for (int i = 0; i < 9000000; i++);

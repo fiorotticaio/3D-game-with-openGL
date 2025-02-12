@@ -21,6 +21,7 @@ class Arena {
 
     GLfloat gWidth;
     GLfloat gHeight;
+    GLfloat gThickness;
 
     GLfloat gRed;
     GLfloat gGreen;
