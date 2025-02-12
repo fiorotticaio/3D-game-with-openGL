@@ -8,7 +8,7 @@ CXX = g++
 CFLAGS  = -g -Wall
 LINKING = -lglut -lGL -lGLU
 TARGET = *
-SVG_PATH = ./arena_teste_4.svg
+SVG_PATH = ./arena_teste.svg
 
 all:
 	$(CXX) $(CFLAGS) -o trabalhocg $(TARGET).cpp $(LINKING)
