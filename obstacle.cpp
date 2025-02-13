@@ -1,8 +1,20 @@
 #include "obstacle.h"
 
 void Obstacle::DrawObstacle() {
+    GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0};
+    GLfloat materialColor[] = { 0.0, 0.0, 0.0, 1.0};
+    GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0};
+    GLfloat mat_shininess[] = { 128 };
+    
     glPushMatrix();
-        glTranslatef(gX, gY, 0);
+        glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
+        glMaterialfv(GL_FRONT, GL_AMBIENT, materialColor);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, materialColor);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+        glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+        glColor3f(0,0,1);
+
+        glTranslatef(gX, gY, 1);
         DrawReact(gWidth, gHeight, gRed, gGreen, gBlue);
     glPopMatrix();
 }
@@ -12,10 +24,14 @@ void Obstacle::DrawReact(GLfloat width, GLfloat height, GLfloat R, GLfloat G, GL
 
     // The coordenates givem in the svg file are the left top corner of the rectangle
     glBegin(GL_POLYGON);
-        glVertex2f(0, -height);
-        glVertex2f(width, -height);
-        glVertex2f(width, 0);
-        glVertex2f(0, 0);
+        glVertex3f(0, -height, 1);
+        glNormal3f(0, 0, 1);
+        glVertex3f(width, -height, 1);
+        glNormal3f(0, 0, 1);
+        glVertex3f(width, 0, 1);
+        glNormal3f(0, 0, 1);
+        glVertex3f(0, 0, 1);
+        glNormal3f(0, 0, 1);
     glEnd();
 }
 

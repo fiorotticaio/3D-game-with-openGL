@@ -13,6 +13,7 @@
 #include <string>
 #include "arena.h"
 #include "shot.h"
+#include "camera.h"
 
 using namespace tinyxml2;
 
@@ -25,8 +26,8 @@ using namespace tinyxml2;
 int keyStatus[256];
 
 // Window dimensions
-const GLint Width = 500;
-const GLint Height = 500;
+int Width = 500;
+int Height = 500;
 
 // Viewing dimensions
 GLfloat viewingWidth = 0;
@@ -44,6 +45,14 @@ GLfloat viewPortTop = 0;
 Arena* arena = NULL;
 std::vector<Shot*> playerShots;
 std::vector<Shot*> opponentsShots;
+Camera* firstPersonCamera = NULL;
+Camera* sightCamera = NULL;
+Camera* thirdPersonCamera = NULL;
+double camXYAngle = 0;
+double camXZAngle = 0;
+int lastX = 0;
+int lastY = 0;
+double camDist = 50;
 
 // Flags and aux variables
 char* svgFilePath = NULL;
@@ -53,6 +62,7 @@ GLfloat timeAccumulator = 0.0f;
 void* font = GLUT_BITMAP_9_BY_15;
 int gameOver = 0;
 int playerWon = 0;
+int toggleCam = 1;
 
 // Feature flags
 int simulateSlowProcessingUbuntu = 0;
@@ -65,61 +75,47 @@ int opponentShoots = 0;
 /*****************************************************************************************/
 /************************************ AUX FUNCTIONS **************************************/
 /*****************************************************************************************/
-void PrintMessage(const char* message, GLfloat x, GLfloat y, GLfloat R, GLfloat G, GLfloat B) {
-	glColor3f(R, G, B);
-	glRasterPos2f(x, y);
-
-	char* tempStr = (char*) message;
-	while (*tempStr) {
-		glutBitmapCharacter(font, *tempStr);
-		tempStr++;
-	}
+void normalize(float a[3]) {
+    double norm = sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]); 
+    a[0] /= norm;
+    a[1] /= norm;
+    a[2] /= norm;
 }
 
 
-void UpdateViewport(GLfloat playerX, GLfloat playerY, 
-                    GLfloat arenaX, GLfloat arenaY, 
-                    GLfloat arenaWidth, GLfloat arenaHeight, 
-                    GLfloat viewingWidth, GLfloat viewingHeight) {
-    GLfloat newViewportX, newViewportY;
+void cross(float a[3], float b[3], float out[3])
+{
+    out[0] = a[1]*b[2] - a[2]*b[1];
+    out[1] = a[2]*b[0] - a[0]*b[2];
+    out[2] = a[0]*b[1] - a[1]*b[0];
+}
 
-    GLfloat centeredX = playerX - viewingWidth / 2;
 
-    if (centeredX < arenaX) { // Min limit
-        newViewportX = arenaX;
-    } else if (centeredX + viewingWidth > arenaX + arenaWidth) { // Max limit
-        newViewportX = arenaX + arenaWidth - viewingWidth;
-    } else { // Normal case
-        newViewportX = centeredX;
-    }
+void RasterChars(GLfloat x, GLfloat y, GLfloat z, const char * text, double r, double g, double b) {
+    glPushAttrib(GL_ENABLE_BIT);
+        glDisable(GL_LIGHTING);
+        // glDisable(GL_TEXTURE_2D);
 
-    GLfloat centeredY = playerY - viewingHeight / 2;
+        glColor3f(r, g, b);
+        glRasterPos3f(x, y, z);
+        const char* tmpStr;
+        tmpStr = text;
+        while(*tmpStr) {
+            glutBitmapCharacter(GLUT_BITMAP_9_BY_15, *tmpStr);
+            tmpStr++;
+        }
+    glPopAttrib();
+}
 
-    if (centeredY < arenaY) { // Min limit
-        newViewportY = arenaY;
-    } else if (centeredY + viewingHeight > arenaY + arenaHeight) { // Max limit
-        newViewportY = arenaY + arenaHeight - viewingHeight;
-    } else { // Normal case
-        newViewportY = centeredY;
-    }
 
-    // Update the viewport
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(newViewportX,                       
-            newViewportX + viewingWidth,        
-            newViewportY,                       
-            newViewportY + viewingHeight,       
-            -100,                               
-            100);                               
+void PrintText(GLfloat x, GLfloat y, const char * text, double r, double g, double b) {
+    glMatrixMode (GL_PROJECTION);
+    glPushMatrix();
+        glLoadIdentity ();
+        glOrtho(0, 1, 0, 1, -1, 1);
+        RasterChars(x, y, 0, text, r, g, b);    
+    glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
-
-	viewPortLeft = newViewportX;
-	viewPortRight = newViewportX + viewingWidth;
-	viewPortBottom = newViewportY;
-	viewPortTop = newViewportY + viewingHeight;
-
-    glLoadIdentity();
 }
 
 
@@ -167,9 +163,33 @@ bool loadViewportSizeFromSvg(const char* svg_file_path) {
     return false;
 }
 
+
 void renderScene(void) {
-	// Clear the screen
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	if (toggleCam == 1){
+        PrintText(0.1, 0.1, "First person camera", 0, 1, 0);
+		gluLookAt(arena->GetPlayerGx(), arena->GetPlayerGy(), 0, arena->GetPlayerGx(), arena->GetPlayerGy(), 0, 0, 1, 0);
+ 
+    } else if (toggleCam == 2){
+        PrintText(0.1, 0.1, "Gun sight camera", 0, 1, 0);
+
+    } else if (toggleCam == 3){
+        PrintText(0.1, 0.1, "Third person camera", 0, 1, 0);
+
+    }
+
+	// A partir daqui estamos no sistema de coordenadas do mundo
+	
+	// Set the light 0 position
+	GLfloat light_position[] = {arena->GetPlayerGx(), arena->GetPlayerGy()+10, 0.0, 1.0}; // Last element 1.0 means it is a point light
+	glPushMatrix();
+		glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	glPopMatrix();
     
 	arena->Draw();
 
@@ -184,13 +204,13 @@ void renderScene(void) {
 	if (gameOver) {
 		GLfloat messagePosX = viewPortLeft + viewingWidth / 2 - 6;
 		GLfloat messagePosy = viewPortBottom + viewingHeight / 2 + 15;
-		PrintMessage("Game Over", messagePosX, messagePosy, 1.0f, 0.0f, 0.0f);
+		PrintText(messagePosX, messagePosy, "Game Over", 1.0f, 0.0f, 0.0f);
 	}
 
 	if (playerWon) {
 		GLfloat messagePosX = viewPortLeft + viewingWidth / 2 - 6;
 		GLfloat messagePosy = viewPortBottom + viewingHeight / 2 + 15;
-		PrintMessage("Player Won", messagePosX, messagePosy, 1.0f, 1.0f, 1.0f);
+		PrintText(messagePosX, messagePosy, "Player Won", 1.0f, 1.0f, 1.0f);
 	}
 
 	// Draw on the frame buffer
@@ -201,18 +221,27 @@ void renderScene(void) {
 void keyPress(unsigned char key, int x, int y) {
 	switch (key) {
 		case '1':
-			simulateSlowProcessingUbuntu = !simulateSlowProcessingUbuntu;
+			toggleCam = 1;
 			break;
 		case '2':
-			simulateSlowProcessingWindows = !simulateSlowProcessingWindows;
+			toggleCam = 2;
 			break;
 		case '3':
-			opponentMoves = !opponentMoves;
+			toggleCam = 3;
 			break;
 		case '4':
-			opponentShoots = !opponentShoots;
+			simulateSlowProcessingUbuntu = !simulateSlowProcessingUbuntu;
 			break;
 		case '5':
+			simulateSlowProcessingWindows = !simulateSlowProcessingWindows;
+			break;
+		case '6':
+			opponentMoves = !opponentMoves;
+			break;
+		case '7':
+			opponentShoots = !opponentShoots;
+			break;
+		case '8':
 			gameOver = 1;
 			break;
 		case 'a':
@@ -279,28 +308,37 @@ void ResetKeyStatus() {
 }
 
 
-void init(void) {
+void init(int windowSize) {
+    glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+    glEnable(GL_LIGHTING);
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_LIGHT0);
+	// glEnable(GL_TEXTURE_2D)
+
+    glViewport(0, 0, (GLsizei) windowSize, (GLsizei) windowSize);
+
+	// Defining camera parameters
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(90, (GLfloat) windowSize / (GLfloat) windowSize, 1, 200);
+
 	ResetKeyStatus();
-
-	// The color the windows will redraw. Its done to erase the previous frame
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Black, no opacity (alpha)
-
-	glMatrixMode(GL_PROJECTION); // Select the projection matrix    
-	glOrtho(xPositionArena,                 // X coordinate of left edge             
-			xPositionArena + viewingWidth,  // X coordinate of right edge            
-			yPositionArena,                 // Y coordinate of bottom edge             
-			yPositionArena + viewingHeight, // Y coordinate of top edge             
-			-100,                           // Z coordinate of the “near” plane            
-			100);                           // Z coordinate of the “far” plane
-	glMatrixMode(GL_MODELVIEW); // Select the projection matrix    
-
-	glLoadIdentity();
 }
 
 
 void passiveMotion(int x, int y) {
 	// Invert the y position
 	mouseY = Height - y;
+
+	camXYAngle += x - lastX;
+    camXZAngle += y - lastY;
+    
+    camXYAngle = (int) camXYAngle % 360;
+    camXZAngle = (int) camXZAngle % 360;
+    
+    lastX = x;
+    lastY = y;
 }
 
 
@@ -359,11 +397,6 @@ void ResetGame() {
 	loadViewportSizeFromSvg(svgFilePath);
     
 	arena = new Arena(svgFilePath);
-
-    UpdateViewport(arena->GetPlayerGx(), arena->GetPlayerGy(), 
-                   xPositionArena, yPositionArena, 
-                   arenaWidth, arenaHeight, 
-                   viewingWidth, viewingHeight);
 }
 
 
@@ -373,9 +406,9 @@ void idle(void) {
 
 	static GLdouble previousTime = glutGet(GLUT_ELAPSED_TIME);
 	GLdouble currentTime, timeDifference;
-	currentTime = glutGet(GLUT_ELAPSED_TIME);   // Get the time that has passed since the start of the application
+	currentTime = glutGet(GLUT_ELAPSED_TIME);    // Get the time that has passed since the start of the application
 	timeDifference = currentTime - previousTime; // Calculates the elapsed time since the last frame
-	previousTime = currentTime;                 // Update the time of the last frame that occurred
+	previousTime = currentTime;                  // Update the time of the last frame that occurred
 
 	// Avoids the program to crash when the difference is too high
 	if (timeDifference <= 0.0f || timeDifference > 200.0f) timeDifference = 1.0f;
@@ -408,11 +441,6 @@ void idle(void) {
 		if (opponentShoots) arena->UpdateOpponentsShots(opponentsShots, arenaWidth, timeDifference);
 		timeAccumulator = 0.0f;
 	}
-
-	UpdateViewport(arena->GetPlayerGx(), arena->GetPlayerGy(), 
-				   xPositionArena, yPositionArena,
-				   arena->GetWidth(), arena->GetHeight(),
-				   viewingWidth, viewingHeight);
 	
 	if (arena->PlayerReachedMaximumJumpHeight() || arena->PlayerHitsHead()) {
 		arena->SetPlayerYDirection(-1);
@@ -509,20 +537,18 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	// Initialize the arena
 	arena = new Arena(svgFilePath);
+	firstPersonCamera = new Camera(arena->GetPlayerGx(), arena->GetPlayerGy(), 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
+	// sightCamera = new Camera(arena->GetPlayerGx(), arena->GetPlayerGy(), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	// thirdPersonCamera = new Camera(arena->GetPlayerGx(), arena->GetPlayerGy(), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 
-	// Initialize openGL with Double buffer and RGB color without transparency.
-	// Its interesting to try GLUT_SINGLE instead of GLUT_DOUBLE.
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
-	// Create the window
 	glutInitWindowSize(Width, Height);
 	glutInitWindowPosition(150, 50);
-	glutCreateWindow("Trabalho 2D");
+	glutCreateWindow("Trabalho 3D");
 
-	// Define callbacks
 	glutDisplayFunc(renderScene);
 	glutKeyboardFunc(keyPress);
 	glutIdleFunc(idle);
@@ -530,7 +556,7 @@ int main(int argc, char *argv[]) {
 	glutPassiveMotionFunc(passiveMotion);
 	glutMouseFunc(mouseClick);
 	
-	init();
+	init(Width);
 
 	glutMainLoop();
 

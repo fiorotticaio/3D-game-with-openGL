@@ -5,6 +5,7 @@ GLfloat MapYCoordinate(GLfloat yRead, GLfloat yPositionArena, GLfloat arenaHeigh
     return yPositionArena + arenaHeight - (yRead - yPositionArena);
 }
 
+
 void Arena::LoadArena(const char* svg_file_path) {
     using namespace tinyxml2;
 
@@ -33,6 +34,7 @@ void Arena::LoadArena(const char* svg_file_path) {
                     // Arena parameters
                     gWidth = elem->FloatAttribute("width");
                     gHeight = elem->FloatAttribute("height");
+                    gThickness = gHeight / 2; 
                     gX = elem->FloatAttribute("x");
                     gY = elem->FloatAttribute("y");
                     gRed = 0.0f;
@@ -79,10 +81,24 @@ void Arena::LoadArena(const char* svg_file_path) {
 
 
 void Arena::DrawArena() {
+    GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0};
+    GLfloat materialColor[] = { 0.0, 0.0, 1.0, 1.0};
+    GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0};
+    GLfloat mat_shininess[] = { 128 };
+
     glPushMatrix();
+        glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
+        glMaterialfv(GL_FRONT, GL_AMBIENT, materialColor);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, materialColor);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+        glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+        glColor3f(0,0,1);
+
         // Draw arena background
         glTranslatef(gX, gY, 0);
         DrawRect(gWidth, gHeight, gRed, gGreen, gBlue);
+        // glScalef(gWidth, gHeight, gThickness);
+        // glutSolidCube(1);
     glPopMatrix();
 
     for (Obstacle* obstacle : gObstacles) {
@@ -102,10 +118,14 @@ void Arena::DrawRect(GLfloat width, GLfloat height, GLfloat R, GLfloat G, GLfloa
 
     // The coordenates givem in the svg file are the left bottom corner of the arena
     glBegin(GL_POLYGON);
-        glVertex2f(0, 0);
-        glVertex2f(width, 0);
-        glVertex2f(width, height);
-        glVertex2f(0, height);
+        glVertex3f(0, 0, 0);
+        glNormal3f(0, 0, 1);
+        glVertex3f(width, 0, 0);
+        glNormal3f(0, 0, 1);
+        glVertex3f(width, height, 0);
+        glNormal3f(0, 0, 1);
+        glVertex3f(0, height, 0);
+        glNormal3f(0, 0, 1);
     glEnd();
 }
 

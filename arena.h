@@ -5,6 +5,7 @@
 
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <GL/glut.h>
 #include "player.h"
 #include "obstacle.h"
 #include "opponent.h"
@@ -20,6 +21,7 @@ class Arena {
 
     GLfloat gWidth;
     GLfloat gHeight;
+    GLfloat gThickness;
 
     GLfloat gRed;
     GLfloat gGreen;
