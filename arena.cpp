@@ -5,6 +5,7 @@ GLfloat MapYCoordinate(GLfloat yRead, GLfloat yPositionArena, GLfloat arenaHeigh
     return yPositionArena + arenaHeight - (yRead - yPositionArena);
 }
 
+
 void Arena::LoadArena(const char* svg_file_path) {
     using namespace tinyxml2;
 
