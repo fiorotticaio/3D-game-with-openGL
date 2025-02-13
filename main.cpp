@@ -52,7 +52,7 @@ double camXYAngle = 0;
 double camXZAngle = 0;
 int lastX = 0;
 int lastY = 0;
-double camDist = 50;
+int zoom = 50;
 
 // Flags and aux variables
 char* svgFilePath = NULL;
@@ -119,6 +119,44 @@ void PrintText(GLfloat x, GLfloat y, const char * text, double r, double g, doub
 }
 
 
+void DrawAxes() {
+    GLfloat color_r[] = { 1.0, 0.0, 0.0, 1.0 };
+    GLfloat color_g[] = { 0.0, 1.0, 0.0, 1.0 };
+    GLfloat color_b[] = { 0.0, 0.0, 1.0, 1.0 };
+
+    glPushAttrib(GL_ENABLE_BIT);
+        glDisable(GL_LIGHTING);
+        glDisable(GL_TEXTURE_2D);
+ 
+        //x axis
+        glPushMatrix();
+            glColor3fv(color_r);
+            glScalef(5, 0.3, 0.3);
+            glTranslatef(0.5, 0, 0); // put in one end
+            glutSolidCube(1.0);
+        glPopMatrix();
+
+        //y axis
+        glPushMatrix();
+            glColor3fv(color_g);
+            glRotatef(90,0,0,1);
+            glScalef(5, 0.3, 0.3);
+            glTranslatef(0.5, 0, 0); // put in one end
+            glutSolidCube(1.0);
+        glPopMatrix();
+
+        //z axis
+        glPushMatrix();
+            glColor3fv(color_b);
+            glRotatef(-90,0,1,0);
+            glScalef(5, 0.3, 0.3);
+            glTranslatef(0.5, 0, 0); // put in one end
+            glutSolidCube(1.0);
+        glPopMatrix();
+    glPopAttrib();
+}
+
+
 bool loadViewportSizeFromSvg(const char* svg_file_path) {
 	XMLDocument doc;
     if (doc.LoadFile(svg_file_path) != XML_SUCCESS) {
@@ -173,7 +211,11 @@ void renderScene(void) {
 
 	if (toggleCam == 1){
         PrintText(0.1, 0.1, "First person camera", 0, 1, 0);
-		gluLookAt(arena->GetPlayerGx(), arena->GetPlayerGy(), 0, arena->GetPlayerGx(), arena->GetPlayerGy(), 0, 0, 1, 0);
+		glTranslatef(0, 0, -zoom);
+		glRotatef(camXZAngle, 1, 0, 0);
+		glRotatef(camXYAngle, 0, 1, 0);
+		// We want that this next translation do not interfere with the camera rotation
+		glTranslatef(-arena->GetPlayerGx(), -arena->GetPlayerGy(), 0);
  
     } else if (toggleCam == 2){
         PrintText(0.1, 0.1, "Gun sight camera", 0, 1, 0);
@@ -184,6 +226,10 @@ void renderScene(void) {
     }
 
 	// A partir daqui estamos no sistema de coordenadas do mundo
+	glPushMatrix();
+		glTranslatef(playerPos[0], playerPos[1], playerPos[2]);
+		DrawAxes();
+	glPopMatrix();
 	
 	// Set the light 0 position
 	GLfloat light_position[] = {arena->GetPlayerGx(), arena->GetPlayerGy()+10, 0.0, 1.0}; // Last element 1.0 means it is a point light
@@ -286,6 +332,12 @@ void keyPress(unsigned char key, int x, int y) {
 			break;
 		case ' ':
 			keyStatus[(int)(' ')] = 1;
+			break;
+		case '+':
+			zoom--;
+			break;
+		case '-':
+			zoom++;
 			break;
 		case 27:
 			exit(0);
