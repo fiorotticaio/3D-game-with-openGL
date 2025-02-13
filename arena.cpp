@@ -92,11 +92,11 @@ void Arena::DrawArena() {
         glMaterialfv(GL_FRONT, GL_DIFFUSE, materialColor);
         glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
         glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-        glColor3f(0,0,1);
+        glColor3f(0, 0, 1);
 
         // Draw arena background
         glTranslatef(gX, gY, 0);
-        DrawRect(gWidth, gHeight, gRed, gGreen, gBlue);
+        DrawRect(gWidth, gHeight, gThickness, gRed, gGreen, gBlue);
         // glScalef(gWidth, gHeight, gThickness);
         // glutSolidCube(1);
     glPopMatrix();
@@ -113,20 +113,68 @@ void Arena::DrawArena() {
 }
 
 
-void Arena::DrawRect(GLfloat width, GLfloat height, GLfloat R, GLfloat G, GLfloat B) {
+void Arena::DrawRect(GLfloat width, GLfloat height, GLfloat thickness, GLfloat R, GLfloat G, GLfloat B) {
     glColor3f(R, G, B);
 
     // The coordenates givem in the svg file are the left bottom corner of the arena
+
+    // 1º Face
     glBegin(GL_POLYGON);
         glVertex3f(0, 0, 0);
-        glNormal3f(0, 0, 1);
+        glNormal3f(0, 0, -1);
         glVertex3f(width, 0, 0);
-        glNormal3f(0, 0, 1);
+        glNormal3f(0, 0, -1);
         glVertex3f(width, height, 0);
-        glNormal3f(0, 0, 1);
+        glNormal3f(0, 0, -1);
         glVertex3f(0, height, 0);
+        glNormal3f(0, 0, -1);
+    glEnd();
+
+    // 2º Face
+    glBegin(GL_POLYGON);
+        glVertex3f(width, 0, 0);
+        glNormal3f(-1, 0, 0);
+        glVertex3f(width, 0, -thickness);
+        glNormal3f(-1, 0, 0);
+        glVertex3f(width, height, -thickness);
+        glNormal3f(-1, 0, 0);
+        glVertex3f(width, height, 0);
+        glNormal3f(-1, 0, 0);
+    glEnd();
+
+    // 3º Face
+    glBegin(GL_POLYGON);
+        glVertex3f(width, 0, -thickness);
+        glNormal3f(0, 0, 1);
+        glVertex3f(0, 0, -thickness);
+        glNormal3f(0, 0, 1);
+        glVertex3f(0, height, -thickness);
+        glNormal3f(0, 0, 1);
+        glVertex3f(width, height, -thickness);
         glNormal3f(0, 0, 1);
     glEnd();
+
+    // 4º Face
+    glBegin(GL_POLYGON);
+        glVertex3f(0, 0, -thickness);
+        glNormal3f(1, 0, 0);
+        glVertex3f(0, 0, 0);
+        glNormal3f(1, 0, 0);
+        glVertex3f(0, height, 0);
+        glNormal3f(1, 0, 0);
+        glVertex3f(0, height, -thickness);
+        glNormal3f(1, 0, 0);
+    glEnd();
+}
+
+
+GLfloat Arena::GetGx() {
+    return gX;
+}
+
+
+GLfloat Arena::GetGy() {
+    return gY;
 }
 
 
@@ -137,6 +185,11 @@ GLfloat Arena::GetWidth() {
 
 GLfloat Arena::GetHeight() {
     return gHeight;
+}
+
+
+GLfloat Arena::GetThickness() {
+    return gThickness;
 }
 
 

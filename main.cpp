@@ -203,7 +203,7 @@ bool loadViewportSizeFromSvg(const char* svg_file_path) {
 
 
 void renderScene(void) {
-	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	glMatrixMode(GL_MODELVIEW);
@@ -227,12 +227,14 @@ void renderScene(void) {
 
 	// A partir daqui estamos no sistema de coordenadas do mundo
 	glPushMatrix();
-		glTranslatef(playerPos[0], playerPos[1], playerPos[2]);
+		glTranslatef(arena->GetPlayerGx(), arena->GetPlayerGy(), 0);
 		DrawAxes();
 	glPopMatrix();
 	
-	// Set the light 0 position
-	GLfloat light_position[] = {arena->GetPlayerGx(), arena->GetPlayerGy()+10, 0.0, 1.0}; // Last element 1.0 means it is a point light
+	GLfloat light_position[] = {arena->GetGx()+arena->GetWidth()/2, 
+							    arena->GetGy()+arena->GetHeight(), 
+								-arena->GetThickness()/2, 
+								1.0}; // Last element 1.0 means it is a point light
 	glPushMatrix();
 		glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 	glPopMatrix();
@@ -590,9 +592,6 @@ int main(int argc, char *argv[]) {
 	}
 
 	arena = new Arena(svgFilePath);
-	firstPersonCamera = new Camera(arena->GetPlayerGx(), arena->GetPlayerGy(), 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
-	// sightCamera = new Camera(arena->GetPlayerGx(), arena->GetPlayerGy(), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	// thirdPersonCamera = new Camera(arena->GetPlayerGx(), arena->GetPlayerGy(), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);

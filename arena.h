@@ -35,7 +35,7 @@ class Arena {
 private:
     void LoadArena(const char* svg_file_path);
     void DrawArena();
-    void DrawRect(GLfloat width, GLfloat height, GLfloat R, GLfloat G, GLfloat B);
+    void DrawRect(GLfloat width, GLfloat height, GLfloat thickness, GLfloat R, GLfloat G, GLfloat B);
     bool PlayerCollidesWithObstacle(Player* player, Obstacle* obstacle, GLfloat dx, GLfloat dy);
     bool PlayerLandsInObstacle(Player* player, Obstacle* obstacle, GLfloat dx, GLfloat dy);
     bool PlayerCollidesWithOpponent(Player* player, Opponent* opponent, GLfloat dx, GLfloat dy);
@@ -57,8 +57,11 @@ public:
         DrawArena();
     }
 
+    GLfloat GetGx();
+    GLfloat GetGy();
     GLfloat GetWidth();
     GLfloat GetHeight();
+    GLfloat GetThickness();
     GLfloat GetPlayerGx();
     GLfloat GetPlayerGy();
     void MovePlayerInX(GLdouble timeDifference);
