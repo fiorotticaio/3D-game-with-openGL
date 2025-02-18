@@ -3,7 +3,7 @@
 void Player::DrawPlayer() {
     glPushMatrix();
         // Draw the body
-        glTranslatef(gX, gY, 0);
+        glTranslatef(gX, gY, gZ);
         DrawRect(gBodyWidth, gBodyHeight, 0.0f, 1.0f, 0.0f);
 
         DrawHeadAndArm();
@@ -87,6 +87,10 @@ GLfloat Player::GetGx() {
 
 GLfloat Player::GetGy() {
     return gY;
+}
+
+GLfloat Player::GetGz() {
+    return gZ;
 }
 
 void Player::MoveInX(GLfloat minPlayerPositionX, GLfloat maxPlayerPositionX, GLdouble timeDifference) {

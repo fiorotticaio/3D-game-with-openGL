@@ -7,12 +7,14 @@
 #include <GL/glu.h>
 #include <math.h>
 #include <stdio.h>
+#include <random>
 #include "shot.h"
 
 
 class Player {
     GLfloat gX;
     GLfloat gY;
+    GLfloat gZ;
 
     GLfloat gBaseCircleRadius; // Read in the svg file
     GLfloat gHeadCircleRadius;
@@ -66,9 +68,16 @@ private:
     
 
 public:
-    Player(GLfloat x, GLfloat y, GLfloat baseCircleRadius) {
+    Player(GLfloat x, GLfloat y, GLfloat baseCircleRadius, GLfloat arenaThickness) {
         gX = x;
         gY = y;
+        
+        // Random number generator with uniform distribution between 0 and -arenaThickness
+        std::random_device rd;  
+        std::mt19937 gen(rd()); 
+        std::uniform_real_distribution<GLfloat> dist(-arenaThickness, 0.0f);
+        gZ = dist(gen);
+
         gXDirection = 1;
         gYDirection = -1;
         gBaseCircleRadius = baseCircleRadius;
@@ -105,6 +114,7 @@ public:
 
     GLfloat GetGx();
     GLfloat GetGy();
+    GLfloat GetGz();
     void MoveInX(GLfloat minPlayerPositionX, GLfloat maxPlayerPositionX, GLdouble timeDifference);
     void MoveInY(GLfloat minPlayerPositionY, GLfloat maxPlayerPositionY, GLdouble timeDifference);
     void RotateArm(GLfloat y, GLfloat windowHeight, GLdouble timeDifference);

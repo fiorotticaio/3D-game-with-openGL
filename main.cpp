@@ -216,7 +216,7 @@ void renderScene(void) {
 		glRotatef(camXZAngle, 1, 0, 0);
 		glRotatef(camXYAngle, 0, 1, 0);
 		// We want that this next translation do not interfere with the camera rotation
-		glTranslatef(-arena->GetPlayerGx(), -arena->GetPlayerGy(), 0);
+		glTranslatef(-arena->GetPlayerGx(), -arena->GetPlayerGy(), -arena->GetPlayerGz());
  
     } else if (toggleCam == 2){
         PrintText(0.1, 0.1, "Gun sight camera", 0, 1, 0);
@@ -236,7 +236,7 @@ void renderScene(void) {
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 	
 	glPushMatrix();
-		glTranslatef(arena->GetPlayerGx(), arena->GetPlayerGy(), 0);
+		glTranslatef(arena->GetPlayerGx(), arena->GetPlayerGy(), arena->GetPlayerGz());
 		DrawAxes();
 	glPopMatrix();
 

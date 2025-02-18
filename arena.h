@@ -64,6 +64,7 @@ public:
     GLfloat GetThickness();
     GLfloat GetPlayerGx();
     GLfloat GetPlayerGy();
+    GLfloat GetPlayerGz();
     void MovePlayerInX(GLdouble timeDifference);
     void MovePlayerInY(GLdouble timeDifference);
     void RotatePlayerArm(GLfloat y, GLfloat WindowHeight, GLdouble timeDifference);

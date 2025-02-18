@@ -65,7 +65,7 @@ void Arena::LoadArena(const char* svg_file_path) {
                 cy = MapYCoordinate(cy, gY, gHeight);
 
                 if (fillStr == "green") {
-                    gPlayer = new Player(cx, cy, radius);
+                    gPlayer = new Player(cx, cy, radius, gThickness);
                 } else if (fillStr == "red") {
                     gOpponents.push_back(new Opponent(cx, cy, radius));
                 }
@@ -226,6 +226,11 @@ GLfloat Arena::GetPlayerGx() {
 
 GLfloat Arena::GetPlayerGy() {
     return gPlayer->GetGy();
+}
+
+
+GLfloat Arena::GetPlayerGz() {
+    return gPlayer->GetGz();
 }
 
 
