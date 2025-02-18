@@ -101,8 +101,6 @@ void Arena::DrawArena() {
         // Draw arena background
         glTranslatef(gX, gY, 0);
         DrawRect(gWidth, gHeight, gThickness, gRed, gGreen, gBlue);
-        // glScalef(gWidth, gHeight, gThickness);
-        // glutSolidCube(1);
     glPopMatrix();
 
     for (Obstacle* obstacle : gObstacles) {
