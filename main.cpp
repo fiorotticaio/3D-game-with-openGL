@@ -45,14 +45,13 @@ GLfloat viewPortTop = 0;
 Arena* arena = NULL;
 std::vector<Shot*> playerShots;
 std::vector<Shot*> opponentsShots;
-Camera* firstPersonCamera = NULL;
-Camera* sightCamera = NULL;
-Camera* thirdPersonCamera = NULL;
+
+// Camera
 double camXYAngle = 0;
 double camXZAngle = 0;
 int lastX = 0;
 int lastY = 0;
-int zoom = 50;
+int thirdCameraZoom = 20;
 
 // Flags and aux variables
 char* svgFilePath = NULL;
@@ -62,13 +61,14 @@ GLfloat timeAccumulator = 0.0f;
 void* font = GLUT_BITMAP_9_BY_15;
 int gameOver = 0;
 int playerWon = 0;
-int toggleCam = 1;
+int toggleCam = 3;
 
 // Feature flags
 int simulateSlowProcessingUbuntu = 0;
 int simulateSlowProcessingWindows = 0;
 int opponentMoves = 0;
 int opponentShoots = 0;
+int moveThirdCamera = 0;
 
 
 
@@ -211,12 +211,6 @@ void renderScene(void) {
 
 	if (toggleCam == 1){
         PrintText(0.1, 0.1, "First person camera", 0, 1, 0);
-
-		glTranslatef(0, 0, -zoom);
-		glRotatef(camXZAngle, 1, 0, 0);
-		glRotatef(camXYAngle, 0, 1, 0);
-		// We want that this next translation do not interfere with the camera rotation
-		glTranslatef(-arena->GetPlayerGx(), -arena->GetPlayerGy(), -arena->GetPlayerGz());
  
     } else if (toggleCam == 2){
         PrintText(0.1, 0.1, "Gun sight camera", 0, 1, 0);
@@ -224,6 +218,11 @@ void renderScene(void) {
     } else if (toggleCam == 3){
         PrintText(0.1, 0.1, "Third person camera", 0, 1, 0);
 
+		glTranslatef(0, 0, -thirdCameraZoom);
+		glRotatef(camXZAngle, 1, 0, 0);
+		glRotatef(camXYAngle, 0, 1, 0);
+		// We want that this next translation do not interfere with the camera rotation
+		glTranslatef(-arena->GetPlayerGx(), -arena->GetPlayerGy(), -arena->GetPlayerGz());
     }
 
 	// A partir daqui estamos no sistema de coordenadas do mundo
@@ -337,10 +336,10 @@ void keyPress(unsigned char key, int x, int y) {
 			keyStatus[(int)(' ')] = 1;
 			break;
 		case '+':
-			zoom--;
+			thirdCameraZoom--;
 			break;
 		case '-':
-			zoom++;
+			thirdCameraZoom++;
 			break;
 		case 27:
 			exit(0);
@@ -389,7 +388,7 @@ void passiveMotion(int x, int y) {
 
 	camXYAngle += x - lastX;
     camXZAngle += y - lastY;
-    
+
     camXYAngle = (int) camXYAngle % 360;
     camXZAngle = (int) camXZAngle % 360;
     
@@ -402,6 +401,13 @@ void mouseClick(int button, int state, int x, int y) {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && !gameOver && !playerWon) {
         playerShots.push_back(arena->PlayerShoot(viewingWidth));
     }
+	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN && !gameOver && !playerWon) {
+		toggleCam = 2;
+	}
+	if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP && !gameOver && !playerWon) {
+		// toggleCam = 1;
+		toggleCam = 3;
+	}
 }
 
 
@@ -482,6 +488,9 @@ void idle(void) {
 	}
 	if (keyStatus[(int)(' ')] && arena->PlayerLanded()) {
 		arena->PlayerJump();
+	}
+	if (keyStatus[(int)('x')]) {
+		moveThirdCamera = !moveThirdCamera;
 	}
 
 	arena->RotatePlayerArm(mouseY, Height, timeDifference);
