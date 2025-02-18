@@ -10,7 +10,7 @@
 - [ ] O retângulo de colisão agora é um cilindro
 - [ ] A colisão também deve ser calculada para as novas paredes da arena (que agora tem um formato de paralelepípedo, ou um corredor)
 'a' e 'd' giram o jogador no sentido horário e anti-horário (respectivamente), enquanto as teclas 'w' e 's' servem para mover o jogador para frente e para trás (respectivamente)
-- [ ] O pulo agora deve ser feito com a barra de espaço
+- [x] O pulo agora deve ser feito com a barra de espaço
 - [ ] O braço pode fazer o movimento de um cone imaginário e a bala deve seguir na direção em que a arma estiver apontando
 - [ ] O jogo deverá conter pelo menos um modelo de luz na arena (pontual ou direcional)
 - [ ] O jogo deverá ter um modo noturno (fazer a troca de modos com a tecla “n”) em que todas as luzes da arena são apagadas, sendo ligado somente uma lanterna na arma (braço) do jogador apontando na mesma direção da arma (A lanterna será representada por uma iluminação spot que deverá ser vista na arena quando iluminada)

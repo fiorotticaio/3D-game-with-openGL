@@ -400,12 +400,6 @@ void mouseClick(int button, int state, int x, int y) {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && !gameOver && !playerWon) {
         playerShots.push_back(arena->PlayerShoot(viewingWidth));
     }
-	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN && arena->PlayerLanded()) {
-		arena->PlayerJump();
-	}
-	if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP) {
-		arena->SetPlayerYDirection(-1);
-	}
 }
 
 
@@ -484,6 +478,9 @@ void idle(void) {
 		arena->SetPlayerXDirection(1);
 		arena->MovePlayerInX(timeDifference);
 	}
+	if (keyStatus[(int)(' ')] && arena->PlayerLanded()) {
+		arena->PlayerJump();
+	}
 
 	arena->RotatePlayerArm(mouseY, Height, timeDifference);
 	arena->MovePlayerInY(timeDifference);
@@ -496,7 +493,7 @@ void idle(void) {
 		timeAccumulator = 0.0f;
 	}
 	
-	if (arena->PlayerReachedMaximumJumpHeight() || arena->PlayerHitsHead()) {
+	if (!keyStatus[(int)(' ')] || arena->PlayerReachedMaximumJumpHeight() || arena->PlayerHitsHead()) {
 		arena->SetPlayerYDirection(-1);
 	}
 	
