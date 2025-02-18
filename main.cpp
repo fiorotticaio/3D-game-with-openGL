@@ -83,8 +83,7 @@ void normalize(float a[3]) {
 }
 
 
-void cross(float a[3], float b[3], float out[3])
-{
+void cross(float a[3], float b[3], float out[3]) {
     out[0] = a[1]*b[2] - a[2]*b[1];
     out[1] = a[2]*b[0] - a[0]*b[2];
     out[2] = a[0]*b[1] - a[1]*b[0];
@@ -100,7 +99,8 @@ void RasterChars(GLfloat x, GLfloat y, GLfloat z, const char * text, double r, d
         glRasterPos3f(x, y, z);
         const char* tmpStr;
         tmpStr = text;
-        while(*tmpStr) {
+
+        while (*tmpStr) {
             glutBitmapCharacter(GLUT_BITMAP_9_BY_15, *tmpStr);
             tmpStr++;
         }
@@ -108,7 +108,7 @@ void RasterChars(GLfloat x, GLfloat y, GLfloat z, const char * text, double r, d
 }
 
 
-void PrintText(GLfloat x, GLfloat y, const char * text, double r, double g, double b) {
+void PrintText(GLfloat x, GLfloat y, const char *text, double r, double g, double b) {
     glMatrixMode (GL_PROJECTION);
     glPushMatrix();
         glLoadIdentity ();
@@ -128,29 +128,29 @@ void DrawAxes() {
         glDisable(GL_LIGHTING);
         glDisable(GL_TEXTURE_2D);
  
-        //x axis
+        // X axis
         glPushMatrix();
             glColor3fv(color_r);
             glScalef(5, 0.3, 0.3);
-            glTranslatef(0.5, 0, 0); // put in one end
+            glTranslatef(0.5, 0, 0); // Put in one end
             glutSolidCube(1.0);
         glPopMatrix();
 
-        //y axis
+        // Y axis
         glPushMatrix();
             glColor3fv(color_g);
-            glRotatef(90,0,0,1);
+            glRotatef(90, 0, 0, 1);
             glScalef(5, 0.3, 0.3);
-            glTranslatef(0.5, 0, 0); // put in one end
+            glTranslatef(0.5, 0, 0); // Put in one end
             glutSolidCube(1.0);
         glPopMatrix();
 
-        //z axis
+        // Z axis
         glPushMatrix();
             glColor3fv(color_b);
-            glRotatef(-90,0,1,0);
+            glRotatef(-90, 0, 1, 0);
             glScalef(5, 0.3, 0.3);
-            glTranslatef(0.5, 0, 0); // put in one end
+            glTranslatef(0.5, 0, 0); // Put in one end
             glutSolidCube(1.0);
         glPopMatrix();
     glPopAttrib();
@@ -211,6 +211,7 @@ void renderScene(void) {
 
 	if (toggleCam == 1){
         PrintText(0.1, 0.1, "First person camera", 0, 1, 0);
+
 		glTranslatef(0, 0, -zoom);
 		glRotatef(camXZAngle, 1, 0, 0);
 		glRotatef(camXYAngle, 0, 1, 0);
@@ -224,6 +225,8 @@ void renderScene(void) {
         PrintText(0.1, 0.1, "Third person camera", 0, 1, 0);
 
     }
+
+	// A partir daqui estamos no sistema de coordenadas do mundo
 	
 	GLfloat light_position[] = {arena->GetGx()+arena->GetWidth()/2, 
 								arena->GetGy()+arena->GetHeight()-20, 
@@ -232,13 +235,11 @@ void renderScene(void) {
 
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 	
-	// A partir daqui estamos no sistema de coordenadas do mundo
 	glPushMatrix();
 		glTranslatef(arena->GetPlayerGx(), arena->GetPlayerGy(), 0);
 		DrawAxes();
 	glPopMatrix();
 
-    
 	arena->Draw();
 
 	for (Shot* shot : playerShots) {
@@ -250,15 +251,15 @@ void renderScene(void) {
 	}
 
 	if (gameOver) {
-		GLfloat messagePosX = viewPortLeft + viewingWidth / 2 - 6;
-		GLfloat messagePosy = viewPortBottom + viewingHeight / 2 + 15;
-		PrintText(messagePosX, messagePosy, "Game Over", 1.0f, 0.0f, 0.0f);
+		GLfloat messagePosX = 0.5;
+		GLfloat messagePosy = 0.5;
+		PrintText(messagePosX, messagePosy, "Game Over", 1, 0, 0);		
 	}
-
+	
 	if (playerWon) {
-		GLfloat messagePosX = viewPortLeft + viewingWidth / 2 - 6;
-		GLfloat messagePosy = viewPortBottom + viewingHeight / 2 + 15;
-		PrintText(messagePosX, messagePosy, "Player Won", 1.0f, 1.0f, 1.0f);
+		GLfloat messagePosX = 0.5;
+		GLfloat messagePosy = 0.5;
+		PrintText(messagePosX, messagePosy, "Player Won", 1, 1, 1);
 	}
 
 	// Draw on the frame buffer
@@ -369,13 +370,14 @@ void init(int windowSize) {
     glShadeModel(GL_SMOOTH);
     glEnable(GL_LIGHT0);
 	// glEnable(GL_TEXTURE_2D)
+	glDepthFunc(GL_LEQUAL);
 
     glViewport(0, 0, (GLsizei) windowSize, (GLsizei) windowSize);
 
 	// Defining camera parameters
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(90, (GLfloat) windowSize / (GLfloat) windowSize, 1, 200);
+    gluPerspective(90, (GLfloat) windowSize / (GLfloat) windowSize, 1, 150);
 
 	ResetKeyStatus();
 }
