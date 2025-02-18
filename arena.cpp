@@ -85,6 +85,10 @@ void Arena::DrawArena() {
     GLfloat materialColor[] = { 0.0, 0.0, 1.0, 1.0};
     GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0};
     GLfloat mat_shininess[] = { 128 };
+    // GLfloat materialEmission[] = { 0.10, 0.10, 0.10, 1};
+    // GLfloat materialColor[] = { 0.0, 0.0, 1.0, 1};
+    // GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1};
+    // GLfloat mat_shininess[] = { 100.0 };
 
     glPushMatrix();
         glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
@@ -119,51 +123,75 @@ void Arena::DrawRect(GLfloat width, GLfloat height, GLfloat thickness, GLfloat R
     // The coordenates givem in the svg file are the left bottom corner of the arena
 
     // 1º Face
-    glBegin(GL_POLYGON);
+    glBegin(GL_QUADS);
+        glNormal3f(0, 0, -1);
         glVertex3f(0, 0, 0);
-        glNormal3f(0, 0, -1);
-        glVertex3f(width, 0, 0);
-        glNormal3f(0, 0, -1);
-        glVertex3f(width, height, 0);
         glNormal3f(0, 0, -1);
         glVertex3f(0, height, 0);
         glNormal3f(0, 0, -1);
+        glVertex3f(width, height, 0);
+        glNormal3f(0, 0, -1);
+        glVertex3f(width, 0, 0);
     glEnd();
 
     // 2º Face
-    glBegin(GL_POLYGON);
+    glBegin(GL_QUADS);
+        glNormal3f(-1, 0, 0);
         glVertex3f(width, 0, 0);
-        glNormal3f(-1, 0, 0);
-        glVertex3f(width, 0, -thickness);
-        glNormal3f(-1, 0, 0);
-        glVertex3f(width, height, -thickness);
         glNormal3f(-1, 0, 0);
         glVertex3f(width, height, 0);
         glNormal3f(-1, 0, 0);
+        glVertex3f(width, height, -thickness);
+        glNormal3f(-1, 0, 0);
+        glVertex3f(width, 0, -thickness);
     glEnd();
 
     // 3º Face
-    glBegin(GL_POLYGON);
+    glBegin(GL_QUADS);
+        glNormal3f(0, 0, 1);
         glVertex3f(width, 0, -thickness);
-        glNormal3f(0, 0, 1);
-        glVertex3f(0, 0, -thickness);
-        glNormal3f(0, 0, 1);
-        glVertex3f(0, height, -thickness);
         glNormal3f(0, 0, 1);
         glVertex3f(width, height, -thickness);
         glNormal3f(0, 0, 1);
+        glVertex3f(0, height, -thickness);
+        glNormal3f(0, 0, 1);
+        glVertex3f(0, 0, -thickness);
     glEnd();
 
     // 4º Face
-    glBegin(GL_POLYGON);
+    glBegin(GL_QUADS);
+        glNormal3f(1, 0, 0);
         glVertex3f(0, 0, -thickness);
-        glNormal3f(1, 0, 0);
-        glVertex3f(0, 0, 0);
-        glNormal3f(1, 0, 0);
-        glVertex3f(0, height, 0);
         glNormal3f(1, 0, 0);
         glVertex3f(0, height, -thickness);
         glNormal3f(1, 0, 0);
+        glVertex3f(0, height, 0);
+        glNormal3f(1, 0, 0);
+        glVertex3f(0, 0, 0);
+    glEnd();
+
+    // Ground
+    glBegin(GL_QUADS);
+        glNormal3f(0, 1, 0);
+        glVertex3f(0, 0, 0);
+        glNormal3f(0, 1, 0);
+        glVertex3f(width, 0, 0);
+        glNormal3f(0, 1, 0);
+        glVertex3f(width, 0, -thickness);
+        glNormal3f(0, 1, 0);
+        glVertex3f(0, 0, -thickness);
+    glEnd();
+
+    // Ceiling
+    glBegin(GL_QUADS);
+        glNormal3f(0, -1, 0);
+        glVertex3f(0, height, 0);
+        glNormal3f(0, -1, 0);
+        glVertex3f(0, height, -thickness);
+        glNormal3f(0, -1, 0);
+        glVertex3f(width, height, -thickness);
+        glNormal3f(0, -1, 0);
+        glVertex3f(width, height, 0);
     glEnd();
 }
 

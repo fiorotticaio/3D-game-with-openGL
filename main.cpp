@@ -224,20 +224,20 @@ void renderScene(void) {
         PrintText(0.1, 0.1, "Third person camera", 0, 1, 0);
 
     }
+	
+	GLfloat light_position[] = {arena->GetGx()+arena->GetWidth()/2, 
+								arena->GetGy()+arena->GetHeight()-20, 
+								-arena->GetThickness()/2, 
+								1.0}; // Last element 1.0 means it is a point light
 
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	
 	// A partir daqui estamos no sistema de coordenadas do mundo
 	glPushMatrix();
 		glTranslatef(arena->GetPlayerGx(), arena->GetPlayerGy(), 0);
 		DrawAxes();
 	glPopMatrix();
-	
-	GLfloat light_position[] = {arena->GetGx()+arena->GetWidth()/2, 
-							    arena->GetGy()+arena->GetHeight(), 
-								-arena->GetThickness()/2, 
-								1.0}; // Last element 1.0 means it is a point light
-	glPushMatrix();
-		glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-	glPopMatrix();
+
     
 	arena->Draw();
 
