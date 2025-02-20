@@ -202,11 +202,9 @@ bool loadViewportSizeFromSvg(const char* svg_file_path) {
 }
 
 
-void renderScene(void) {
+void renderScene(void) {	
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
 	if (toggleCam == 1){
@@ -228,9 +226,9 @@ void renderScene(void) {
 	// A partir daqui estamos no sistema de coordenadas do mundo
 	
 	GLfloat light_position[] = {arena->GetGx()+arena->GetWidth()/2, 
-								arena->GetGy()+arena->GetHeight()-20, 
-								-arena->GetThickness()/2, 
-								1.0}; // Last element 1.0 means it is a point light
+		arena->GetGy()+arena->GetHeight(), 
+		-arena->GetThickness()/2, 
+		1.0}; // Last element 1.0 means it is a point light
 
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 	
@@ -377,6 +375,9 @@ void init(int windowSize) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(90, (GLfloat) windowSize / (GLfloat) windowSize, 1, 150);
+
+	glMatrixMode(GL_MODELVIEW);
+
 
 	ResetKeyStatus();
 }

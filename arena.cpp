@@ -49,8 +49,9 @@ void Arena::LoadArena(const char* svg_file_path) {
                     GLfloat obstacleHeight = elem->FloatAttribute("height");
 
                     obstacleY = MapYCoordinate(obstacleY, gY, gHeight);
-
-                    gObstacles.push_back(new Obstacle(obstacleX, obstacleY, obstacleWidth, obstacleHeight));
+                    
+                    // TODOS: Cases when an obstacle is defined in the svg before the arena
+                    gObstacles.push_back(new Obstacle(obstacleX, obstacleY, obstacleWidth, obstacleHeight, gThickness));
                 }
             }
         } else if (tag == "circle") {
@@ -81,14 +82,18 @@ void Arena::LoadArena(const char* svg_file_path) {
 
 
 void Arena::DrawArena() {
-    GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0};
-    GLfloat materialColor[] = { 0.0, 0.0, 1.0, 1.0};
-    GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0};
-    GLfloat mat_shininess[] = { 128 };
+    // GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0};
+    // GLfloat materialColor[] = { 0.0, 0.0, 1.0, 1.0};
+    // GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0};
+    // GLfloat mat_shininess[] = { 128 };
     // GLfloat materialEmission[] = { 0.10, 0.10, 0.10, 1};
     // GLfloat materialColor[] = { 0.0, 0.0, 1.0, 1};
     // GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1};
     // GLfloat mat_shininess[] = { 100.0 };
+    GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0 };
+    GLfloat materialColor[] = { 0.0, 0.0, 0.8, 1.0 };
+    GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
+    GLfloat mat_shininess[] = { 50 };
 
     glPushMatrix();
         glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
@@ -100,7 +105,7 @@ void Arena::DrawArena() {
 
         // Draw arena background
         glTranslatef(gX, gY, 0);
-        DrawRect(gWidth, gHeight, gThickness, gRed, gGreen, gBlue);
+        DrawRects(gWidth, gHeight, gThickness, gRed, gGreen, gBlue);
     glPopMatrix();
 
     for (Obstacle* obstacle : gObstacles) {
@@ -115,7 +120,7 @@ void Arena::DrawArena() {
 }
 
 
-void Arena::DrawRect(GLfloat width, GLfloat height, GLfloat thickness, GLfloat R, GLfloat G, GLfloat B) {
+void Arena::DrawRects(GLfloat width, GLfloat height, GLfloat thickness, GLfloat R, GLfloat G, GLfloat B) {
     glColor3f(R, G, B);
 
     // The coordenates givem in the svg file are the left bottom corner of the arena
