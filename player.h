@@ -72,10 +72,10 @@ public:
         gX = x;
         gY = y;
         
-        // Random number generator with uniform distribution between 0 and -arenaThickness
+        // Random number generator with uniform distribution between -1 and -(arenaThickness-1)
         std::random_device rd;  
         std::mt19937 gen(rd()); 
-        std::uniform_real_distribution<GLfloat> dist(-arenaThickness, 0.0f);
+        std::uniform_real_distribution<GLfloat> dist(-(arenaThickness-1), -1.0f);
         gZ = dist(gen);
 
         gXDirection = 1;
