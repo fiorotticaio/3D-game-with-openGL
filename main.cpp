@@ -51,7 +51,8 @@ double camXYAngle = 0;
 double camXZAngle = 0;
 int lastX = 0;
 int lastY = 0;
-int thirdCameraZoom = 20;
+int thirdCameraZoom = 10;
+float cameraHeightOffset = 5.0f;
 
 // Flags and aux variables
 char* svgFilePath = NULL;
@@ -215,10 +216,28 @@ void renderScene(void) {
 
     } else if (toggleCam == 3){
         PrintText(0.1, 0.1, "Third person camera", 0, 1, 0);
+		
+		// Calculate the angle to point to player
+		float deltaY = cameraHeightOffset;
+		float deltaX = thirdCameraZoom;
+		float angle = atan(deltaY/deltaX) * 180 / M_PI;
 
-		glTranslatef(0, 0, -thirdCameraZoom);
-		glRotatef(camXZAngle, 1, 0, 0);
-		glRotatef(camXYAngle, 0, 1, 0);
+		// Move away from the player
+		if (!moveThirdCamera) glTranslatef(0, -cameraHeightOffset, -thirdCameraZoom);
+		else                  glTranslatef(0, 0, -thirdCameraZoom);
+
+		// Mouse rotation
+		if (moveThirdCamera) {
+			glRotatef(camXZAngle, 1, 0, 0);
+			glRotatef(camXYAngle, 0, 1, 0);
+		}
+
+		// Rotate camera to point to x positive
+		glRotatef(90, 0, 1, 0);
+
+		// Rotate angle in y negative
+		if (!moveThirdCamera) glRotatef(angle, 0, 0, 1);
+
 		// We want that this next translation do not interfere with the camera rotation
 		glTranslatef(-arena->GetPlayerGx(), -arena->GetPlayerGy(), -arena->GetPlayerGz());
     }
@@ -326,6 +345,10 @@ void keyPress(unsigned char key, int x, int y) {
 		case 'H':
 			keyStatus[(int)('h')] = 1;
 			break;
+		case 'x':
+		case 'X':
+			moveThirdCamera = !moveThirdCamera;
+			break;
 		case 'y':
 		case 'Y':
 			keyStatus[(int)('y')] = 1;
@@ -334,10 +357,10 @@ void keyPress(unsigned char key, int x, int y) {
 			keyStatus[(int)(' ')] = 1;
 			break;
 		case '+':
-			thirdCameraZoom--;
+			if (thirdCameraZoom > 5) thirdCameraZoom--;
 			break;
 		case '-':
-			thirdCameraZoom++;
+			if (thirdCameraZoom < 10) thirdCameraZoom++;
 			break;
 		case 27:
 			exit(0);
@@ -387,14 +410,23 @@ void passiveMotion(int x, int y) {
 	// Invert the y position
 	mouseY = Height - y;
 
-	camXYAngle += x - lastX;
-    camXZAngle += y - lastY;
+	if (moveThirdCamera) {
+		camXYAngle += x - lastX;
+		camXZAngle += y - lastY;
 
-    camXYAngle = (int) camXYAngle % 360;
-    camXZAngle = (int) camXZAngle % 360;
-    
-    lastX = x;
-    lastY = y;
+		camXYAngle = (int) camXYAngle % 360;
+		camXZAngle = (int) camXZAngle % 360;
+		if (camXZAngle > 60) camXZAngle = 60;
+		if (camXZAngle < -60) camXZAngle = -60;
+
+		lastX = x;
+		lastY = y;
+	}    
+}
+
+
+void rotateThirdCamera() {
+
 }
 
 
@@ -489,9 +521,6 @@ void idle(void) {
 	}
 	if (keyStatus[(int)(' ')] && arena->PlayerLanded()) {
 		arena->PlayerJump();
-	}
-	if (keyStatus[(int)('x')]) {
-		moveThirdCamera = !moveThirdCamera;
 	}
 
 	arena->RotatePlayerArm(mouseY, Height, timeDifference);

@@ -18,7 +18,7 @@
 - [ ] O botão 1 (opção padrão) deverá acionar uma câmera perspectiva posicionada no olho do jogador e olhando para frente. 
 - [ ] O botão 2 deverá acionar uma câmera na arma do jogador, ou seja, como se fosse uma mira. Ela será uma câmera perspectiva posicionada em cima da arma, olhando na direção do tiro (paralelamente ao cano da arma) e com o up perpendicular a arma. Com essa visão, seria possível ver parte da arma, assim como o que estiver a frente dela.
 - [x] Você poderá entrar temporariamente na câmera 2 (a partir de qualquer outra) enquanto o botão direito do mouse estiver pressionado. 
-- [ ] O botão 3 deverá acionar uma câmera perspectiva posicionada inicialmente atrás do jogador (a uma distância grande suficiente para ver todo o jogador por uma terceira pessoa) e a uma altura superior à do jogador, e olhando para o centro do jogador (up apontando para o teto). 
-- [ ] A câmera 3 poderá ser rotacionada (360 graus em torno do jogador e ±60 graus para cima e para baixo do centro do jogado) quando pressionada a tecla x, resultando em um movimento esférico em volta do jogador.
+- [x] O botão 3 deverá acionar uma câmera perspectiva posicionada inicialmente atrás do jogador (a uma distância grande suficiente para ver todo o jogador por uma terceira pessoa) e a uma altura superior à do jogador, e olhando para o centro do jogador (up apontando para o teto). 
+- [x] A câmera 3 poderá ser rotacionada (360 graus em torno do jogador e ±60 graus para cima e para baixo do centro do jogado) quando pressionada a tecla x, resultando em um movimento esférico em volta do jogador.
 - [x] As teclas de + e – devem controlar o zoom da câmera 3.
 - [ ] Incluir um arquivo README.txt junto com o código fonte do jogo explicando os atalhos e funcionalidades adiconais. 
