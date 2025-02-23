@@ -91,7 +91,7 @@ void cross(float a[3], float b[3], float out[3]) {
 }
 
 
-void RasterChars(GLfloat x, GLfloat y, GLfloat z, const char * text, double r, double g, double b) {
+void RasterChars(GLfloat x, GLfloat y, GLfloat z, const char* text, double r, double g, double b) {
     glPushAttrib(GL_ENABLE_BIT);
         glDisable(GL_LIGHTING);
         // glDisable(GL_TEXTURE_2D);
@@ -109,8 +109,8 @@ void RasterChars(GLfloat x, GLfloat y, GLfloat z, const char * text, double r, d
 }
 
 
-void PrintText(GLfloat x, GLfloat y, const char *text, double r, double g, double b) {
-    glMatrixMode (GL_PROJECTION);
+void PrintText(GLfloat x, GLfloat y, const char* text, double r, double g, double b) {
+    glMatrixMode(GL_PROJECTION);
     glPushMatrix();
         glLoadIdentity ();
         glOrtho(0, 1, 0, 1, -1, 1);
@@ -208,6 +208,14 @@ void renderScene(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
+	if (gameOver) {
+		PrintText(0.5, 0.8, "Game Over", 1, 0, 0);		
+	}
+	
+	if (playerWon) {
+		PrintText(0.5, 0.8, "Player Won", 1, 1, 1);
+	}
+
 	if (toggleCam == 1){
         PrintText(0.1, 0.1, "First person camera", 0, 1, 0);
  
@@ -264,18 +272,6 @@ void renderScene(void) {
 
 	for (Shot* shot : opponentsShots) {
 		if (shot) shot->Draw();
-	}
-
-	if (gameOver) {
-		GLfloat messagePosX = 0.5;
-		GLfloat messagePosy = 0.5;
-		PrintText(messagePosX, messagePosy, "Game Over", 1, 0, 0);		
-	}
-	
-	if (playerWon) {
-		GLfloat messagePosX = 0.5;
-		GLfloat messagePosy = 0.5;
-		PrintText(messagePosX, messagePosy, "Player Won", 1, 1, 1);
 	}
 
 	// Draw on the frame buffer

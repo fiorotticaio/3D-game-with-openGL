@@ -3,7 +3,7 @@
 ## Jogo
 
 - [x] A janela de visualização deverá ter 500x500 pixels
-- [ ] Jogador deve ganhar ao chegar ao final
+- [x] Jogador deve ganhar ao chegar ao final
 - [ ] Jogador deve perder ao encostar nos tiros ou nos oponentes
 
 ## Jogador
@@ -26,7 +26,7 @@
 
 ## Arena
 
-- [ ] Carregar arena normalmente para x e y e com a coordenada z com metade do tamanho da y
+- [x] Carregar arena normalmente para x e y e com a coordenada z com metade do tamanho da metade y
 - [x] Personagens devem ser iniciados na coordenada x, y fornecida no arquivo svg e coordenada z aleatória (desde que dentro da arena)
 - [ ] O jogo deverá conter pelo menos um modelo de luz na arena (pontual ou direcional)
 - [ ] O jogo deverá ter um modo noturno (fazer a troca de modos com a tecla “n”) em que todas as luzes da arena são apagadas, sendo ligado somente uma lanterna na arma (braço) do jogador apontando na mesma direção da arma (A lanterna será representada por uma iluminação spot que deverá ser vista na arena quando iluminada)
