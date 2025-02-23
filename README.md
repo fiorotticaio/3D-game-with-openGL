@@ -1,7 +1,3 @@
-- Mudar o jeito de câmera, ao invés de mudar a viewport, fixar a viewport na câmera e mover somente a câmera
-- Centralizar a câmera no personagem
-- Mudar o modo de visualização para perspectiva e ir mudando a posição da câmera para ver a arena achatada
-
 # Requisitos
 
 ## Jogo
