@@ -9,6 +9,7 @@
 ## Jogador
 
 - [x] Desenhar o jogador em 3D (usar criatividade)
+- [x] Desenhar os oponentes em 3D (usar criatividade)
 - [ ] O retângulo de colisão agora é um cilindro
 - [ ] 'a' e 'd' giram o jogador no sentido horário e anti-horário (respectivamente), enquanto as teclas 'w' e 's' servem para mover o jogador para frente e para trás (respectivamente)
 - [ ] A colisão também deve ser calculada para as novas paredes da arena (que agora tem um formato de paralelepípedo, ou um corredor)

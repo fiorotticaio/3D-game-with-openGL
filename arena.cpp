@@ -50,7 +50,7 @@ void Arena::LoadArena(const char* svg_file_path) {
 
                     obstacleY = MapYCoordinate(obstacleY, gY, gHeight);
                     
-                    // TODOS: Cases when an obstacle is defined in the svg before the arena
+                    // TODO: Cases when an obstacle is defined in the svg before the arena
                     gObstacles.push_back(new Obstacle(obstacleX, obstacleY, obstacleWidth, obstacleHeight, gThickness));
                 }
             }
@@ -66,9 +66,11 @@ void Arena::LoadArena(const char* svg_file_path) {
                 cy = MapYCoordinate(cy, gY, gHeight);
 
                 if (fillStr == "green") {
+                    // TODO: Cases when an obstacle is defined in the svg before the arena
                     gPlayer = new Player(cx, cy, radius, gThickness);
                 } else if (fillStr == "red") {
-                    gOpponents.push_back(new Opponent(cx, cy, radius));
+                    // TODO: Cases when an obstacle is defined in the svg before the arena
+                    gOpponents.push_back(new Opponent(cx, cy, radius, gThickness));
                 }
             }
         }

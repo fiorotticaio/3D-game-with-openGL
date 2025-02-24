@@ -70,6 +70,7 @@ void Player::DrawFrontLeg() {
     glPopMatrix();
 }
 
+
 void Player::DrawBackLeg() {
     glPushMatrix();
         // Draw the back thigh

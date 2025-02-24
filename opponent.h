@@ -7,12 +7,16 @@
 #include <GL/glu.h>
 #include <math.h>
 #include <stdio.h>
+#include <random>
 #include "shot.h"
 
 
 class Opponent {
     GLfloat gX;
     GLfloat gY;
+    GLfloat gZ;
+
+    GLfloat gXZangle;
 
     GLfloat gBaseCircleRadius; // Read in the svg file
     GLfloat gHeadCircleRadius;
@@ -20,22 +24,26 @@ class Opponent {
 
     GLfloat gBodyWidth;
     GLfloat gBodyHeight;
-    // Invisible rectangle for collision detection
+    GLfloat gBodyThickness;
+
     GLfloat gInvisibleReactWidth;
     GLfloat gInvisibleReactHeight;
 
     GLfloat gArmWidth;
     GLfloat gArmHeight;
+    GLfloat gArmThickness;
     GLfloat gArmAngle;
     GLfloat gArmSpeed;
 
     GLfloat gThighWidth;
     GLfloat gThighHeight;
+    GLfloat gThighThickness;
     GLfloat gFrontThighAngle;
     GLfloat gBackThighAngle;
 
     GLfloat gShinWidth;
     GLfloat gShinHeight;
+    GLfloat gShinThickness;
     GLfloat gFrontShinAngle;
     GLfloat gBackShinAngle;
 
@@ -55,44 +63,66 @@ class Opponent {
 
 private:
     void DrawOpponent();
-    void DrawCircle(GLfloat radius, GLfloat R, GLfloat G, GLfloat B);
-    void DrawRect(GLfloat width, GLfloat height, GLfloat R, GLfloat G, GLfloat B);
-    void DrawHeadAndArm();
+    void DrawCuboid(GLfloat width, GLfloat height, GLfloat depth, GLfloat R, GLfloat G, GLfloat B);
+    void DrawSphere(GLfloat radius, GLfloat R, GLfloat G, GLfloat B);
+    void DrawHeadAndArms();
     void DrawFrontLeg();
     void DrawBackLeg();
     void RotatePoint(GLfloat x, GLfloat y, GLfloat angle, GLfloat &xOut, GLfloat &yOut);
     void TranslatePoint(GLfloat x, GLfloat y, GLfloat dx, GLfloat dy, GLfloat &xOut, GLfloat &yOut);
     void ScalePoint(GLfloat x, GLfloat y, GLfloat sx, GLfloat sy, GLfloat &xOut, GLfloat &yOut);
-    
+
 
 public:
-    Opponent(GLfloat x, GLfloat y, GLfloat baseCircleRadius) {
+    Opponent(GLfloat x, GLfloat y, GLfloat baseCircleRadius, GLfloat arenaThickness) {
         gX = x;
         gY = y;
-        gXDirection = -1;
+        
+        // Random number generator with uniform distribution between -1 and -(arenaThickness-1)
+        std::random_device rd;  
+        std::mt19937 gen(rd()); 
+        std::uniform_real_distribution<GLfloat> dist(-(arenaThickness-1), -1.0f);
+        gZ = dist(gen);
+
+        gXZangle = 0.0f;
+
+        gXDirection = 1;
         gYDirection = -1;
+
         gBaseCircleRadius = baseCircleRadius;
         gHeadCircleRadius = ((float) 22 / (float) 172) * gBaseCircleRadius;
+
         gBodyHeight = ((float) 53 / 172) * gBaseCircleRadius;
         gBodyWidth = (float) gBodyHeight / (float) 2;
+        gBodyThickness = gBodyWidth;
+
         gArmHeight = ((float) 57 / (float) 172) * gBaseCircleRadius;
         gArmWidth = (float) gArmHeight / (float) 6;
+        gArmThickness = gArmWidth;
         gArmAngle = -90.0f;
         gArmSpeed = 0.5f;
+
         gThighHeight = ((float) 47 / (float) 172) * gBaseCircleRadius;
         gThighWidth = (float) gThighHeight / (float) 6;
+        gThighThickness = gThighWidth;
         gFrontThighAngle = -140.0f;
         gBackThighAngle = -210.0f;
+
         gShinHeight = ((float) 50 / (float) 172) * gBaseCircleRadius;
         gShinWidth = (float) gShinHeight / (float)  6;
+        gShinThickness = gShinWidth;
         gFrontShinAngle = 0.0f;
         gBackShinAngle = -50.0f;
+
         gXSpeed = 0.025f;
         gYSpeed = 0.025f;
+
         gInvisibleReactHeight = gThighHeight + gShinHeight + gBodyHeight + 2 * gHeadCircleRadius;
         gInvisibleReactWidth = gBodyWidth;
+
         maxJumpHeight = 4 * gInvisibleReactHeight; // 4 instead of 3 to make the game more playable
         jumpHeight = 0;
+
         gFrontThighAngleDir = 1;
         gBackThighAngleDir = 1;
         gFrontShinAngleDir = -1;
