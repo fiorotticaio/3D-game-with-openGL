@@ -307,7 +307,7 @@ void keyPress(unsigned char key, int x, int y) {
 			break;
 		case 'a':
 		case 'A':
-			keyStatus[(int)('a')] = 1;
+			keyStatus[(int)('a')] = -1;
 			break;
 		case 'd':
 		case 'D':
@@ -506,15 +506,24 @@ void idle(void) {
 
 	if (gameOver || playerWon) return;
 
-
+	// Player movement forwards and backwards
+	if (keyStatus[(int)('s')]) {
+		arena->SetPlayerMovementDirection(-1);
+		arena->MovePlayerInXZ(timeDifference);
+	}
+	if (keyStatus[(int)('w')]) {
+		arena->SetPlayerMovementDirection(1);
+		arena->MovePlayerInXZ(timeDifference);
+	}
+	
+	// Player rotational movement
 	if (keyStatus[(int)('a')]) {
-		arena->SetPlayerXDirection(-1);
-		arena->MovePlayerInX(timeDifference);
+		arena->RotatePlayer(true, timeDifference);
 	}
 	if (keyStatus[(int)('d')]) {
-		arena->SetPlayerXDirection(1);
-		arena->MovePlayerInX(timeDifference);
+		arena->RotatePlayer(false, timeDifference);
 	}
+
 	if (keyStatus[(int)(' ')] && arena->PlayerLanded()) {
 		arena->PlayerJump();
 	}
@@ -522,7 +531,7 @@ void idle(void) {
 	arena->RotatePlayerArm(mouseY, Height, timeDifference);
 	arena->MovePlayerInY(timeDifference);
 	arena->MoveOpponentsInY(timeDifference);
-	if (opponentMoves) arena->MoveOpponentsInX(timeDifference);
+	if (opponentMoves) arena->MoveOpponentsInXZ(timeDifference);
 	arena->MoveOpponentsArms(timeDifference);
 
 	if (timeAccumulator >= 1000.0f) {

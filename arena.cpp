@@ -241,7 +241,7 @@ GLfloat Arena::GetPlayerGz() {
 }
 
 
-void Arena::MovePlayerInX(GLdouble timeDifference) {
+void Arena::MovePlayerInXZ(GLdouble timeDifference) {
     for (Obstacle* obstacle : gObstacles) {
         if(PlayerCollidesWithObstacle(gPlayer, obstacle, gPlayer->GetXSpeed(), 0)) {
             return;
@@ -254,7 +254,7 @@ void Arena::MovePlayerInX(GLdouble timeDifference) {
         }
     }
 
-    gPlayer->MoveInX(gX, gX + gWidth, timeDifference);
+    gPlayer->MoveInXZ(gX, gX + gWidth, -gThickness, 0, timeDifference);
 }
 
 
@@ -272,6 +272,10 @@ void Arena::MovePlayerInY(GLdouble timeDifference) {
     }
 
     gPlayer->MoveInY(gY, gY + gHeight, timeDifference);
+}
+
+void Arena::RotatePlayer(bool clockwise, GLdouble timeDifference) {
+    gPlayer->Rotate(clockwise, timeDifference);
 }
 
 
@@ -373,7 +377,7 @@ void Arena::RotatePlayerArm(GLfloat y, GLfloat WindowHeight, GLdouble timeDiffer
 }
 
 
-void Arena::SetPlayerXDirection(GLint xDirection) {
+void Arena::SetPlayerMovementDirection(GLint xDirection) {
     gPlayer->SetXDirection(xDirection);
 }
 
@@ -576,7 +580,7 @@ void Arena::MoveOpponentsInY(GLdouble timeDifference) {
 }
 
 
-void Arena::MoveOpponentsInX(GLdouble timeDifference) {
+void Arena::MoveOpponentsInXZ(GLdouble timeDifference) {
     for (Opponent* opponent : gOpponents) {
         if (!OpponentLanded(opponent)) { continue; }
 
@@ -638,7 +642,7 @@ void Arena::MoveOpponentsInX(GLdouble timeDifference) {
         }
 
         if (!directionChanged) {
-            opponent->MoveInX(gX, gX + gWidth, timeDifference);
+            opponent->MoveInXZ(gX, gX + gWidth, -gThickness, 0, timeDifference);
         }
     }
 }

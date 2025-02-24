@@ -4,13 +4,13 @@ void Opponent::DrawOpponent() {
     glPushMatrix();
         // Draw the body
         glTranslatef(gX, gY, gZ);
-        glRotatef(gXZangle, 0, 1, 0);
+        glRotatef(gXZAngle, 0, 1, 0);
         DrawCuboid(gBodyWidth, gBodyHeight, gBodyThickness, 1.0f, 0.0f, 0.0f);
 
         DrawHeadAndArms();
 
         DrawBackLeg();
-
+        
         DrawFrontLeg();
     glPopMatrix();
 }
@@ -26,13 +26,13 @@ void Opponent::DrawHeadAndArms() {
         glTranslatef(0, -(gHeadCircleRadius + (gBodyHeight/2)), gBodyThickness/2);
 
         glPushMatrix(); // The angle dont interfear in the angle of the other arm
-            glRotatef(gArmAngle * gXDirection, 0, 0, 1);
+            glRotatef(gArmAngle, 0, 0, 1);
             DrawCuboid(gArmWidth, gArmHeight, gArmThickness, 1.0f, 1.0f, 0.0f);
         glPopMatrix();
 
         // Draw back arm (the one that doesn't move)
         glTranslatef(0, 0, -gBodyThickness);
-        glRotatef(-150 * gXDirection, 0, 0, 1); // Fixed angle
+        glRotatef(-150, 0, 0, 1); // Fixed angle
         DrawCuboid(gArmWidth, gArmHeight, gArmThickness, 1.0f, 1.0f, 0.0f);
     glPopMatrix();
 }
@@ -61,12 +61,12 @@ void Opponent::DrawFrontLeg() {
     glPushMatrix();
         // Draw the front thigh
         glTranslatef(0, 0, -gBodyThickness/2);
-        glRotatef(gFrontThighAngle * gXDirection, 0, 0, 1);
+        glRotatef(gFrontThighAngle, 0, 0, 1);
         DrawCuboid(gThighWidth, gThighHeight, gThighThickness, 1.0f, 1.0f, 1.0f);
 
         // Draw the front leg
         glTranslatef(0, gThighHeight, 0);
-        glRotatef(gFrontShinAngle * gXDirection, 0, 0, 1);
+        glRotatef(gFrontShinAngle, 0, 0, 1);
         DrawCuboid(gShinWidth, gShinHeight, gShinThickness, 1.0f, 1.0f, 1.0f);
     glPopMatrix();
 }
@@ -76,12 +76,12 @@ void Opponent::DrawBackLeg() {
     glPushMatrix();
         // Draw the back thigh
         glTranslatef(0, 0, gBodyThickness/2);
-        glRotatef(gBackThighAngle * gXDirection, 0, 0, 1);
+        glRotatef(gBackThighAngle, 0, 0, 1);
         DrawCuboid(gThighWidth, gThighHeight, gThighThickness, 1.0f, 1.0f, 1.0f);
 
         // Draw the back shin
         glTranslatef(0, gThighHeight, 0);
-        glRotatef(gBackShinAngle * gXDirection, 0, 0, 1);
+        glRotatef(gBackShinAngle, 0, 0, 1);
         DrawCuboid(gShinWidth, gShinHeight, gShinThickness, 1.0f, 1.0f, 1.0f);
     glPopMatrix();
 }
@@ -173,11 +173,25 @@ GLfloat Opponent::GetGy() {
     return gY;
 }
 
-void Opponent::MoveInX(GLfloat minOpponentPositionX, GLfloat maxOpponentPositionX, GLdouble timeDifference) {
-    if (gX + gXSpeed * timeDifference * gXDirection >= minOpponentPositionX + gBodyWidth/2 && 
-        gX + gXSpeed * timeDifference * gXDirection <= maxOpponentPositionX - gBodyWidth/2) {
+GLfloat Opponent::GetGz() {
+    return gZ;
+}
+
+void Opponent::MoveInXZ(GLfloat minPlayerPositionX, GLfloat maxPlayerPositionX, GLfloat minPlayerPositionZ, GLfloat maxPlayerPositionZ, GLdouble timeDifference) {
+
+    GLfloat angleRad = gXZAngle * M_PI / 180.0f;
+    GLfloat gX_preview = gX + gXZSpeed * timeDifference * gMovementDirection * cos(angleRad);
+    GLfloat gZ_preview = gZ - (gXZSpeed * timeDifference * gMovementDirection * sin(angleRad));
+
+    bool playerViolatesXMIN = gX_preview <= minPlayerPositionX + gBodyWidth/2;
+    bool playerViolatesXMAX = gX_preview >= maxPlayerPositionX - gBodyWidth/2;
+    bool playerViolatesZMIN = gZ_preview <= minPlayerPositionZ + gBodyWidth/2;
+    bool playerViolatesZMAX = gZ_preview >= maxPlayerPositionZ - gBodyWidth/2;
+
+    if (!playerViolatesXMIN && !playerViolatesXMAX && !playerViolatesZMIN && !playerViolatesZMAX) {
         AnimateLegs(timeDifference);
-        gX += gXSpeed * timeDifference * gXDirection;
+        gX = gX_preview;
+        gZ = gZ_preview;
     }
 }
 
@@ -189,6 +203,11 @@ void Opponent::MoveInY(GLfloat minOpponentPositionY, GLfloat maxOpponentPosition
     }
 }
 
+void Opponent::Rotate(bool clockwise, GLdouble timeDifference) {
+    gXZAngle += gArmSpeed * (clockwise ? 1 : -1) * timeDifference; // using arm speed for testing 
+    gXZAngle = gXZAngle % 360;
+}
+
 void Opponent::RotateArmToTargetAngle(GLdouble timeDifference, GLfloat targetAngle) {
     if (gArmAngle < targetAngle) {
         gArmAngle += gArmSpeed * timeDifference;
@@ -198,7 +217,7 @@ void Opponent::RotateArmToTargetAngle(GLdouble timeDifference, GLfloat targetAng
 }
 
 void Opponent::SetXDirection(GLint xDirection) {
-    gXDirection = xDirection;
+    gMovementDirection = xDirection;
 }
 
 void Opponent::SetYDirection(GLint yDirection) {
@@ -338,7 +357,7 @@ Shot* Opponent::Shoot(GLfloat maxDist) {
         TranslatePoint(x, y, 0, gArmHeight, xOut, yOut);
         x = xOut; y = yOut;
 
-        RotatePoint(x, y, (gArmAngle * M_PI / 180) * gXDirection, xOut, yOut);
+        RotatePoint(x, y, (gArmAngle * M_PI / 180) * gMovementDirection, xOut, yOut);
         x = xOut; y = yOut;
 
         TranslatePoint(x, y, 0, gBodyHeight/2, xOut, yOut);
@@ -355,7 +374,7 @@ Shot* Opponent::Shoot(GLfloat maxDist) {
         x = 0.0; y = 0.0;
         xOut = 0.0, yOut = 0.0;
 
-        RotatePoint(x, y, (gArmAngle * M_PI / 180) * gXDirection, xOut, yOut);
+        RotatePoint(x, y, (gArmAngle * M_PI / 180) * gMovementDirection, xOut, yOut);
         x = xOut; y = yOut;
 
         TranslatePoint(x, y, 0, gBodyHeight/2, xOut, yOut);
@@ -382,12 +401,12 @@ Shot* Opponent::Shoot(GLfloat maxDist) {
         GLfloat shotDirection[2] = {xResVector, yResVector};
     glPopMatrix();
 
-    return new Shot(xTopArm, yTopArm, gXSpeed, shotDirection, maxDist, gBaseCircleRadius/5);
+    return new Shot(xTopArm, yTopArm, gXZSpeed, shotDirection, maxDist, gBaseCircleRadius/5);
 }
 
 
 GLfloat Opponent::GetXSpeed() {
-    return gXSpeed;
+    return gXZSpeed;
 }
 
 
@@ -397,7 +416,7 @@ GLfloat Opponent::GetYSpeed() {
 
 
 GLint Opponent::GetXDirection() {
-    return gXDirection;
+    return gMovementDirection;
 }
 
 

@@ -65,10 +65,11 @@ public:
     GLfloat GetPlayerGx();
     GLfloat GetPlayerGy();
     GLfloat GetPlayerGz();
-    void MovePlayerInX(GLdouble timeDifference);
+    void MovePlayerInXZ(GLdouble timeDifference);
     void MovePlayerInY(GLdouble timeDifference);
+    void RotatePlayer(bool clockwise, GLdouble timeDifference);
     void RotatePlayerArm(GLfloat y, GLfloat WindowHeight, GLdouble timeDifference);
-    void SetPlayerXDirection(GLint xDirection);
+    void SetPlayerMovementDirection(GLint xDirection);
     GLint GetPlayerXDirection();
     void SetPlayerYDirection(GLint yDirection);
     GLint GetPlayerYDirection();
@@ -95,7 +96,7 @@ public:
     std::vector<Opponent*> GetOpponents();
     void EraseOpponent(Opponent* opponent);
     void MoveOpponentsInY(GLdouble timeDifference);
-	void MoveOpponentsInX(GLdouble timeDifference);
+	void MoveOpponentsInXZ(GLdouble timeDifference);
     bool ObstaclesCollidesWithShot(Shot* shot);
     bool OpponentsCollidesWithShot(Shot* shot);
     void MoveOpponentsArms(GLdouble timeDifference);

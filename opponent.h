@@ -16,8 +16,6 @@ class Opponent {
     GLfloat gY;
     GLfloat gZ;
 
-    GLfloat gXZangle;
-
     GLfloat gBaseCircleRadius; // Read in the svg file
     GLfloat gHeadCircleRadius;
     GLfloat gHeadAngle;
@@ -52,10 +50,11 @@ class Opponent {
     GLint gFrontShinAngleDir;
     GLint gBackShinAngleDir;
 
-    GLfloat gXSpeed;
+    GLfloat gXZSpeed;
     GLfloat gYSpeed;
-    GLint gXDirection; // 1 for right (front), -1 for left (back)
+    GLint gMovementDirection; // 1 for front, -1 for back
     GLint gYDirection; // 1 for up, -1 for down
+    GLint gXZAngle;
 
     GLfloat maxJumpHeight;
     GLfloat jumpHeight;
@@ -84,11 +83,9 @@ public:
         std::uniform_real_distribution<GLfloat> dist(-(arenaThickness-1), -1.0f);
         gZ = dist(gen);
 
-        gXZangle = 0.0f;
-
-        gXDirection = 1;
+        gMovementDirection = 1;
         gYDirection = -1;
-
+        gXZAngle = 0;
         gBaseCircleRadius = baseCircleRadius;
         gHeadCircleRadius = ((float) 22 / (float) 172) * gBaseCircleRadius;
 
@@ -113,8 +110,7 @@ public:
         gShinThickness = gShinWidth;
         gFrontShinAngle = 0.0f;
         gBackShinAngle = -50.0f;
-
-        gXSpeed = 0.025f;
+        gXZSpeed = 0.025f;
         gYSpeed = 0.025f;
 
         gInvisibleReactHeight = gThighHeight + gShinHeight + gBodyHeight + 2 * gHeadCircleRadius;
@@ -135,8 +131,10 @@ public:
 
     GLfloat GetGx();
     GLfloat GetGy();
-    void MoveInX(GLfloat minOpponentPositionX, GLfloat maxOpponentPositionX, GLdouble timeDifference);
+    GLfloat GetGz();
+    void MoveInXZ(GLfloat minPlayerPositionX, GLfloat maxPlayerPositionX, GLfloat minPlayerPositionZ, GLfloat maxPlayerPositionZ, GLdouble timeDifference);
     void MoveInY(GLfloat minOpponentPositionY, GLfloat maxOpponentPositionY, GLdouble timeDifference);
+    void Rotate(bool clockwise, GLdouble timeDifference);
     void RotateArmToTargetAngle(GLdouble timeDifference, GLfloat targetAngle);
     void SetXDirection(GLint xDirection);
     GLint GetXDirection();
