@@ -167,13 +167,16 @@ GLfloat Player::GetGx() {
     return gX;
 }
 
+
 GLfloat Player::GetGy() {
     return gY;
 }
 
+
 GLfloat Player::GetGz() {
     return gZ;
 }
+
 
 void Player::MoveInX(GLfloat minPlayerPositionX, GLfloat maxPlayerPositionX, GLdouble timeDifference) {
     if (gX + gXSpeed * timeDifference * gXDirection >= minPlayerPositionX + gBodyWidth/2 && 
@@ -183,6 +186,7 @@ void Player::MoveInX(GLfloat minPlayerPositionX, GLfloat maxPlayerPositionX, GLd
     }
 }
 
+
 void Player::MoveInY(GLfloat minPlayerPositionY, GLfloat maxPlayerPositionY, GLdouble timeDifference) {
     if (gY + gYSpeed * timeDifference * gYDirection >= minPlayerPositionY + gThighHeight + gShinHeight && 
         gY + gYSpeed * timeDifference * gYDirection <= maxPlayerPositionY - gThighHeight - gShinHeight) {
@@ -190,6 +194,7 @@ void Player::MoveInY(GLfloat minPlayerPositionY, GLfloat maxPlayerPositionY, GLd
         jumpHeight += gYSpeed * timeDifference * gYDirection;
     }
 }
+
 
 void Player::RotateArm(GLfloat y, GLfloat windowHeight, GLdouble timeDifference) {
     GLfloat mouseMin = 0;
@@ -207,53 +212,66 @@ void Player::RotateArm(GLfloat y, GLfloat windowHeight, GLdouble timeDifference)
     }
 }
 
+
 void Player::SetXDirection(GLint xDirection) {
     gXDirection = xDirection;
 }
+
 
 void Player::SetYDirection(GLint yDirection) {
     gYDirection = yDirection;
 }
 
+
 GLfloat Player::GetFrontThighAngle() {
     return gFrontThighAngle;
 }
+
 
 GLfloat Player::GetBackThighAngle() {
     return gBackThighAngle;
 }
 
+
 GLfloat Player::GetFrontShinAngle() {
     return gFrontShinAngle;
 }
+
 
 GLfloat Player::GetBackShinAngle() {
     return gBackShinAngle;
 }
 
+
 void Player::RotateFrontThigh(GLfloat angle, GLdouble timeDifference) {
     gFrontThighAngle += angle * 0.1f * timeDifference;
 }
+
 
 void Player::RotateBackThigh(GLfloat angle, GLdouble timeDifference) {
     gBackThighAngle += angle * 0.1f * timeDifference;
 }
 
+
 void Player::RotateFrontShin(GLfloat angle, GLdouble timeDifference) {
     gFrontShinAngle += angle * 0.1f * timeDifference;
 }
+
 
 void Player::RotateBackShin(GLfloat angle, GLdouble timeDifference) {
     gBackShinAngle += angle * 0.1f * timeDifference;
 }
 
+
 void Player::SetFrontShinAngle(GLfloat angle) {
     gFrontShinAngle = angle;
 }
 
+
 void Player::SetBackShinAngle(GLfloat angle) {
     gBackShinAngle = angle;
 }
+
 
 // Aux rotation func
 void Player::RotatePoint(GLfloat x, GLfloat y, GLfloat angle, GLfloat &xOut, GLfloat &yOut) {
@@ -282,6 +300,7 @@ void Player::RotatePoint(GLfloat x, GLfloat y, GLfloat angle, GLfloat &xOut, GLf
     yOut = outVector[1];
 }
 
+
 // Aux translate func
 void Player::TranslatePoint(GLfloat x, GLfloat y, GLfloat dx, GLfloat dy, GLfloat &xOut, GLfloat &yOut) {
     // Translation matrix
@@ -309,6 +328,7 @@ void Player::TranslatePoint(GLfloat x, GLfloat y, GLfloat dx, GLfloat dy, GLfloa
     yOut = outVector[1];
 }
 
+
 // Aux scale func
 void Player::ScalePoint(GLfloat x, GLfloat y, GLfloat sx, GLfloat sy, GLfloat &xOut, GLfloat &yOut) {
     // Sacle matriz
@@ -335,6 +355,7 @@ void Player::ScalePoint(GLfloat x, GLfloat y, GLfloat sx, GLfloat sy, GLfloat &x
     xOut = outVector[0];
     yOut = outVector[1];
 }
+
 
 Shot* Player::Shoot(GLfloat maxDist) {
     GLfloat xBaseArm = 0.0, yBaseArm = 0.0;
