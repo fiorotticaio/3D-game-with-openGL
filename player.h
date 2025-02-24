@@ -16,28 +16,34 @@ class Player {
     GLfloat gY;
     GLfloat gZ;
 
+    GLfloat gXZangle;
+
     GLfloat gBaseCircleRadius; // Read in the svg file
     GLfloat gHeadCircleRadius;
     GLfloat gHeadAngle;
 
     GLfloat gBodyWidth;
     GLfloat gBodyHeight;
-    // Invisible rectangle for collision detection
+    GLfloat gBodyThickness;
+
     GLfloat gInvisibleReactWidth;
     GLfloat gInvisibleReactHeight;
 
     GLfloat gArmWidth;
     GLfloat gArmHeight;
+    GLfloat gArmThickness;
     GLfloat gArmAngle;
     GLfloat gArmSpeed;
 
     GLfloat gThighWidth;
     GLfloat gThighHeight;
+    GLfloat gThighThickness;
     GLfloat gFrontThighAngle;
     GLfloat gBackThighAngle;
 
     GLfloat gShinWidth;
     GLfloat gShinHeight;
+    GLfloat gShinThickness;
     GLfloat gFrontShinAngle;
     GLfloat gBackShinAngle;
 
@@ -78,30 +84,45 @@ public:
         std::uniform_real_distribution<GLfloat> dist(-(arenaThickness-1), -1.0f);
         gZ = dist(gen);
 
+        gXZangle = 0.0f;
+
         gXDirection = 1;
         gYDirection = -1;
+
         gBaseCircleRadius = baseCircleRadius;
         gHeadCircleRadius = ((float) 22 / (float) 172) * gBaseCircleRadius;
+
         gBodyHeight = ((float) 53 / 172) * gBaseCircleRadius;
         gBodyWidth = (float) gBodyHeight / (float) 2;
+        gBodyThickness = gBodyWidth;
+
         gArmHeight = ((float) 57 / (float) 172) * gBaseCircleRadius;
         gArmWidth = (float) gArmHeight / (float) 6;
+        gArmThickness = gArmWidth;
         gArmAngle = -90.0f;
         gArmSpeed = 0.5f;
+
         gThighHeight = ((float) 47 / (float) 172) * gBaseCircleRadius;
         gThighWidth = (float) gThighHeight / (float) 6;
+        gThighThickness = gThighWidth;
         gFrontThighAngle = -140.0f;
         gBackThighAngle = -210.0f;
+
         gShinHeight = ((float) 50 / (float) 172) * gBaseCircleRadius;
         gShinWidth = (float) gShinHeight / (float)  6;
+        gShinThickness = gShinWidth;
         gFrontShinAngle = 0.0f;
         gBackShinAngle = -50.0f;
+
         gXSpeed = 0.05f;
         gYSpeed = 0.025f;
+
         gInvisibleReactHeight = gThighHeight + gShinHeight + gBodyHeight + 2 * gHeadCircleRadius;
         gInvisibleReactWidth = gBodyWidth;
+
         maxJumpHeight = 4 * gInvisibleReactHeight; // 4 instead of 3 to make the game more playable
         jumpHeight = 0;
+        
         gFrontThighAngleDir = 1;
         gBackThighAngleDir = 1;
         gFrontShinAngleDir = -1;
