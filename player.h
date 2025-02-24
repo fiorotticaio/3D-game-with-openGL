@@ -63,9 +63,9 @@ class Player {
 
 private:
     void DrawPlayer();
-    void DrawCircle(GLfloat radius, GLfloat R, GLfloat G, GLfloat B);
-    void DrawRect(GLfloat width, GLfloat height, GLfloat R, GLfloat G, GLfloat B);
-    void DrawHeadAndArm();
+    void DrawCuboid(GLfloat width, GLfloat height, GLfloat depth, GLfloat R, GLfloat G, GLfloat B);
+    void DrawSphere(GLfloat radius, GLfloat R, GLfloat G, GLfloat B);
+    void DrawHeadAndArms();
     void DrawFrontLeg();
     void DrawBackLeg();
     void RotatePoint(GLfloat x, GLfloat y, GLfloat angle, GLfloat &xOut, GLfloat &yOut);
@@ -122,7 +122,7 @@ public:
 
         maxJumpHeight = 4 * gInvisibleReactHeight; // 4 instead of 3 to make the game more playable
         jumpHeight = 0;
-        
+
         gFrontThighAngleDir = 1;
         gBackThighAngleDir = 1;
         gFrontShinAngleDir = -1;

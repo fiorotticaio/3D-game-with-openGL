@@ -4,9 +4,10 @@ void Player::DrawPlayer() {
     glPushMatrix();
         // Draw the body
         glTranslatef(gX, gY, gZ);
-        DrawRect(gBodyWidth, gBodyHeight, 0.0f, 1.0f, 0.0f);
+        glRotatef(gXZangle, 0, 1, 0);
+        DrawCuboid(gBodyWidth, gBodyHeight, gBodyThickness, 0.0f, 1.0f, 0.0f);
 
-        DrawHeadAndArm();
+        DrawHeadAndArms();
 
         DrawBackLeg();
 
@@ -14,72 +15,153 @@ void Player::DrawPlayer() {
     glPopMatrix();
 }
 
-void Player::DrawHeadAndArm() {
+void Player::DrawHeadAndArms() {
     glPushMatrix();
         // Draw the head
         glTranslatef(0, gBodyHeight + gHeadCircleRadius, 0);
-        DrawCircle(gHeadCircleRadius, 0.0f, 1.0f, 0.0f);
+        DrawSphere(gHeadCircleRadius, 0.0f, 1.0f, 0.0f);
 
-        // Draw the arm
-        glTranslatef(0, -(gHeadCircleRadius + (gBodyHeight/2)), 0);
-        glRotatef(gArmAngle * gXDirection, 0, 0, 1);
-        DrawRect(gArmWidth, gArmHeight, 1.0f, 1.0f, 0.0f);
+        // Draw front arm (the one that moves)
+        glTranslatef(0, -(gHeadCircleRadius + (gBodyHeight/2)), gBodyThickness/2);
+
+        glPushMatrix(); // The angle dont interfear in the angle of the other arm
+            glRotatef(gArmAngle * gXDirection, 0, 0, 1);
+            DrawCuboid(gArmWidth, gArmHeight, gArmThickness, 1.0f, 1.0f, 0.0f);
+        glPopMatrix();
+
+        // Draw back arm (the one that doesn't move)
+        glTranslatef(0, 0, -gBodyThickness);
+        glRotatef(-150 * gXDirection, 0, 0, 1); // Fixed angle
+        DrawCuboid(gArmWidth, gArmHeight, gArmThickness, 1.0f, 1.0f, 0.0f);
     glPopMatrix();
 }
+
+
+void Player::DrawSphere(GLfloat radius, GLfloat R, GLfloat G, GLfloat B) {
+    GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0 };
+    GLfloat materialColor[] = { R, G, B, 1.0 };
+    GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
+    GLfloat mat_shininess[] = { 50 };
+
+    glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
+    glMaterialfv(GL_FRONT, GL_AMBIENT, materialColor);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, materialColor);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+    glColor3f(R, G, B);
+
+    GLUquadric* quad = gluNewQuadric();
+    gluSphere(quad, radius, 20, 20);
+    gluDeleteQuadric(quad);
+}
+
 
 void Player::DrawFrontLeg() {
     glPushMatrix();
         // Draw the front thigh
+        glTranslatef(0, 0, -gBodyThickness/2);
         glRotatef(gFrontThighAngle * gXDirection, 0, 0, 1);
-        DrawRect(gThighWidth, gThighHeight, 1.0f, 0.0f, 0.0f);
+        DrawCuboid(gThighWidth, gThighHeight, gThighThickness, 1.0f, 0.0f, 0.0f);
 
         // Draw the front leg
         glTranslatef(0, gThighHeight, 0);
         glRotatef(gFrontShinAngle * gXDirection, 0, 0, 1);
-        DrawRect(gShinWidth, gShinHeight, 1.0f, 0.0f, 0.0f);
+        DrawCuboid(gShinWidth, gShinHeight, gShinThickness, 1.0f, 0.0f, 0.0f);
     glPopMatrix();
 }
 
 void Player::DrawBackLeg() {
     glPushMatrix();
         // Draw the back thigh
+        glTranslatef(0, 0, gBodyThickness/2);
         glRotatef(gBackThighAngle * gXDirection, 0, 0, 1);
-        DrawRect(gThighWidth, gThighHeight, 1.0f, 0.0f, 0.0f);
+        DrawCuboid(gThighWidth, gThighHeight, gThighThickness, 1.0f, 0.0f, 0.0f);
 
-        // Draw the back leg
+        // Draw the back shin
         glTranslatef(0, gThighHeight, 0);
         glRotatef(gBackShinAngle * gXDirection, 0, 0, 1);
-        DrawRect(gShinWidth, gShinHeight, 1.0f, 0.0f, 0.0f);
+        DrawCuboid(gShinWidth, gShinHeight, gShinThickness, 1.0f, 0.0f, 0.0f);
     glPopMatrix();
 }
 
-void Player::DrawRect(GLfloat width, GLfloat height, GLfloat R, GLfloat G, GLfloat B) {
-    glColor3f(R, G, B);
 
-    glBegin(GL_POLYGON);
-        glVertex2f(-width / 2, 0);
-        glVertex2f(width / 2, 0);
-        glVertex2f(width / 2, height);
-        glVertex2f(-width / 2, height);
+void Player::DrawCuboid(GLfloat width, GLfloat height, GLfloat depth, GLfloat R, GLfloat G, GLfloat B) {
+    GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0 };
+    GLfloat materialColor[] = { R, G, B, 1.0 };
+    GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
+    GLfloat mat_shininess[] = { 50 };
+
+    
+    glBegin(GL_QUADS);
+        glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
+        glMaterialfv(GL_FRONT, GL_AMBIENT, materialColor);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, materialColor);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+        glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+        glColor3f(R, G, B);
+
+        // Front face
+        glNormal3f(0, 0, 1);
+        glVertex3f(-width/2, 0, depth/2);
+        glNormal3f(0, 0, 1);
+        glVertex3f(width/2, 0, depth/2);
+        glNormal3f(0, 0, 1);
+        glVertex3f(width/2, height, depth/2);
+        glNormal3f(0, 0, 1);
+        glVertex3f(-width/2, height, depth/2);
+
+        // Back face
+        glNormal3f(0, 0, -1);
+        glVertex3f(-width/2, 0, -depth/2);
+        glNormal3f(0, 0, -1);
+        glVertex3f(-width/2, height, -depth/2);
+        glNormal3f(0, 0, -1);
+        glVertex3f(width/2, height, -depth/2);
+        glNormal3f(0, 0, -1);
+        glVertex3f(width/2, 0, -depth/2);
+
+        // Right face
+        glNormal3f(1, 0, 0);
+        glVertex3f(width/2, 0, depth/2);
+        glNormal3f(1, 0, 0);
+        glVertex3f(width/2, 0, -depth/2);
+        glNormal3f(1, 0, 0);
+        glVertex3f(width/2, height, -depth/2);
+        glNormal3f(1, 0, 0);
+        glVertex3f(width/2, height, depth/2);
+
+        // Left face
+        glNormal3f(-1, 0, 0);
+        glVertex3f(-width/2, 0, depth/2);
+        glNormal3f(-1, 0, 0);
+        glVertex3f(-width/2, height, depth/2);
+        glNormal3f(-1, 0, 0);
+        glVertex3f(-width/2, height, -depth/2);
+        glNormal3f(-1, 0, 0);
+        glVertex3f(-width/2, 0, -depth/2);
+
+        // Top face
+        glNormal3f(0, 1, 0);
+        glVertex3f(-width/2, height, depth/2);
+        glNormal3f(0, 1, 0);
+        glVertex3f(width/2, height, depth/2);
+        glNormal3f(0, 1, 0);
+        glVertex3f(width/2, height, -depth/2);
+        glNormal3f(0, 1, 0);
+        glVertex3f(-width/2, height, -depth/2);
+
+        // Bottom face
+        glNormal3f(0, -1, 0);
+        glVertex3f(-width/2, 0, depth/2);
+        glNormal3f(0, -1, 0);
+        glVertex3f(-width/2, 0, -depth/2);
+        glNormal3f(0, -1, 0);
+        glVertex3f(width/2, 0, -depth/2);
+        glNormal3f(0, -1, 0);
+        glVertex3f(width/2, 0, depth/2);
     glEnd();
 }
 
-void Player::DrawCircle(GLfloat radius, GLfloat R, GLfloat G, GLfloat B) {
-    const int numSegments = 100;
-    const GLfloat angleStep = 2.0f * M_PI / numSegments;
-
-    glColor3f(R, G, B);
-
-    glBegin(GL_TRIANGLE_FAN);
-        glVertex2f(0.0f, 0.0f);
-        for (int i = 0; i <= numSegments; ++i) {
-            GLfloat angle = i * angleStep;
-            GLfloat x = radius * cos(angle);
-            GLfloat y = radius * sin(angle);
-            glVertex2f(x, y);
-        }
-    glEnd();
-}
 
 GLfloat Player::GetGx() {
     return gX;
