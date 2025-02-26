@@ -218,6 +218,8 @@ void renderScene(void) {
 
 	if (toggleCam == 1){
         PrintText(0.1, 0.1, "First person camera", 0, 1, 0);
+		glRotatef(90-arena->GetPlayerXZAngle(), 0, 1, 0);
+		glTranslatef(-arena->GetPlayerGx(), -arena->CalculatePlayerHeadYPosition(), -arena->GetPlayerGz());
  
     } else if (toggleCam == 2){
         PrintText(0.1, 0.1, "Gun sight camera", 0, 1, 0);
@@ -307,7 +309,7 @@ void keyPress(unsigned char key, int x, int y) {
 			break;
 		case 'a':
 		case 'A':
-			keyStatus[(int)('a')] = -1;
+			keyStatus[(int)('a')] = 1;
 			break;
 		case 'd':
 		case 'D':
@@ -505,6 +507,8 @@ void idle(void) {
 	}
 
 	if (gameOver || playerWon) return;
+
+	// printf("Player position: (%f, %f, %f); Player rotation: %f\n", arena->GetPlayerGx(), arena->GetPlayerGy(), arena->GetPlayerGz(), arena->GetPlayerXZAngle());
 
 	// Player movement forwards and backwards
 	if (keyStatus[(int)('s')]) {

@@ -987,3 +987,13 @@ void Arena::AnimateOpponentsLegs(GLdouble timeDifference) {
         opponent->AnimateLegs(timeDifference);
     }
 }
+
+
+GLfloat Arena::CalculatePlayerHeadYPosition() {
+    return gPlayer->GetGy() - gPlayer->GetThighHeight() - gPlayer->GetShinHeight() + gPlayer->GetInvisibleReactHeight();
+}
+
+
+GLfloat Arena::GetPlayerXZAngle() {
+    return gPlayer->GetXZAngle();
+}

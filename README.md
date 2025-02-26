@@ -36,7 +36,7 @@ seja, 1/16 da área).
 
 ## Camera
 
-- [ ] O botão 1 (opção padrão) deverá acionar uma câmera perspectiva posicionada no olho do jogador e olhando para frente. 
+- [x] O botão 1 (opção padrão) deverá acionar uma câmera perspectiva posicionada no olho do jogador e olhando para frente.
 - [ ] O botão 2 deverá acionar uma câmera na arma do jogador, ou seja, como se fosse uma mira. Ela será uma câmera perspectiva posicionada em cima da arma, olhando na direção do tiro (paralelamente ao cano da arma) e com o up perpendicular a arma. Com essa visão, seria possível ver parte da arma, assim como o que estiver a frente dela.
 - [x] Você poderá entrar temporariamente na câmera 2 (a partir de qualquer outra) enquanto o botão direito do mouse estiver pressionado. 
 - [x] O botão 3 deverá acionar uma câmera perspectiva posicionada inicialmente atrás do jogador (a uma distância grande suficiente para ver todo o jogador por uma terceira pessoa) e a uma altura superior à do jogador, e olhando para o centro do jogador (up apontando para o teto). 

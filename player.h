@@ -55,6 +55,7 @@ class Player {
     GLint gMovementDirection; // 1 for right (front), -1 for left (back)
     GLint gYDirection; // 1 for up, -1 for down
     GLint gXZAngle;
+    GLfloat gRotationSpeed;
 
     GLfloat maxJumpHeight;
     GLfloat jumpHeight;
@@ -112,6 +113,7 @@ public:
         gBackShinAngle = -50.0f;
         gXZSpeed = 0.05f;
         gYSpeed = 0.025f;
+        gRotationSpeed = 0.5f;
 
         gInvisibleReactHeight = gThighHeight + gShinHeight + gBodyHeight + 2 * gHeadCircleRadius;
         gInvisibleReactWidth = gBodyWidth;
@@ -162,6 +164,7 @@ public:
     GLfloat GetInvisibleReactHeight();
     GLfloat GetInvisibleReactWidth();
     void AnimateLegs(GLdouble timeDifference);
+    GLfloat GetXZAngle();
 };
 
 

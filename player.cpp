@@ -206,7 +206,7 @@ void Player::MoveInY(GLfloat minPlayerPositionY, GLfloat maxPlayerPositionY, GLd
 }
 
 void Player::Rotate(bool clockwise, GLdouble timeDifference) {
-    gXZAngle += gArmSpeed * (clockwise ? 1 : -1) * timeDifference; // using arm speed for testing 
+    gXZAngle += gRotationSpeed * (clockwise ? 1 : -1) * timeDifference; 
     gXZAngle = gXZAngle % 360;
 }
 
@@ -507,4 +507,9 @@ void Player::AnimateLegs(GLdouble timeDifference) {
     RotateBackThigh(gBackThighAngleDir, timeDifference);
     RotateFrontShin(gFrontShinAngleDir, timeDifference);
     RotateBackShin(gBackShinAngleDir, timeDifference);
+}
+
+
+GLfloat Player::GetXZAngle() {
+    return gXZAngle;
 }
