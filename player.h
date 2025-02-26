@@ -167,6 +167,10 @@ public:
     GLfloat GetInvisibleReactWidth();
     void AnimateLegs(GLdouble timeDifference);
     GLfloat GetXZAngle();
+    GLfloat GetXZArmAngle();
+    GLfloat GetXYArmAngle();
+    void CalculateArmTopPos(GLfloat* armTopPos);
+    void CalculateArmLookAt(GLfloat* armLookAt);
 };
 
 

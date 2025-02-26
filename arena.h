@@ -115,6 +115,10 @@ public:
     bool OpponentLandsInOtherOpponent(Opponent* opponent, Opponent* otherOpponent, GLfloat dx, GLfloat dy);
     GLfloat CalculatePlayerHeadYPosition();
     GLfloat GetPlayerXZAngle();
+    GLfloat GetPlayerXZArmAngle();
+    GLfloat GetPlayerXYArmAngle();
+    void CalculatePlayerArmTopPos(GLfloat* playerArmTopPos);
+    void CalculatePlayerArmLookAt(GLfloat* playerArmLookAt);
 };
 
 

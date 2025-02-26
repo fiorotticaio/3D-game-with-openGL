@@ -77,18 +77,20 @@ int moveThirdCamera = 0;
 /*****************************************************************************************/
 /************************************ AUX FUNCTIONS **************************************/
 /*****************************************************************************************/
-void normalize(float a[3]) {
-    double norm = sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]); 
-    a[0] /= norm;
-    a[1] /= norm;
-    a[2] /= norm;
+void Normalize(GLfloat* v) {
+    GLfloat length = sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    if (length > 1e-6) { // Evita divisão por zero
+        v[0] /= length;
+        v[1] /= length;
+        v[2] /= length;
+    }
 }
 
 
-void cross(float a[3], float b[3], float out[3]) {
-    out[0] = a[1]*b[2] - a[2]*b[1];
-    out[1] = a[2]*b[0] - a[0]*b[2];
-    out[2] = a[0]*b[1] - a[1]*b[0];
+void CrossProduct(GLfloat* a, GLfloat* b, GLfloat* result) {
+    result[0] = a[1] * b[2] - a[2] * b[1];
+    result[1] = a[2] * b[0] - a[0] * b[2];
+    result[2] = a[0] * b[1] - a[1] * b[0];
 }
 
 
@@ -219,11 +221,46 @@ void renderScene(void) {
 
 	if (toggleCam == 1){
         PrintText(0.1, 0.1, "First person camera", 0, 1, 0);
-		glRotatef(90-arena->GetPlayerXZAngle(), 0, 1, 0);
+		glRotatef(-arena->GetPlayerXZAngle(), 0, 1, 0);
+		glRotatef(90, 0, 1, 0); // Rotate to point to x positive
 		glTranslatef(-arena->GetPlayerGx(), -arena->CalculatePlayerHeadYPosition(), -arena->GetPlayerGz());
  
     } else if (toggleCam == 2){
         PrintText(0.1, 0.1, "Gun sight camera", 0, 1, 0);
+
+		GLfloat playerArmTopPos[3];
+		arena->CalculatePlayerArmTopPos(playerArmTopPos);
+
+		GLfloat playerArmLookAt[3];
+		arena->CalculatePlayerArmLookAt(playerArmLookAt); // Já é um vetor de direção normalizado
+
+		// 1. Definir um vetor worldUp genérico
+		GLfloat worldUp[3] = {0.0f, 1.0f, 0.0f};
+
+		// 2. Calcular o vetor "right" (perpendicular entre worldUp e playerArmLookAt)
+		GLfloat right[3];
+		CrossProduct(worldUp, playerArmLookAt, right);
+		Normalize(right);
+
+		// Se "right" for nulo (caso raro, quando o braço está perfeitamente alinhado com o eixo Y)
+		if (fabs(right[0]) < 1e-6 && fabs(right[1]) < 1e-6 && fabs(right[2]) < 1e-6) {
+			worldUp[0] = 1.0f; worldUp[1] = 0.0f; worldUp[2] = 0.0f; // Ajuste alternativo
+			CrossProduct(worldUp, playerArmLookAt, right);
+			Normalize(right);
+		}
+
+		// 3. Calcular "up" (perpendicular a "right" e "playerArmLookAt")
+		GLfloat upVector[3];
+		CrossProduct(playerArmLookAt, right, upVector);
+		Normalize(upVector);
+
+		// 4. Configurar a câmera
+		gluLookAt(playerArmTopPos[0], playerArmTopPos[1], playerArmTopPos[2],
+				playerArmTopPos[0] + playerArmLookAt[0], 
+				playerArmTopPos[1] + playerArmLookAt[1], 
+				playerArmTopPos[2] + playerArmLookAt[2], 
+				upVector[0], upVector[1], upVector[2]);
+
 
     } else if (toggleCam == 3){
         PrintText(0.1, 0.1, "Third person camera", 0, 1, 0);
@@ -422,6 +459,13 @@ void passiveMotion(int x, int y) {
 		lastX = x;
 		lastY = y;
 	}    
+}
+
+
+void mouseMotion(int x, int y) {
+	// Invert the y position
+	mouseY = Height - y;
+	mouseX = x;
 }
 
 
@@ -649,6 +693,7 @@ int main(int argc, char *argv[]) {
 	glutIdleFunc(idle);
 	glutKeyboardUpFunc(keyUp);
 	glutPassiveMotionFunc(passiveMotion);
+	glutMotionFunc(mouseMotion);
 	glutMouseFunc(mouseClick);
 	
 	init(Width);

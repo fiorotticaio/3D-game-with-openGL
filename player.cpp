@@ -578,3 +578,123 @@ void Player::AnimateLegs(GLdouble timeDifference) {
 GLfloat Player::GetXZAngle() {
     return gXZAngle;
 }
+
+
+GLfloat Player::GetXZArmAngle() {
+    return gXZArmAngle;
+}
+
+
+GLfloat Player::GetXYArmAngle() {
+    return gXYArmAngle;
+}
+
+
+void Player::CalculateArmTopPos(GLfloat* armTopPos) {
+    GLfloat xTopArm = 0.0, yTopArm = 0.0, zTopArm = 0.0;
+
+    glPushMatrix();
+        // Getting top position
+        GLfloat x = 0.0, y = 0.0, z = 0.0;
+        GLfloat xOut = 0.0, yOut = 0.0, zOut = 0.0;
+
+        TranslatePoint(x, y, z, 0, gArmHeight, 0, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+
+        RotatePoint(x, y, z, (gXYArmAngle * M_PI / 180), (gXZArmAngle * M_PI / 180), 0, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+
+        TranslatePoint(x, y, z, 0, gBodyHeight/2, gBodyThickness/2, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+
+        RotatePoint(x, y, z, 0, 0, (gXZAngle * M_PI / 180), xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+
+        TranslatePoint(x, y, z, gX, gY, gZ, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+        
+
+        xTopArm = x;
+        yTopArm = y;
+        zTopArm = z;
+    glPopMatrix();
+
+    armTopPos[0] = xTopArm;
+    armTopPos[1] = yTopArm;
+    armTopPos[2] = zTopArm;
+}
+
+
+void Player::CalculateArmLookAt(GLfloat* armLookAt) {
+    GLfloat xBaseArm = 0.0, yBaseArm = 0.0, zBaseArm = 0.0;
+    GLfloat xTopArm = 0.0, yTopArm = 0.0, zTopArm = 0.0;
+
+    glPushMatrix();
+        // Getting top position
+        GLfloat x = 0.0, y = 0.0, z = 0.0;
+        GLfloat xOut = 0.0, yOut = 0.0, zOut = 0.0;
+
+        TranslatePoint(x, y, z, 0, gArmHeight, 0, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+
+        RotatePoint(x, y, z, (gXYArmAngle * M_PI / 180), (gXZArmAngle * M_PI / 180), 0, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+
+        TranslatePoint(x, y, z, 0, gBodyHeight/2, gBodyThickness/2, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+
+        RotatePoint(x, y, z, 0, 0, (gXZAngle * M_PI / 180), xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+
+        TranslatePoint(x, y, z, gX, gY, gZ, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+        
+
+        xTopArm = x;
+        yTopArm = y;
+        zTopArm = z;
+
+
+        // Getting base position
+        x = 0.0; y = 0.0, z = 0.0;
+        xOut = 0.0, yOut = 0.0, zOut = 0.0;
+
+        RotatePoint(x, y, z, (gXYArmAngle * M_PI / 180), (gXZArmAngle * M_PI / 180), 0, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+
+        TranslatePoint(x, y, z, 0, gBodyHeight/2, gBodyThickness/2, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+
+        RotatePoint(x, y, z, 0, 0, (gXZAngle * M_PI / 180), xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+        
+        TranslatePoint(x, y, z, gX, gY, gZ, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+        
+
+        xBaseArm = x;
+        yBaseArm = y;
+        zBaseArm = z;
+
+
+        // Findig the direction
+        GLfloat baseVector[3] = {xBaseArm, yBaseArm, zBaseArm};
+        GLfloat topVector[3] = {xTopArm, yTopArm, zTopArm};
+
+        // Now we have to consider 3 dimensions
+        GLfloat xResVector = topVector[0] - baseVector[0];
+        GLfloat yResVector = topVector[1] - baseVector[1];
+        GLfloat zResVector = topVector[2] - baseVector[2];
+
+        GLfloat norm = sqrt(pow(xResVector, 2) + pow(yResVector, 2) + pow(zResVector, 2));
+        xResVector /= norm;
+        yResVector /= norm;
+        zResVector /= norm;
+
+        GLfloat shotDirection[3] = {xResVector, yResVector, zResVector};
+    glPopMatrix();
+
+    armLookAt[0] = shotDirection[0];
+    armLookAt[1] = shotDirection[1];
+    armLookAt[2] = shotDirection[2];
+}

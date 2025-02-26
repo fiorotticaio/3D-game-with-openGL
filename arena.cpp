@@ -1017,3 +1017,23 @@ GLfloat Arena::CalculatePlayerHeadYPosition() {
 GLfloat Arena::GetPlayerXZAngle() {
     return gPlayer->GetXZAngle();
 }
+
+
+GLfloat Arena::GetPlayerXZArmAngle() {
+    return gPlayer->GetXZArmAngle();
+}
+
+
+GLfloat Arena::GetPlayerXYArmAngle() {
+    return gPlayer->GetXYArmAngle();
+}
+
+
+void Arena::CalculatePlayerArmTopPos(GLfloat* playerArmTopPos) {
+    gPlayer->CalculateArmTopPos(playerArmTopPos);
+}
+
+
+void Arena::CalculatePlayerArmLookAt(GLfloat* playerArmLookAt) {
+    gPlayer->CalculateArmLookAt(playerArmLookAt);
+}
