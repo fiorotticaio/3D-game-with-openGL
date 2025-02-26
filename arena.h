@@ -68,7 +68,7 @@ public:
     void MovePlayerInXZ(GLdouble timeDifference);
     void MovePlayerInY(GLdouble timeDifference);
     void RotatePlayer(bool clockwise, GLdouble timeDifference);
-    void RotatePlayerArm(GLfloat y, GLfloat WindowHeight, GLdouble timeDifference);
+    void RotatePlayerArm(GLfloat x, GLfloat y, GLfloat windowWidth, GLfloat windowHeight, GLdouble timeDifference);
     void SetPlayerMovementDirection(GLint xDirection);
     GLint GetPlayerXDirection();
     void SetPlayerYDirection(GLint yDirection);

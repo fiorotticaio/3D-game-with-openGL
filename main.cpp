@@ -58,6 +58,7 @@ float cameraHeightOffset = 5.0f;
 char* svgFilePath = NULL;
 float positionTolerance = 0.5f;
 float mouseY = 0.0f;
+float mouseX = 0.0f;
 GLfloat timeAccumulator = 0.0f;
 void* font = GLUT_BITMAP_9_BY_15;
 int gameOver = 0;
@@ -407,6 +408,7 @@ void init(int windowSize) {
 void passiveMotion(int x, int y) {
 	// Invert the y position
 	mouseY = Height - y;
+	mouseX = x;
 
 	if (moveThirdCamera) {
 		camXYAngle += x - lastX;
@@ -420,11 +422,6 @@ void passiveMotion(int x, int y) {
 		lastX = x;
 		lastY = y;
 	}    
-}
-
-
-void rotateThirdCamera() {
-
 }
 
 
@@ -532,7 +529,7 @@ void idle(void) {
 		arena->PlayerJump();
 	}
 
-	arena->RotatePlayerArm(mouseY, Height, timeDifference);
+	arena->RotatePlayerArm(mouseX, mouseY, Width, Height, timeDifference);
 	arena->MovePlayerInY(timeDifference);
 	arena->MoveOpponentsInY(timeDifference);
 	if (opponentMoves) arena->MoveOpponentsInXZ(timeDifference);

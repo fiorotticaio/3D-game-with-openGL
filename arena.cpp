@@ -372,8 +372,8 @@ bool Arena::PlayerLandsInOpponent(Player* player, Opponent* opponent, GLfloat dx
 }
 
 
-void Arena::RotatePlayerArm(GLfloat y, GLfloat WindowHeight, GLdouble timeDifference) {
-    gPlayer->RotateArm(y, WindowHeight, timeDifference);
+void Arena::RotatePlayerArm(GLfloat x, GLfloat y, GLfloat windowWidth, GLfloat windowHeight, GLdouble timeDifference) {
+    gPlayer->RotateArm(x, y, windowWidth, windowHeight, timeDifference);
 }
 
 

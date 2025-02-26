@@ -14,7 +14,7 @@
 - [ ] A colisão também deve ser calculada para as novas paredes da arena (que agora tem um formato de paralelepípedo, ou um corredor)
 - [x] O pulo agora deve ser feito com a barra de espaço
 - [ ] O jogador pode apenas se movimentar para frente e para trás enquanto pula
-- [ ] O braço pode fazer o movimento de um cone imaginário e a bala deve seguir na direção em que a arma estiver apontando
+- [x] O braço pode fazer o movimento de um cone imaginário e a bala deve seguir na direção em que a arma estiver apontando
 - [ ] (BONUS) Utilizar modelos avançados de jogador e suas partes. Referencia: https://www.mixamo.com/
 - [ ] (BONUS) Para quem for usar modelos avançados, será permitido usar a arma acoplada ao ombro para não ter que movimentar o braço do modelo. Neste caso, as funcionalidades referentes ao braço descritas nos itens anteriores deverão ser implementadas para a arma (ou seja, controle com o mouse, atirar, etc).
 

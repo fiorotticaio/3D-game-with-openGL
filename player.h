@@ -30,7 +30,8 @@ class Player {
     GLfloat gArmWidth;
     GLfloat gArmHeight;
     GLfloat gArmThickness;
-    GLfloat gArmAngle;
+    GLfloat gXZArmAngle;
+    GLfloat gXYArmAngle;
     GLfloat gArmSpeed;
 
     GLfloat gThighWidth;
@@ -97,7 +98,8 @@ public:
         gArmHeight = ((float) 57 / (float) 172) * gBaseCircleRadius;
         gArmWidth = (float) gArmHeight / (float) 6;
         gArmThickness = gArmWidth;
-        gArmAngle = -90.0f;
+        gXZArmAngle = 0.0f;
+        gXYArmAngle = -90.0f;
         gArmSpeed = 0.5f;
 
         gThighHeight = ((float) 47 / (float) 172) * gBaseCircleRadius;
@@ -137,7 +139,7 @@ public:
     void MoveInXZ(GLfloat minPlayerPositionX, GLfloat maxPlayerPositionX, GLfloat minPlayerPositionZ, GLfloat maxPlayerPositionZ, GLdouble timeDifference);
     void MoveInY(GLfloat minPlayerPositionY, GLfloat maxPlayerPositionY, GLdouble timeDifference);
     void Rotate(bool clockwise, GLdouble timeDifference);
-    void RotateArm(GLfloat y, GLfloat windowHeight, GLdouble timeDifference);
+    void RotateArm(GLfloat x, GLfloat y, GLfloat windowWidth, GLfloat windowHeight, GLdouble timeDifference);
     void SetXDirection(GLint xDirection);
     GLint GetXDirection();
     void SetYDirection(GLint yDirection);

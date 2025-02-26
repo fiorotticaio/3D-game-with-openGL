@@ -25,7 +25,8 @@ void Player::DrawHeadAndArms() {
         glTranslatef(0, -(gHeadCircleRadius + (gBodyHeight/2)), gBodyThickness/2);
 
         glPushMatrix(); // The angle dont interfear in the angle of the other arm
-            glRotatef(gArmAngle, 0, 0, 1);
+            glRotatef(gXYArmAngle, 0, 0, 1);
+            glRotatef(gXZArmAngle, 1, 0, 0);
             DrawCuboid(gArmWidth, gArmHeight, gArmThickness, 1.0f, 1.0f, 0.0f);
         glPopMatrix();
 
@@ -210,19 +211,30 @@ void Player::Rotate(bool clockwise, GLdouble timeDifference) {
     gXZAngle = gXZAngle % 360;
 }
 
-void Player::RotateArm(GLfloat y, GLfloat windowHeight, GLdouble timeDifference) {
-    GLfloat mouseMin = 0;
-    GLfloat mouseMax = windowHeight - mouseMin;
+void Player::RotateArm(GLfloat x, GLfloat y, GLfloat windowWidth, GLfloat windowHeight, GLdouble timeDifference) {
+    GLfloat mouseXMin = 0;
+    GLfloat mouseXMax = windowWidth - mouseXMin;
+    GLfloat mouseYMin = 0;
+    GLfloat mouseYMax = windowHeight - mouseYMin;
 
-    GLfloat angleMax = -45.0f;
-    GLfloat angleMin = -135.0f;
+    GLfloat XYMaxAngle = -45.0f;
+    GLfloat XYMinAngle = -135.0f;
+    GLfloat XYTargetAngle = XYMinAngle + ((y - mouseYMin) / (mouseYMax - mouseYMin)) * (XYMaxAngle - XYMinAngle);
 
-    GLfloat targetAngle = angleMin + ((y - mouseMin) / (mouseMax - mouseMin)) * (angleMax - angleMin);
+    GLfloat XZMaxAngle = 45.0f;
+    GLfloat XZMinAngle = -45.0f;
+    GLfloat XZTargetAngle = XZMinAngle + ((x - mouseXMin) / (mouseXMax - mouseXMin)) * (XZMaxAngle - XZMinAngle);
     
-    if (gArmAngle < targetAngle) {
-        gArmAngle += gArmSpeed * timeDifference;
-    } else if (gArmAngle > targetAngle) {
-        gArmAngle -= gArmSpeed * timeDifference;
+    if (gXYArmAngle < XYTargetAngle) {
+        gXYArmAngle += gArmSpeed * timeDifference;
+    } else if (gXYArmAngle > XYTargetAngle) {
+        gXYArmAngle -= gArmSpeed * timeDifference;
+    }
+
+    if (gXZArmAngle < XZTargetAngle) {
+        gXZArmAngle += gArmSpeed * timeDifference;
+    } else if (gXZArmAngle > XZTargetAngle) {
+        gXZArmAngle -= gArmSpeed * timeDifference;
     }
 }
 
@@ -383,7 +395,7 @@ Shot* Player::Shoot(GLfloat maxDist) {
         TranslatePoint(x, y, 0, gArmHeight, xOut, yOut);
         x = xOut; y = yOut;
 
-        RotatePoint(x, y, (gArmAngle * M_PI / 180) * gMovementDirection, xOut, yOut);
+        RotatePoint(x, y, (gXYArmAngle * M_PI / 180) * gMovementDirection, xOut, yOut);
         x = xOut; y = yOut;
 
         TranslatePoint(x, y, 0, gBodyHeight/2, xOut, yOut);
@@ -400,7 +412,7 @@ Shot* Player::Shoot(GLfloat maxDist) {
         x = 0.0; y = 0.0;
         xOut = 0.0, yOut = 0.0;
 
-        RotatePoint(x, y, (gArmAngle * M_PI / 180) * gMovementDirection, xOut, yOut);
+        RotatePoint(x, y, (gXYArmAngle * M_PI / 180) * gMovementDirection, xOut, yOut);
         x = xOut; y = yOut;
 
         TranslatePoint(x, y, 0, gBodyHeight/2, xOut, yOut);
