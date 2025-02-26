@@ -401,7 +401,7 @@ Shot* Opponent::Shoot(GLfloat maxDist) {
         GLfloat shotDirection[2] = {xResVector, yResVector};
     glPopMatrix();
 
-    return new Shot(xTopArm, yTopArm, gXZSpeed, shotDirection, maxDist, gBaseCircleRadius/5);
+    return new Shot(xTopArm, yTopArm, 0, gXZSpeed, shotDirection, maxDist, gBaseCircleRadius/5);
 }
 
 

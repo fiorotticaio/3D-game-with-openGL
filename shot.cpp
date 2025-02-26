@@ -2,31 +2,37 @@
 #include <math.h>
 
 
-void Shot::DrawShot(GLfloat x, GLfloat y) {
+void Shot::DrawShot(GLfloat x, GLfloat y, GLfloat z) {
     glPushMatrix();
-        glTranslatef(x, y, 0);
-        DrawCircle(gRadius, 1.0f, 1.0f, 1.0f);
+        glTranslatef(x, y, z);
+        DrawSphere(gRadius, 1.0f, 1.0f, 1.0f);
     glPopMatrix();
 }
 
 
-void Shot::DrawCircle(GLfloat radius, GLfloat R, GLfloat G, GLfloat B) {
+void Shot::DrawSphere(GLfloat radius, GLfloat R, GLfloat G, GLfloat B) {
+    GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0 };
+    GLfloat materialColor[] = { R, G, B, 1.0 };
+    GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
+    GLfloat mat_shininess[] = { 50 };
+
+    glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
+    glMaterialfv(GL_FRONT, GL_AMBIENT, materialColor);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, materialColor);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
     glColor3f(R, G, B);
 
-    glBegin(GL_POLYGON);
-        for (int i = 0; i < 360; i += 20) {
-            GLfloat angle = 2.0f * M_PI * i / 360;
-            GLfloat x = radius * cos(angle);
-            GLfloat y = radius * sin(angle);   
-            glVertex2f(x, y);
-        }
-    glEnd();
+    GLUquadric* quad = gluNewQuadric();
+    gluSphere(quad, radius, 20, 20);
+    gluDeleteQuadric(quad);
 }
 
 
 void Shot::Move(GLdouble timeDifference) {
     gX += gDirection[0] * gSpeed * timeDifference;
     gY += gDirection[1] * gSpeed * timeDifference;
+    gZ += gDirection[2] * gSpeed * timeDifference;
 }
 
 
@@ -43,6 +49,11 @@ GLfloat Shot::GetGx() {
 
 GLfloat Shot::GetGy() {
     return gY;
+}
+
+
+GLfloat Shot::GetGz() {
+    return gZ;
 }
 
 
