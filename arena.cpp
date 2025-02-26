@@ -826,33 +826,53 @@ void Arena::MoveOpponentsArms(GLdouble timeDifference) {
     for (Opponent* opponent : gOpponents) {
         GLfloat playerX = gPlayer->GetGx();
         GLfloat playerY = gPlayer->GetGy();
+        GLfloat playerZ = gPlayer->GetGz();
 
         GLfloat opponentX = opponent->GetGx();
         GLfloat opponentY = opponent->GetGy();
+        GLfloat opponentZ = opponent->GetGz();
 
         GLfloat xResVector = playerX - opponentX;
         GLfloat yResVector = playerY - opponentY;
+        GLfloat zResVector = playerZ - opponentZ;
 
-        GLfloat angleMax = -45.0f;
-        GLfloat angleMin = -135.0f;
-
-        GLfloat angle;
+        GLfloat XYmaxAngle = -45.0f;
+        GLfloat XYminAngle = -135.0f;
+        GLfloat XYangle = 0.0f;
 
         // Special case: player and opponent at the same Y level
         if (fabs(yResVector) < 0.001f) { // Tolerance for float equality
-            angle = -90.0f;
+            XYangle = -90.0f;
         } else {
-            angle = atan2(yResVector, xResVector) * 180.0f / M_PI;
+            XYangle = atan2(yResVector, xResVector) * 180.0f / M_PI;
 
             // Adjust the angle to the arm limits
-            angle = angle - 90.0f;
-            if (angle > 0) angle *= -1;
+            XYangle = XYangle - 90.0f;
+            if (XYangle > 0) XYangle *= -1;
 
-            if      (angle > angleMax) angle = angleMax;
-            else if (angle < angleMin) angle = angleMin;
+            if      (XYangle > XYmaxAngle) XYangle = XYmaxAngle;
+            else if (XYangle < XYminAngle) XYangle = XYminAngle;
         }
 
-        opponent->RotateArmToTargetAngle(timeDifference, angle);
+        GLfloat XZmaxAngle = 45.0f;
+        GLfloat XZminAngle = -45.0f;
+        GLfloat XZangle = 0.0f;
+
+        // Special case: player and opponent at the same Z level
+        if (fabs(zResVector) < 0.001f) { // Tolerance for float equality
+            XZangle = 0.0f;
+        } else {
+            XZangle = atan2(zResVector, xResVector) * 180.0f / M_PI;
+
+            // Adjust the angle to the arm limits
+            XZangle = XZangle - 90.0f;
+            if (XZangle > 0) XZangle *= -1;
+
+            if      (XZangle > XZmaxAngle) XZangle = XZmaxAngle;
+            else if (XZangle < XZminAngle) XZangle = XZminAngle;
+        }
+
+        opponent->RotateArmToTargetAngle(timeDifference, XZangle, XYangle);
     }
 }
 

@@ -30,7 +30,8 @@ class Opponent {
     GLfloat gArmWidth;
     GLfloat gArmHeight;
     GLfloat gArmThickness;
-    GLfloat gArmAngle;
+    GLfloat gXZArmAngle;
+    GLfloat gXYArmAngle;
     GLfloat gArmSpeed;
 
     GLfloat gThighWidth;
@@ -55,6 +56,7 @@ class Opponent {
     GLint gMovementDirection; // 1 for front, -1 for back
     GLint gYDirection; // 1 for up, -1 for down
     GLint gXZAngle;
+    GLfloat gRotationSpeed;
 
     GLfloat maxJumpHeight;
     GLfloat jumpHeight;
@@ -67,9 +69,9 @@ private:
     void DrawHeadAndArms();
     void DrawFrontLeg();
     void DrawBackLeg();
-    void RotatePoint(GLfloat x, GLfloat y, GLfloat angle, GLfloat &xOut, GLfloat &yOut);
-    void TranslatePoint(GLfloat x, GLfloat y, GLfloat dx, GLfloat dy, GLfloat &xOut, GLfloat &yOut);
-    void ScalePoint(GLfloat x, GLfloat y, GLfloat sx, GLfloat sy, GLfloat &xOut, GLfloat &yOut);
+    void RotatePoint(GLfloat x, GLfloat y, GLfloat z, GLfloat XYangle, GLfloat XZangle, GLfloat YZangle, GLfloat &xOut, GLfloat &yOut, GLfloat &zOut);
+    void TranslatePoint(GLfloat x, GLfloat y, GLfloat z, GLfloat dx, GLfloat dy, GLfloat dz, GLfloat &xOut, GLfloat &yOut, GLfloat &zOut);
+    void ScalePoint(GLfloat x, GLfloat y, GLfloat z, GLfloat sx, GLfloat sy, GLfloat sz, GLfloat &xOut, GLfloat &yOut, GLfloat &zOut);
 
 
 public:
@@ -96,7 +98,8 @@ public:
         gArmHeight = ((float) 57 / (float) 172) * gBaseCircleRadius;
         gArmWidth = (float) gArmHeight / (float) 6;
         gArmThickness = gArmWidth;
-        gArmAngle = -90.0f;
+        gXZArmAngle = 0.0f;
+        gXYArmAngle = -90.0f;
         gArmSpeed = 0.5f;
 
         gThighHeight = ((float) 47 / (float) 172) * gBaseCircleRadius;
@@ -112,6 +115,7 @@ public:
         gBackShinAngle = -50.0f;
         gXZSpeed = 0.025f;
         gYSpeed = 0.025f;
+        gRotationSpeed = 0.5f;
 
         gInvisibleReactHeight = gThighHeight + gShinHeight + gBodyHeight + 2 * gHeadCircleRadius;
         gInvisibleReactWidth = gBodyWidth;
@@ -135,7 +139,7 @@ public:
     void MoveInXZ(GLfloat minPlayerPositionX, GLfloat maxPlayerPositionX, GLfloat minPlayerPositionZ, GLfloat maxPlayerPositionZ, GLdouble timeDifference);
     void MoveInY(GLfloat minOpponentPositionY, GLfloat maxOpponentPositionY, GLdouble timeDifference);
     void Rotate(bool clockwise, GLdouble timeDifference);
-    void RotateArmToTargetAngle(GLdouble timeDifference, GLfloat targetAngle);
+    void RotateArmToTargetAngle(GLdouble timeDifference, GLfloat XZtargetAngle , GLfloat XYtargetAngle);
     void SetXDirection(GLint xDirection);
     GLint GetXDirection();
     void SetYDirection(GLint yDirection);

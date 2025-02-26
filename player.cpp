@@ -300,7 +300,7 @@ void Player::SetBackShinAngle(GLfloat angle) {
 
 
 // Aux rotation func
-void RotatePoint(GLfloat x, GLfloat y, GLfloat z, GLfloat XYangle, GLfloat XZangle, GLfloat YZangle, GLfloat &xOut, GLfloat &yOut, GLfloat &zOut) {
+void Player::RotatePoint(GLfloat x, GLfloat y, GLfloat z, GLfloat XYangle, GLfloat XZangle, GLfloat YZangle, GLfloat &xOut, GLfloat &yOut, GLfloat &zOut) {
     // Rotation matrix
     GLfloat rotMatrix1[4][4] = {
         {cos(XYangle), -sin(XYangle), 0, 0},
@@ -364,7 +364,7 @@ void RotatePoint(GLfloat x, GLfloat y, GLfloat z, GLfloat XYangle, GLfloat XZang
 
 
 // Aux translate func
-void TranslatePoint(GLfloat x, GLfloat y, GLfloat z, GLfloat dx, GLfloat dy, GLfloat dz, GLfloat &xOut, GLfloat &yOut, GLfloat &zOut) {
+void Player::TranslatePoint(GLfloat x, GLfloat y, GLfloat z, GLfloat dx, GLfloat dy, GLfloat dz, GLfloat &xOut, GLfloat &yOut, GLfloat &zOut) {
     // Translation matrix
     GLfloat transMatrix[4][4] = {
         {1, 0, 0, dx},
@@ -394,7 +394,7 @@ void TranslatePoint(GLfloat x, GLfloat y, GLfloat z, GLfloat dx, GLfloat dy, GLf
 
 
 // Aux scale func
-void ScalePoint(GLfloat x, GLfloat y, GLfloat z, GLfloat sx, GLfloat sy, GLfloat sz, GLfloat &xOut, GLfloat &yOut, GLfloat &zOut) {
+void Player::ScalePoint(GLfloat x, GLfloat y, GLfloat z, GLfloat sx, GLfloat sy, GLfloat sz, GLfloat &xOut, GLfloat &yOut, GLfloat &zOut) {
     // Sacle matriz
     GLfloat scaleMatrix[4][4] = {
         {sx, 0 , 0 , 0},

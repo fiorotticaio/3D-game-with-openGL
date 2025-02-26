@@ -26,7 +26,8 @@ void Opponent::DrawHeadAndArms() {
         glTranslatef(0, -(gHeadCircleRadius + (gBodyHeight/2)), gBodyThickness/2);
 
         glPushMatrix(); // The angle dont interfear in the angle of the other arm
-            glRotatef(gArmAngle, 0, 0, 1);
+            glRotatef(gXYArmAngle, 0, 0, 1);
+            glRotatef(gXZArmAngle, 1, 0, 0);
             DrawCuboid(gArmWidth, gArmHeight, gArmThickness, 1.0f, 1.0f, 0.0f);
         glPopMatrix();
 
@@ -169,13 +170,16 @@ GLfloat Opponent::GetGx() {
     return gX;
 }
 
+
 GLfloat Opponent::GetGy() {
     return gY;
 }
 
+
 GLfloat Opponent::GetGz() {
     return gZ;
 }
+
 
 void Opponent::MoveInXZ(GLfloat minPlayerPositionX, GLfloat maxPlayerPositionX, GLfloat minPlayerPositionZ, GLfloat maxPlayerPositionZ, GLdouble timeDifference) {
 
@@ -195,6 +199,7 @@ void Opponent::MoveInXZ(GLfloat minPlayerPositionX, GLfloat maxPlayerPositionX, 
     }
 }
 
+
 void Opponent::MoveInY(GLfloat minOpponentPositionY, GLfloat maxOpponentPositionY, GLdouble timeDifference) {
     if (gY + gYSpeed * timeDifference * gYDirection >= minOpponentPositionY + gThighHeight + gShinHeight && 
         gY + gYSpeed * timeDifference * gYDirection <= maxOpponentPositionY - gThighHeight - gShinHeight) {
@@ -203,85 +208,141 @@ void Opponent::MoveInY(GLfloat minOpponentPositionY, GLfloat maxOpponentPosition
     }
 }
 
+
 void Opponent::Rotate(bool clockwise, GLdouble timeDifference) {
     gXZAngle += gArmSpeed * (clockwise ? 1 : -1) * timeDifference; // using arm speed for testing 
     gXZAngle = gXZAngle % 360;
 }
 
-void Opponent::RotateArmToTargetAngle(GLdouble timeDifference, GLfloat targetAngle) {
-    if (gArmAngle < targetAngle) {
-        gArmAngle += gArmSpeed * timeDifference;
-    } else if (gArmAngle > targetAngle) {
-        gArmAngle -= gArmSpeed * timeDifference;
+
+void Opponent::RotateArmToTargetAngle(GLdouble timeDifference, GLfloat XZtargetAngle , GLfloat XYtargetAngle) {
+    if (gXYArmAngle < XYtargetAngle) {
+        gXYArmAngle += gArmSpeed * timeDifference;
+    } else if (gXYArmAngle > XYtargetAngle) {
+        gXYArmAngle -= gArmSpeed * timeDifference;
+    }
+
+    if (gXZArmAngle < XZtargetAngle) {
+        gXZArmAngle += gArmSpeed * timeDifference;
+    } else if (gXZArmAngle > XZtargetAngle) {
+        gXZArmAngle -= gArmSpeed * timeDifference;
     }
 }
+
 
 void Opponent::SetXDirection(GLint xDirection) {
     gMovementDirection = xDirection;
 }
 
+
 void Opponent::SetYDirection(GLint yDirection) {
     gYDirection = yDirection;
 }
+
 
 GLfloat Opponent::GetFrontThighAngle() {
     return gFrontThighAngle;
 }
 
+
 GLfloat Opponent::GetBackThighAngle() {
     return gBackThighAngle;
 }
+
 
 GLfloat Opponent::GetFrontShinAngle() {
     return gFrontShinAngle;
 }
 
+
 GLfloat Opponent::GetBackShinAngle() {
     return gBackShinAngle;
 }
+
 
 void Opponent::RotateFrontThigh(GLfloat angle, GLdouble timeDifference) {
     gFrontThighAngle += angle * 0.1f * timeDifference;
 }
 
+
 void Opponent::RotateBackThigh(GLfloat angle, GLdouble timeDifference) {
     gBackThighAngle += angle * 0.1f * timeDifference;
 }
+
 
 void Opponent::RotateFrontShin(GLfloat angle, GLdouble timeDifference) {
     gFrontShinAngle += angle * 0.1f * timeDifference;
 }
 
+
 void Opponent::RotateBackShin(GLfloat angle, GLdouble timeDifference) {
     gBackShinAngle += angle * 0.1f * timeDifference;
 }
+
 
 void Opponent::SetFrontShinAngle(GLfloat angle) {
     gFrontShinAngle = angle;
 }
 
+
 void Opponent::SetBackShinAngle(GLfloat angle) {
     gBackShinAngle = angle;
 }
 
+
 // Aux rotation func
-void Opponent::RotatePoint(GLfloat x, GLfloat y, GLfloat angle, GLfloat &xOut, GLfloat &yOut) {
+void Opponent::RotatePoint(GLfloat x, GLfloat y, GLfloat z, GLfloat XYangle, GLfloat XZangle, GLfloat YZangle, GLfloat &xOut, GLfloat &yOut, GLfloat &zOut) {
     // Rotation matrix
-    GLfloat rotMatrix[3][3] = {
-        {cos(angle), -sin(angle), 0},
-        {sin(angle), cos(angle) , 0},
-        {0         , 0          , 1},
+    GLfloat rotMatrix1[4][4] = {
+        {cos(XYangle), -sin(XYangle), 0, 0},
+        {sin(XYangle), cos(XYangle) , 0, 0},
+        {0           , 0            , 1, 0},
+        {0           , 0            , 0, 1},
     };
 
+    GLfloat rotMatrix2[4][4] = {
+        {1, 0           , 0            , 0},
+        {0, cos(XZangle), -sin(XZangle), 0},
+        {0, sin(XZangle), cos(XZangle) , 0},
+        {0, 0           , 0            , 1},
+    };
+
+    GLfloat rotMatrix3[4][4] = {
+        {cos(YZangle), 0, sin(YZangle), 0},
+        {0           , 1, 0           , 0},
+        {-sin(YZangle), 0, cos(YZangle), 0},
+        {0           , 0, 0           , 1},
+    };
+
+    // Multiply rotMatrix2 by rotMatrix3
+    GLfloat middleRotMatrix[4][4] = {0};
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            for (int k = 0; k < 4; k++) {
+                middleRotMatrix[i][j] += rotMatrix2[i][k] * rotMatrix3[k][j];
+            }
+        }
+    }
+
+    // Multiply rotMatrix1 by middleRotMatrix
+    GLfloat rotMatrix[4][4] = {0};
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            for (int k = 0; k < 4; k++) {
+                rotMatrix[i][j] += rotMatrix1[i][k] * middleRotMatrix[k][j];
+            }
+        }
+    }
+
     // Input vector
-    GLfloat inVector[3] = {x, y, 1};
+    GLfloat inVector[4] = {x, y, z, 1};
 
     // Output vector
-    GLfloat outVector[3] = {0, 0, 0};
+    GLfloat outVector[4] = {0, 0, 0, 0};
 
-    // Multiply matrix by vector
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
+    // Multiply rotMatrix by vector
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
             outVector[i] += rotMatrix[i][j] * inVector[j];
         }
     }
@@ -289,26 +350,29 @@ void Opponent::RotatePoint(GLfloat x, GLfloat y, GLfloat angle, GLfloat &xOut, G
     // Output values
     xOut = outVector[0];
     yOut = outVector[1];
+    zOut = outVector[2];
 }
 
+
 // Aux translate func
-void Opponent::TranslatePoint(GLfloat x, GLfloat y, GLfloat dx, GLfloat dy, GLfloat &xOut, GLfloat &yOut) {
+void Opponent::TranslatePoint(GLfloat x, GLfloat y, GLfloat z, GLfloat dx, GLfloat dy, GLfloat dz, GLfloat &xOut, GLfloat &yOut, GLfloat &zOut) {
     // Translation matrix
-    GLfloat transMatrix[3][3] = {
-        {1, 0, dx},
-        {0, 1, dy},
-        {0, 0, 1},
+    GLfloat transMatrix[4][4] = {
+        {1, 0, 0, dx},
+        {0, 1, 0, dy},
+        {0, 0, 1, dz},
+        {0, 0, 0, 1 },
     };
 
     // Input vector
-    GLfloat inVector[3] = {x, y, 1};
+    GLfloat inVector[4] = {x, y, z, 1};
 
     // Output vector
-    GLfloat outVector[3] = {0, 0, 0};
+    GLfloat outVector[4] = {0, 0, 0, 0};
 
     // Multiply matrix by vector
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
             outVector[i] += transMatrix[i][j] * inVector[j];
         }
     }
@@ -316,26 +380,29 @@ void Opponent::TranslatePoint(GLfloat x, GLfloat y, GLfloat dx, GLfloat dy, GLfl
     // Output values
     xOut = outVector[0];
     yOut = outVector[1];
+    zOut = outVector[2];
 }
 
+
 // Aux scale func
-void Opponent::ScalePoint(GLfloat x, GLfloat y, GLfloat sx, GLfloat sy, GLfloat &xOut, GLfloat &yOut) {
+void Opponent::ScalePoint(GLfloat x, GLfloat y, GLfloat z, GLfloat sx, GLfloat sy, GLfloat sz, GLfloat &xOut, GLfloat &yOut, GLfloat &zOut) {
     // Sacle matriz
-    GLfloat scaleMatrix[3][3] = {
-        {sx, 0 , 0},
-        {0 , sy, 0},
-        {0 , 0 , 1},
+    GLfloat scaleMatrix[4][4] = {
+        {sx, 0 , 0 , 0},
+        {0 , sy, 0 , 0},
+        {0 , 0 , sz, 0},
+        {0 , 0 , 0 , 1},
     };
 
     // Input vector
-    GLfloat inVector[3] = {x, y, 1};
+    GLfloat inVector[4] = {x, y, z, 1};
 
     // Output vector
-    GLfloat outVector[3] = {0, 0, 0};
+    GLfloat outVector[4] = {0, 0, 0, 0};
 
     // Multiply matrix by vector
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
             outVector[i] += scaleMatrix[i][j] * inVector[j];
         }
     }
@@ -343,65 +410,80 @@ void Opponent::ScalePoint(GLfloat x, GLfloat y, GLfloat sx, GLfloat sy, GLfloat 
     // Output values
     xOut = outVector[0];
     yOut = outVector[1];
+    zOut = outVector[2];
 }
 
+
 Shot* Opponent::Shoot(GLfloat maxDist) {
-    GLfloat xBaseArm = 0.0, yBaseArm = 0.0;
-    GLfloat xTopArm = 0.0, yTopArm = 0.0;
+    GLfloat xBaseArm = 0.0, yBaseArm = 0.0, zBaseArm = 0.0;
+    GLfloat xTopArm = 0.0, yTopArm = 0.0, zTopArm = 0.0;
 
     glPushMatrix();
         // Getting top position
-        GLfloat x = 0.0, y = 0.0;
-        GLfloat xOut = 0.0, yOut = 0.0;
+        GLfloat x = 0.0, y = 0.0, z = 0.0;
+        GLfloat xOut = 0.0, yOut = 0.0, zOut = 0.0;
 
-        TranslatePoint(x, y, 0, gArmHeight, xOut, yOut);
-        x = xOut; y = yOut;
+        TranslatePoint(x, y, z, 0, gArmHeight, 0, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
 
-        RotatePoint(x, y, (gArmAngle * M_PI / 180) * gMovementDirection, xOut, yOut);
-        x = xOut; y = yOut;
+        RotatePoint(x, y, z, (gXYArmAngle * M_PI / 180), (gXZArmAngle * M_PI / 180), 0, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
 
-        TranslatePoint(x, y, 0, gBodyHeight/2, xOut, yOut);
-        x = xOut; y = yOut;
+        TranslatePoint(x, y, z, 0, gBodyHeight/2, gBodyThickness/2, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
 
-        TranslatePoint(x, y, gX, gY, xOut, yOut);
-        x = xOut; y = yOut;
+        RotatePoint(x, y, z, 0, 0, (gXZAngle * M_PI / 180), xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+
+        TranslatePoint(x, y, z, gX, gY, gZ, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+        
 
         xTopArm = x;
         yTopArm = y;
+        zTopArm = z;
 
 
         // Getting base position
-        x = 0.0; y = 0.0;
-        xOut = 0.0, yOut = 0.0;
+        x = 0.0; y = 0.0, z = 0.0;
+        xOut = 0.0, yOut = 0.0, zOut = 0.0;
 
-        RotatePoint(x, y, (gArmAngle * M_PI / 180) * gMovementDirection, xOut, yOut);
-        x = xOut; y = yOut;
+        RotatePoint(x, y, z, (gXYArmAngle * M_PI / 180), (gXZArmAngle * M_PI / 180), 0, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
 
-        TranslatePoint(x, y, 0, gBodyHeight/2, xOut, yOut);
-        x = xOut; y = yOut;
+        TranslatePoint(x, y, z, 0, gBodyHeight/2, gBodyThickness/2, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
 
-        TranslatePoint(x, y, gX, gY, xOut, yOut);
-        x = xOut; y = yOut;
+        RotatePoint(x, y, z, 0, 0, (gXZAngle * M_PI / 180), xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+        
+        TranslatePoint(x, y, z, gX, gY, gZ, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+        
 
         xBaseArm = x;
         yBaseArm = y;
+        zBaseArm = z;
 
 
         // Findig the direction
-        GLfloat baseVector[2] = {xBaseArm, yBaseArm};
-        GLfloat topVector[2] = {xTopArm, yTopArm};
+        GLfloat baseVector[3] = {xBaseArm, yBaseArm, zBaseArm};
+        GLfloat topVector[3] = {xTopArm, yTopArm, zTopArm};
 
+        // Now we have to consider 3 dimensions
         GLfloat xResVector = topVector[0] - baseVector[0];
         GLfloat yResVector = topVector[1] - baseVector[1];
+        GLfloat zResVector = topVector[2] - baseVector[2];
 
-        GLfloat norm = sqrt(pow(xResVector, 2) + pow(yResVector, 2));
+        GLfloat norm = sqrt(pow(xResVector, 2) + pow(yResVector, 2) + pow(zResVector, 2));
         xResVector /= norm;
         yResVector /= norm;
+        zResVector /= norm;
 
-        GLfloat shotDirection[2] = {xResVector, yResVector};
+        GLfloat shotDirection[3] = {xResVector, yResVector, zResVector};
     glPopMatrix();
 
-    return new Shot(xTopArm, yTopArm, 0, gXZSpeed, shotDirection, maxDist, gBaseCircleRadius/5);
+    return new Shot(xTopArm, yTopArm, zTopArm, gXZSpeed, shotDirection, maxDist, gBaseCircleRadius/10);
 }
 
 

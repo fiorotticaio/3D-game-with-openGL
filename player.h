@@ -69,7 +69,10 @@ private:
     void DrawHeadAndArms();
     void DrawFrontLeg();
     void DrawBackLeg();
-    
+    void RotatePoint(GLfloat x, GLfloat y, GLfloat z, GLfloat XYangle, GLfloat XZangle, GLfloat YZangle, GLfloat &xOut, GLfloat &yOut, GLfloat &zOut);
+    void TranslatePoint(GLfloat x, GLfloat y, GLfloat z, GLfloat dx, GLfloat dy, GLfloat dz, GLfloat &xOut, GLfloat &yOut, GLfloat &zOut);
+    void ScalePoint(GLfloat x, GLfloat y, GLfloat z, GLfloat sx, GLfloat sy, GLfloat sz, GLfloat &xOut, GLfloat &yOut, GLfloat &zOut);
+
 
 public:
     Player(GLfloat x, GLfloat y, GLfloat baseCircleRadius, GLfloat arenaThickness) {
