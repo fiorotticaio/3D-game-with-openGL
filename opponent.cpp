@@ -230,8 +230,8 @@ void Opponent::RotateArmToTargetAngle(GLdouble timeDifference, GLfloat XZtargetA
 }
 
 
-void Opponent::SetXDirection(GLint xDirection) {
-    gMovementDirection = xDirection;
+void Opponent::SetMovementDirection(GLint direction) {
+    gMovementDirection = direction;
 }
 
 
@@ -487,7 +487,7 @@ Shot* Opponent::Shoot(GLfloat maxDist) {
 }
 
 
-GLfloat Opponent::GetXSpeed() {
+GLfloat Opponent::GetXZSpeed() {
     return gXZSpeed;
 }
 
@@ -497,7 +497,7 @@ GLfloat Opponent::GetYSpeed() {
 }
 
 
-GLint Opponent::GetXDirection() {
+GLint Opponent::GetMovementDirection() {
     return gMovementDirection;
 }
 
@@ -538,13 +538,13 @@ bool Opponent::ReachedMaximumJumpHeight() {
 }
 
 
-GLfloat Opponent::GetInvisibleReactHeight() {
-    return gInvisibleReactHeight;
+GLfloat Opponent::GetHitboxHeight() {
+    return gHitboxHeight;
 }
 
 
-GLfloat Opponent::GetInvisibleReactWidth() {
-    return gInvisibleReactWidth;
+GLfloat Opponent::GetHitboxRadius() {
+    return gHitboxRadius;
 }
 
 
@@ -563,4 +563,11 @@ void Opponent::AnimateLegs(GLdouble timeDifference) {
     RotateBackThigh(gBackThighAngleDir, timeDifference);
     RotateFrontShin(gFrontShinAngleDir, timeDifference);
     RotateBackShin(gBackShinAngleDir, timeDifference);
+}
+
+void Opponent::DrawHitbox() {
+    glPushMatrix();
+        glTranslatef(gX, gY, gZ);
+        DrawCuboid(gHitboxRadius, gHitboxHeight, gHitboxRadius, 1.0f, 1.0f, 1.0f);
+    glPopMatrix();
 }

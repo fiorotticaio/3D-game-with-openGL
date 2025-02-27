@@ -36,7 +36,7 @@ private:
     void LoadArena(const char* svg_file_path);
     void DrawArena();
     void DrawRects(GLfloat width, GLfloat height, GLfloat thickness, GLfloat R, GLfloat G, GLfloat B);
-    bool PlayerCollidesWithObstacle(Player* player, Obstacle* obstacle, GLfloat dx, GLfloat dy);
+    bool PlayerCollidesWithObstacle(Obstacle* obstacle, GLfloat timeDifference);
     bool PlayerLandsInObstacle(Player* player, Obstacle* obstacle, GLfloat dx, GLfloat dy);
     bool PlayerCollidesWithOpponent(Player* player, Opponent* opponent, GLfloat dx, GLfloat dy);
     bool PlayerLandsInOpponent(Player* player, Opponent* opponent, GLfloat dx, GLfloat dy);
@@ -69,8 +69,8 @@ public:
     void MovePlayerInY(GLdouble timeDifference);
     void RotatePlayer(bool clockwise, GLdouble timeDifference);
     void RotatePlayerArm(GLfloat x, GLfloat y, GLfloat windowWidth, GLfloat windowHeight, GLdouble timeDifference);
-    void SetPlayerMovementDirection(GLint xDirection);
-    GLint GetPlayerXDirection();
+    void SetPlayerMovementDirection(GLint direction);
+    GLint GetPlayerMovementDirection();
     void SetPlayerYDirection(GLint yDirection);
     GLint GetPlayerYDirection();
     GLfloat GetPlayerFrontThighAngle();
@@ -119,6 +119,7 @@ public:
     GLfloat GetPlayerXYArmAngle();
     void CalculatePlayerArmTopPos(GLfloat* playerArmTopPos);
     void CalculatePlayerArmLookAt(GLfloat* playerArmLookAt);
+    void DrawHitboxes();
 };
 
 

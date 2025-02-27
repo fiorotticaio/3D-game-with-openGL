@@ -15,6 +15,7 @@ void Player::DrawPlayer() {
     glPopMatrix();
 }
 
+
 void Player::DrawHeadAndArms() {
     glPushMatrix();
         // Draw the head
@@ -179,6 +180,7 @@ GLfloat Player::GetGz() {
     return gZ;
 }
 
+
 void Player::MoveInXZ(GLfloat minPlayerPositionX, GLfloat maxPlayerPositionX, GLfloat minPlayerPositionZ, GLfloat maxPlayerPositionZ, GLdouble timeDifference) {
 
     GLfloat angleRad = gXZAngle * M_PI / 180.0f;
@@ -206,10 +208,12 @@ void Player::MoveInY(GLfloat minPlayerPositionY, GLfloat maxPlayerPositionY, GLd
     }
 }
 
+
 void Player::Rotate(bool clockwise, GLdouble timeDifference) {
     gXZAngle += gRotationSpeed * (clockwise ? 1 : -1) * timeDifference; 
     gXZAngle = gXZAngle % 360;
 }
+
 
 void Player::RotateArm(GLfloat x, GLfloat y, GLfloat windowWidth, GLfloat windowHeight, GLdouble timeDifference) {
     GLfloat mouseXMin = 0;
@@ -239,8 +243,8 @@ void Player::RotateArm(GLfloat x, GLfloat y, GLfloat windowWidth, GLfloat window
 }
 
 
-void Player::SetXDirection(GLint xDirection) {
-    gMovementDirection = xDirection;
+void Player::SetMovementDirection(GLint direction) {
+    gMovementDirection = direction;
 }
 
 
@@ -496,7 +500,7 @@ Shot* Player::Shoot(GLfloat maxDist) {
 }
 
 
-GLfloat Player::GetXSpeed() {
+GLfloat Player::GetXZSpeed() {
     return gXZSpeed;
 }
 
@@ -505,11 +509,9 @@ GLfloat Player::GetYSpeed() {
     return gYSpeed;
 }
 
-
-GLint Player::GetXDirection() {
+GLint Player::GetMovementDirection(){
     return gMovementDirection;
 }
-
 
 GLint Player::GetYDirection() {
     return gYDirection;
@@ -547,13 +549,13 @@ bool Player::ReachedMaximumJumpHeight() {
 }
 
 
-GLfloat Player::GetInvisibleReactHeight() {
-    return gInvisibleReactHeight;
+GLfloat Player::GetHitboxHeight() {
+    return gHitboxHeight;
 }
 
 
-GLfloat Player::GetInvisibleReactWidth() {
-    return gInvisibleReactWidth;
+GLfloat Player::GetHitboxRadius() {
+    return gHitboxRadius;
 }
 
 
@@ -697,4 +699,43 @@ void Player::CalculateArmLookAt(GLfloat* armLookAt) {
     armLookAt[0] = shotDirection[0];
     armLookAt[1] = shotDirection[1];
     armLookAt[2] = shotDirection[2];
+}
+
+void Player::DrawHitbox() {
+    glPushMatrix();
+        glTranslatef(gX, gY - gThighHeight - gShinHeight, gZ);
+        glColor3f(1.0f, 1.0f, 1.0f);
+        glPointSize(100);
+
+        // Bottom
+        glBegin(GL_POLYGON);
+            for (int i = 0; i < 20; i++) glVertex3f(gHitboxRadius * cos(i * 2 * M_PI / 20), 0, gHitboxRadius * sin(i * 2 * M_PI / 20));
+        glEnd();
+
+        // Top
+        glTranslatef(0, gHitboxHeight, 0);
+        glBegin(GL_POLYGON);
+        for (int i = 0; i < 20; i++) glVertex3f(gHitboxRadius * cos(i * 2 * M_PI / 20), 0, gHitboxRadius * sin(i * 2 * M_PI / 20));
+        glEnd();
+
+        // Line connecting 
+        glBegin(GL_LINES);
+            // Front line
+            glVertex3f(gHitboxRadius, 0, 0);
+            glVertex3f(gHitboxRadius, -gHitboxHeight, 0);
+
+            // Right line
+            glVertex3f(0, 0, gHitboxRadius);
+            glVertex3f(0, -gHitboxHeight, gHitboxRadius);
+
+            // Back line
+            glVertex3f(-gHitboxRadius, 0, 0);
+            glVertex3f(-gHitboxRadius, -gHitboxHeight, 0);
+
+            // Left line
+            glVertex3f(0, 0, -gHitboxRadius);
+            glVertex3f(0, -gHitboxHeight, -gHitboxRadius);
+        glEnd();
+
+    glPopMatrix();
 }

@@ -71,6 +71,7 @@ int simulateSlowProcessingWindows = 0;
 int opponentMoves = 0;
 int opponentShoots = 0;
 int moveThirdCamera = 0;
+int visibleHitboxes = 0;
 
 
 
@@ -306,6 +307,10 @@ void renderScene(void) {
 
 	arena->Draw();
 
+	if (visibleHitboxes){
+		arena->DrawHitboxes();
+	}
+
 	for (Shot* shot : playerShots) {
 		if (shot) shot->Draw();
 	}
@@ -380,6 +385,10 @@ void keyPress(unsigned char key, int x, int y) {
 		case 'h':
 		case 'H':
 			keyStatus[(int)('h')] = 1;
+			break;
+		case 'c':
+		case 'C':
+			visibleHitboxes = !visibleHitboxes;
 			break;
 		case 'x':
 		case 'X':
@@ -540,24 +549,23 @@ void idle(void) {
 
 	// Avoids the program to crash when the difference is too high
 	if (timeDifference <= 0.0f || timeDifference > 200.0f) timeDifference = 1.0f;
-
 	timeAccumulator += timeDifference;
 	
+	// Check for reset game call
 	if (keyStatus[(int)('r')] && (gameOver || playerWon)) {
 		ResetGame();
 	}
 
+	// Check for end of the game
 	if (gameOver || playerWon) return;
 
-	// printf("Player position: (%f, %f, %f); Player rotation: %f\n", arena->GetPlayerGx(), arena->GetPlayerGy(), arena->GetPlayerGz(), arena->GetPlayerXZAngle());
-
 	// Player movement forwards and backwards
-	if (keyStatus[(int)('s')]) {
-		arena->SetPlayerMovementDirection(-1);
-		arena->MovePlayerInXZ(timeDifference);
-	}
 	if (keyStatus[(int)('w')]) {
 		arena->SetPlayerMovementDirection(1);
+		arena->MovePlayerInXZ(timeDifference);
+	}
+	if (keyStatus[(int)('s')]) {
+		arena->SetPlayerMovementDirection(-1);
 		arena->MovePlayerInXZ(timeDifference);
 	}
 	
@@ -569,25 +577,32 @@ void idle(void) {
 		arena->RotatePlayer(false, timeDifference);
 	}
 
+	// Player jump
 	if (keyStatus[(int)(' ')] && arena->PlayerLanded()) {
 		arena->PlayerJump();
 	}
 
+	// Player arm movement
 	arena->RotatePlayerArm(mouseX, mouseY, Width, Height, timeDifference);
+	
+	// Applying gravity to player and opponents
 	arena->MovePlayerInY(timeDifference);
 	arena->MoveOpponentsInY(timeDifference);
+	if (!keyStatus[(int)(' ')] || arena->PlayerReachedMaximumJumpHeight() || arena->PlayerHitsHead()) {
+		arena->SetPlayerYDirection(-1);
+	}
+
+	// Moving opponents	randomly
 	if (opponentMoves) arena->MoveOpponentsInXZ(timeDifference);
 	arena->MoveOpponentsArms(timeDifference);
 
+	// Firing opponents shots
 	if (timeAccumulator >= 1000.0f) {
 		if (opponentShoots) arena->UpdateOpponentsShots(opponentsShots, arenaWidth, timeDifference);
 		timeAccumulator = 0.0f;
 	}
 	
-	if (!keyStatus[(int)(' ')] || arena->PlayerReachedMaximumJumpHeight() || arena->PlayerHitsHead()) {
-		arena->SetPlayerYDirection(-1);
-	}
-	
+	// Updating player shots
 	for (size_t i = 0; i < playerShots.size(); ++i) {
         Shot* shot = playerShots[i];
         if (shot) {
@@ -621,6 +636,7 @@ void idle(void) {
         }
     }
 
+	// Updating opponents shots
 	for (size_t i = 0; i < opponentsShots.size(); ++i) {
 		Shot* shot = opponentsShots[i];
 
@@ -656,8 +672,10 @@ void idle(void) {
 		}
 	}
 
+	// Check if the player won
 	if (arena->PlayerWon()) { playerWon = 1; }
 
+	// Redraw the scene
 	glutPostRedisplay();
 }
 

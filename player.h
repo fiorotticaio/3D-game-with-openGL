@@ -24,8 +24,8 @@ class Player {
     GLfloat gBodyHeight;
     GLfloat gBodyThickness;
 
-    GLfloat gInvisibleReactWidth;
-    GLfloat gInvisibleReactHeight;
+    GLfloat gHitboxRadius;
+    GLfloat gHitboxHeight;
 
     GLfloat gArmWidth;
     GLfloat gArmHeight;
@@ -117,10 +117,10 @@ public:
         gYSpeed = 0.025f;
         gRotationSpeed = 0.5f;
 
-        gInvisibleReactHeight = gThighHeight + gShinHeight + gBodyHeight + 2 * gHeadCircleRadius;
-        gInvisibleReactWidth = gBodyWidth;
+        gHitboxHeight = gThighHeight + gShinHeight + gBodyHeight + 2 * gHeadCircleRadius;
+        gHitboxRadius = gBodyWidth;
 
-        maxJumpHeight = 4 * gInvisibleReactHeight; // 4 instead of 3 to make the game more playable
+        maxJumpHeight = 4 * gHitboxHeight; // 4 instead of 3 to make the game more playable
         jumpHeight = 0;
 
         gFrontThighAngleDir = 1;
@@ -140,8 +140,8 @@ public:
     void MoveInY(GLfloat minPlayerPositionY, GLfloat maxPlayerPositionY, GLdouble timeDifference);
     void Rotate(bool clockwise, GLdouble timeDifference);
     void RotateArm(GLfloat x, GLfloat y, GLfloat windowWidth, GLfloat windowHeight, GLdouble timeDifference);
-    void SetXDirection(GLint xDirection);
-    GLint GetXDirection();
+    GLint GetMovementDirection();
+    void SetMovementDirection(GLint direction);
     void SetYDirection(GLint yDirection);
     GLint GetYDirection();
     GLfloat GetFrontThighAngle();
@@ -155,7 +155,7 @@ public:
     void SetFrontShinAngle(GLfloat angle);
     void SetBackShinAngle(GLfloat angle);
     Shot* Shoot(GLfloat maxDist);
-    GLfloat GetXSpeed();
+    GLfloat GetXZSpeed();
     GLfloat GetYSpeed();
     void Jump();
     GLfloat GetMaxJumpHeight();
@@ -163,14 +163,15 @@ public:
     GLfloat GetThighHeight();
     GLfloat GetShinHeight();
     bool ReachedMaximumJumpHeight();
-    GLfloat GetInvisibleReactHeight();
-    GLfloat GetInvisibleReactWidth();
+    GLfloat GetHitboxHeight();
+    GLfloat GetHitboxRadius();
     void AnimateLegs(GLdouble timeDifference);
     GLfloat GetXZAngle();
     GLfloat GetXZArmAngle();
     GLfloat GetXYArmAngle();
     void CalculateArmTopPos(GLfloat* armTopPos);
     void CalculateArmLookAt(GLfloat* armLookAt);
+    void DrawHitbox();
 };
 
 
