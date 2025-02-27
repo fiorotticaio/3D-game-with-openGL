@@ -36,10 +36,10 @@ private:
     void LoadArena(const char* svg_file_path);
     void DrawArena();
     void DrawRects(GLfloat width, GLfloat height, GLfloat thickness, GLfloat R, GLfloat G, GLfloat B);
-    bool PlayerCollidesWithObstacle(Obstacle* obstacle, GLfloat timeDifference);
-    bool PlayerLandsInObstacle(Player* player, Obstacle* obstacle, GLfloat dx, GLfloat dy);
+    bool PlayerCollidesWithObstacle(Obstacle* obstacle, GLdouble timeDifference);
+    bool PlayerLandsInObstacle(Obstacle* obstacle, GLdouble timeDifference);
     bool PlayerCollidesWithOpponent(Player* player, Opponent* opponent, GLfloat dx, GLfloat dy);
-    bool PlayerLandsInOpponent(Player* player, Opponent* opponent, GLfloat dx, GLfloat dy);
+    bool PlayerLandsInOpponent(Opponent* opponent, GLdouble timeDifference);
     bool PlayerCollidesWithGround(Player* player, GLfloat dx, GLfloat dy);
     bool OpponentCollidesWithObstacle(Opponent* opponent, Obstacle* obstacle, GLfloat dx, GLfloat dy);
     bool OpponentLandsInObstacle(Opponent* opponent, Obstacle* obstacle, GLfloat dx, GLfloat dy);
@@ -90,7 +90,7 @@ public:
     GLfloat GetPlayerThighHeight();
     GLfloat GetPlayerShinHeight();
     bool PlayerReachedMaximumJumpHeight();
-    bool PlayerLanded();
+    bool PlayerLanded(GLdouble timeDifference);
     bool OpponentLanded(Opponent* opponent);
     std::vector<Obstacle*> GetObstacles();
     std::vector<Opponent*> GetOpponents();

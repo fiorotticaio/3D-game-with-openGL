@@ -578,14 +578,14 @@ void idle(void) {
 	}
 
 	// Player jump
-	if (keyStatus[(int)(' ')] && arena->PlayerLanded()) {
+	if (keyStatus[(int)(' ')] && arena->PlayerLanded(timeDifference)) {
 		arena->PlayerJump();
 	}
 
 	// Player arm movement
 	arena->RotatePlayerArm(mouseX, mouseY, Width, Height, timeDifference);
 	
-	// Applying gravity to player and opponents
+	// Applying 'gravity' to player and opponents
 	arena->MovePlayerInY(timeDifference);
 	arena->MoveOpponentsInY(timeDifference);
 	if (!keyStatus[(int)(' ')] || arena->PlayerReachedMaximumJumpHeight() || arena->PlayerHitsHead()) {

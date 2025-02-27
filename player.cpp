@@ -176,6 +176,11 @@ GLfloat Player::GetGy() {
 }
 
 
+void Player::SetGy(GLfloat y){
+    gY = y;
+}
+
+
 GLfloat Player::GetGz() {
     return gZ;
 }
@@ -509,9 +514,11 @@ GLfloat Player::GetYSpeed() {
     return gYSpeed;
 }
 
+
 GLint Player::GetMovementDirection(){
     return gMovementDirection;
 }
+
 
 GLint Player::GetYDirection() {
     return gYDirection;

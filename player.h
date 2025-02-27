@@ -135,6 +135,7 @@ public:
 
     GLfloat GetGx();
     GLfloat GetGy();
+    void SetGy(GLfloat y);
     GLfloat GetGz();
     void MoveInXZ(GLfloat minPlayerPositionX, GLfloat maxPlayerPositionX, GLfloat minPlayerPositionZ, GLfloat maxPlayerPositionZ, GLdouble timeDifference);
     void MoveInY(GLfloat minPlayerPositionY, GLfloat maxPlayerPositionY, GLdouble timeDifference);
