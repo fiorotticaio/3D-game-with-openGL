@@ -266,29 +266,28 @@ void renderScene(void) {
 		arena->CalculatePlayerArmTopPos(playerArmTopPos);
 
 		GLfloat playerArmLookAt[3];
-		arena->CalculatePlayerArmLookAt(playerArmLookAt); // Já é um vetor de direção normalizado
+		arena->CalculatePlayerArmLookAt(playerArmLookAt); // It is already a normalized direction vector
 
-		// 1. Definir um vetor worldUp genérico
+		// Define a generic worldUp vector
 		GLfloat worldUp[3] = {0.0f, 1.0f, 0.0f};
 
-		// 2. Calcular o vetor "right" (perpendicular entre worldUp e playerArmLookAt)
+		// Calculate the "right" vector (perpendicular between worldUp and playerArmLookAt)
 		GLfloat right[3];
 		CrossProduct(worldUp, playerArmLookAt, right);
 		Normalize(right);
 
-		// Se "right" for nulo (caso raro, quando o braço está perfeitamente alinhado com o eixo Y)
+		// If "right" is null (rare case when the arm is perfectly aligned with the Y axis)
 		if (fabs(right[0]) < 1e-6 && fabs(right[1]) < 1e-6 && fabs(right[2]) < 1e-6) {
 			worldUp[0] = 1.0f; worldUp[1] = 0.0f; worldUp[2] = 0.0f; // Ajuste alternativo
 			CrossProduct(worldUp, playerArmLookAt, right);
 			Normalize(right);
 		}
 
-		// 3. Calcular "up" (perpendicular a "right" e "playerArmLookAt")
+		// Calculate "up" (perpendicular to "right" and "playerArmLookAt")
 		GLfloat upVector[3];
 		CrossProduct(playerArmLookAt, right, upVector);
 		Normalize(upVector);
 
-		// 4. Configurar a câmera
 		gluLookAt(playerArmTopPos[0], playerArmTopPos[1], playerArmTopPos[2],
 				playerArmTopPos[0] + playerArmLookAt[0], 
 				playerArmTopPos[1] + playerArmLookAt[1], 
@@ -324,8 +323,10 @@ void renderScene(void) {
 		glTranslatef(-arena->GetPlayerGx(), -arena->GetPlayerGy(), -arena->GetPlayerGz());
     }
 
-	// A PARTIR DAQUI, ESTAMOS NO SISTEMA DE COORDENADAS DO MUNDO
+
+	// FROM HERE ON, WE ARE IN THE WORLD COORDINATE SYSTEM
 	
+
 	GLfloat light_position[4];
 	GLfloat light_direction[3];
 
@@ -354,13 +355,12 @@ void renderScene(void) {
 
 	if (nightMode) {
 		glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light_direction);
-		glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 30.0); // Ângulo do cone de luz (0° a 90°)
-		glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 10.0); // Intensidade dentro do cone (0 = uniforme, 128 = forte no centro)
+		glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 30.0); // Light cone angle (0° to 90°)
+		glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 10.0); // Intensity within the cone (0 = uniform, 128 = strong in the center)
 	} else {
-		glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 180.0); // Ângulo do cone de luz (0° a 90°)
+		glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 180.0); // Light cone angle (0° to 90°)
 	}
 
-	
 	glPushMatrix();
 		glTranslatef(arena->GetPlayerGx(), arena->GetPlayerGy(), arena->GetPlayerGz());
 		DrawAxes();
@@ -470,12 +470,10 @@ void keyPress(unsigned char key, int x, int y) {
 			keyStatus[(int)(' ')] = 1;
 			break;
 		case '+':
-			// if (thirdCameraZoom > 5 && moveThirdCamera) thirdCameraZoom--;
-			thirdCameraZoom--;
+			if (thirdCameraZoom > 5 && moveThirdCamera) thirdCameraZoom--;
 			break;
 		case '-':
-			// if (thirdCameraZoom < 10 && moveThirdCamera) thirdCameraZoom++;
-			thirdCameraZoom++;
+			if (thirdCameraZoom < 10 && moveThirdCamera) thirdCameraZoom++;
 			break;
 		case 27:
 			exit(0);
