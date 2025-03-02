@@ -42,4 +42,4 @@ seja, 1/16 da área).
 - [x] O botão 3 deverá acionar uma câmera perspectiva posicionada inicialmente atrás do jogador (a uma distância grande suficiente para ver todo o jogador por uma terceira pessoa) e a uma altura superior à do jogador, e olhando para o centro do jogador (up apontando para o teto). 
 - [x] A câmera 3 poderá ser rotacionada (360 graus em torno do jogador e ± 60 graus para cima e para baixo do centro do jogado) quando pressionada a tecla x, resultando em um movimento esférico em volta do jogador.
 - [x] As teclas de + e – devem controlar o zoom da câmera 3.
-- [ ] Incluir um arquivo README.txt junto com o código fonte do jogo explicando os atalhos e funcionalidades adiconais.
+- [x] Incluir um arquivo README.txt junto com o código fonte do jogo explicando os atalhos e funcionalidades adiconais.

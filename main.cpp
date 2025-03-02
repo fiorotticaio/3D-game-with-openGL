@@ -402,10 +402,10 @@ void keyPress(unsigned char key, int x, int y) {
 			keyStatus[(int)(' ')] = 1;
 			break;
 		case '+':
-			if (thirdCameraZoom > 5) thirdCameraZoom--;
+			if (thirdCameraZoom > 5 && moveThirdCamera) thirdCameraZoom--;
 			break;
 		case '-':
-			if (thirdCameraZoom < 10) thirdCameraZoom++;
+			if (thirdCameraZoom < 10 && moveThirdCamera) thirdCameraZoom++;
 			break;
 		case 27:
 			exit(0);
