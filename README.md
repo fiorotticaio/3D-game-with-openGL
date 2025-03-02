@@ -28,9 +28,10 @@
 
 - [x] Carregar arena normalmente para x e y e com a coordenada z com metade do tamanho da metade y
 - [x] Personagens devem ser iniciados na coordenada x, y fornecida no arquivo svg e coordenada z aleatória (desde que dentro da arena)
-- [ ] O jogo deverá conter pelo menos um modelo de luz na arena (pontual ou direcional)
-- [ ] O jogo deverá ter um modo noturno (fazer a troca de modos com a tecla “n”) em que todas as luzes da arena são apagadas, sendo ligado somente uma lanterna na arma (braço) do jogador apontando na mesma direção da arma (A lanterna será representada por uma iluminação spot que deverá ser vista na arena quando iluminada)
-- [ ] As paredes, o chão e o teto da arena deverão ser texturizados, assim como o jogador
+- [x] O jogo deverá conter pelo menos um modelo de luz na arena (pontual ou direcional)
+- [x] O jogo deverá ter um modo noturno (fazer a troca de modos com a tecla “n”) em que todas as luzes da arena são apagadas, sendo ligado somente uma lanterna na arma (braço) do jogador apontando na mesma direção da arma (A lanterna será representada por uma iluminação spot que deverá ser vista na arena quando iluminada)
+- [x] As paredes, o chão e o teto da arena deverão ser texturizados
+- [ ] O jogador deve ser texturizado
 - [ ] (BONUS) Deve ter um minimapa com a visão 2D da arena igual no T2D, com um circulo verde p o player e vermelho para os oponentes. Deve ser transparente. O  mapa  deve  ficar  fixo  no  canto  inferior  direito  e  ocupar  1/4  da  largura  da  janela  (ou 
 seja, 1/16 da área).
 

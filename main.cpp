@@ -73,6 +73,7 @@ int opponentMoves = 0;
 int opponentShoots = 0;
 int moveThirdCamera = 0;
 int visibleHitboxes = 0;
+int nightMode = 0;
 
 // Textures
 GLuint arenaGroundTexture;
@@ -322,14 +323,42 @@ void renderScene(void) {
 		glTranslatef(-arena->GetPlayerGx(), -arena->GetPlayerGy(), -arena->GetPlayerGz());
     }
 
-	// A partir daqui estamos no sistema de coordenadas do mundo
+	// A PARTIR DAQUI, ESTAMOS NO SISTEMA DE COORDENADAS DO MUNDO
 	
-	GLfloat light_position[] = {arena->GetGx()+arena->GetWidth()/2, 
-		                        arena->GetGy()+arena->GetHeight()-20, 
-		                        -arena->GetThickness()/2, 
-		                        1.0}; // Last element 1.0 means it is a point light
+	GLfloat light_position[4];
+	GLfloat light_direction[3];
+
+	if (nightMode) {
+		GLfloat playerArmTopPos[3];
+		arena->CalculatePlayerArmTopPos(playerArmTopPos);
+		light_position[0] = playerArmTopPos[0];
+		light_position[1] = playerArmTopPos[1];
+		light_position[2] = playerArmTopPos[2];
+		light_position[3] = 1.0;
+
+		GLfloat playerArmLookAt[3];
+		arena->CalculatePlayerArmLookAt(playerArmLookAt);
+		light_direction[0] = playerArmLookAt[0];
+		light_direction[1] = playerArmLookAt[1];
+		light_direction[2] = playerArmLookAt[2];
+	
+	} else {
+		light_position[0] = arena->GetGx() + arena->GetWidth() / 2;
+		light_position[1] = arena->GetGy() + arena->GetHeight() - 20;
+		light_position[2] = -arena->GetThickness() / 2;
+		light_position[3] = 1.0;
+	}
 
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+	if (nightMode) {
+		glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light_direction);
+		glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 30.0); // Ângulo do cone de luz (0° a 90°)
+		glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 10.0); // Intensidade dentro do cone (0 = uniforme, 128 = forte no centro)
+	} else {
+		glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 180.0); // Ângulo do cone de luz (0° a 90°)
+	}
+
 	
 	glPushMatrix();
 		glTranslatef(arena->GetPlayerGx(), arena->GetPlayerGy(), arena->GetPlayerGz());
@@ -396,6 +425,10 @@ void keyPress(unsigned char key, int x, int y) {
 		case 's':
 		case 'S':
 			keyStatus[(int)('s')] = 1;
+			break;
+		case 'n':
+		case 'N':
+		    nightMode = !nightMode;
 			break;
 		case 'f':
 		case 'F':
