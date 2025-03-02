@@ -84,14 +84,6 @@ void Arena::LoadArena(const char* svg_file_path) {
 
 
 void Arena::DrawArena() {
-    // GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0};
-    // GLfloat materialColor[] = { 0.0, 0.0, 1.0, 1.0};
-    // GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0};
-    // GLfloat mat_shininess[] = { 128 };
-    // GLfloat materialEmission[] = { 0.10, 0.10, 0.10, 1};
-    // GLfloat materialColor[] = { 0.0, 0.0, 1.0, 1};
-    // GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1};
-    // GLfloat mat_shininess[] = { 100.0 };
     GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0 };
     GLfloat materialColor[] = { 0.0, 0.0, 0.8, 1.0 };
     GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
@@ -105,7 +97,6 @@ void Arena::DrawArena() {
         glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
         glColor3f(0, 0, 1);
 
-        // Draw arena background
         glTranslatef(gX, gY, 0);
         DrawRects(gWidth, gHeight, gThickness, gRed, gGreen, gBlue);
     glPopMatrix();
@@ -176,14 +167,25 @@ void Arena::DrawRects(GLfloat width, GLfloat height, GLfloat thickness, GLfloat 
     glEnd();
 
     // Ground
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glBindTexture(GL_TEXTURE_2D, gGroundTexture);
+    double textureS = 3;
     glBegin(GL_QUADS);
         glNormal3f(0, 1, 0);
+        glTexCoord2f(0, 0);
         glVertex3f(0, 0, 0);
+
         glNormal3f(0, 1, 0);
+        glTexCoord2f(0, textureS);
         glVertex3f(width, 0, 0);
+
         glNormal3f(0, 1, 0);
+        glTexCoord2f(textureS, textureS);
         glVertex3f(width, 0, -thickness);
+
         glNormal3f(0, 1, 0);
+        glTexCoord2f(textureS, 0);
         glVertex3f(0, 0, -thickness);
     glEnd();
 

@@ -31,6 +31,10 @@ class Arena {
     std::vector<Obstacle*> gObstacles;
     std::vector<Opponent*> gOpponents;
 
+    GLuint gGroundTexture;
+    GLuint gWallTexture;
+    GLuint gRoofTexture;
+
 
 private:
     void LoadArena(const char* svg_file_path);
@@ -49,8 +53,9 @@ private:
 
 
 public:
-    Arena(const char* svg_file_path) {
+    Arena(const char* svg_file_path, GLuint groundTexture) {
         LoadArena(svg_file_path);
+        gGroundTexture = groundTexture;
     }
 
     void Draw() {

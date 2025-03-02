@@ -13,7 +13,8 @@
 #include <string>
 #include "arena.h"
 #include "shot.h"
-#include "camera.h"
+#include "imageloader.h"
+
 
 using namespace tinyxml2;
 
@@ -64,6 +65,7 @@ void* font = GLUT_BITMAP_9_BY_15;
 int gameOver = 0;
 int playerWon = 0;
 int toggleCam = 3;
+GLuint arenaGroundTexture;
 
 // Feature flags
 int simulateSlowProcessingUbuntu = 0;
@@ -78,6 +80,30 @@ int visibleHitboxes = 0;
 /*****************************************************************************************/
 /************************************ AUX FUNCTIONS **************************************/
 /*****************************************************************************************/
+GLuint LoadTextureRAW(const char* filename) {
+    GLuint texture;
+    Image* image = loadBMP(filename);
+
+    glGenTextures( 1, &texture ); // Cria o container de textura
+    glBindTexture( GL_TEXTURE_2D, texture );
+    glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,GL_MODULATE );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR );
+    glTexImage2D(GL_TEXTURE_2D,                //Always GL_TEXTURE_2D
+                             0,                            //0 for now
+                             GL_RGB,                       //Format OpenGL uses for image
+                             image->width, image->height,  //Width and height pixels
+                             0,                            //The border of the image
+                             GL_RGB, //GL_RGB, because pixels are stored in RGB format
+                             GL_UNSIGNED_BYTE, //GL_UNSIGNED_BYTE, because pixels are stored
+                                               //as unsigned numbers
+                             image->pixels);               //The actual pixel data
+    delete image;
+
+    return texture;
+}
+
+
 void Normalize(GLfloat* v) {
     GLfloat length = sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
     if (length > 1e-6) { // Evita divisão por zero
@@ -98,7 +124,7 @@ void CrossProduct(GLfloat* a, GLfloat* b, GLfloat* result) {
 void RasterChars(GLfloat x, GLfloat y, GLfloat z, const char* text, double r, double g, double b) {
     glPushAttrib(GL_ENABLE_BIT);
         glDisable(GL_LIGHTING);
-        // glDisable(GL_TEXTURE_2D);
+        glDisable(GL_TEXTURE_2D);
 
         glColor3f(r, g, b);
         glRasterPos3f(x, y, z);
@@ -294,9 +320,9 @@ void renderScene(void) {
 	// A partir daqui estamos no sistema de coordenadas do mundo
 	
 	GLfloat light_position[] = {arena->GetGx()+arena->GetWidth()/2, 
-		arena->GetGy()+arena->GetHeight(), 
-		-arena->GetThickness()/2, 
-		1.0}; // Last element 1.0 means it is a point light
+		                        arena->GetGy()+arena->GetHeight()-10, 
+		                        -arena->GetThickness()/2, 
+		                        1.0}; // Last element 1.0 means it is a point light
 
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 	
@@ -402,10 +428,12 @@ void keyPress(unsigned char key, int x, int y) {
 			keyStatus[(int)(' ')] = 1;
 			break;
 		case '+':
-			if (thirdCameraZoom > 5 && moveThirdCamera) thirdCameraZoom--;
+			// if (thirdCameraZoom > 5 && moveThirdCamera) thirdCameraZoom--;
+			thirdCameraZoom--;
 			break;
 		case '-':
-			if (thirdCameraZoom < 10 && moveThirdCamera) thirdCameraZoom++;
+			// if (thirdCameraZoom < 10 && moveThirdCamera) thirdCameraZoom++;
+			thirdCameraZoom++;
 			break;
 		case 27:
 			exit(0);
@@ -428,14 +456,14 @@ void ResetKeyStatus() {
 }
 
 
-void init(int windowSize) {
+void init(int windowSize, char* svg_file_path) {
     glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
     glEnable(GL_LIGHTING);
     glShadeModel(GL_SMOOTH);
-    glEnable(GL_LIGHT0);
-	// glEnable(GL_TEXTURE_2D)
+	glEnable(GL_TEXTURE_2D);
 	glDepthFunc(GL_LEQUAL);
+    glEnable(GL_LIGHT0);
 
     glViewport(0, 0, (GLsizei) windowSize, (GLsizei) windowSize);
 
@@ -444,8 +472,16 @@ void init(int windowSize) {
     glLoadIdentity();
     gluPerspective(90, (GLfloat) windowSize / (GLfloat) windowSize, 1, 150);
 
-	glMatrixMode(GL_MODELVIEW);
 
+	glMatrixMode(GL_MODELVIEW);
+	
+	if (!loadViewportSizeFromSvg(svgFilePath)) {
+		exit(1);
+	}
+
+	arenaGroundTexture = LoadTextureRAW("textures/ground.bmp");
+
+	arena = new Arena(svgFilePath, arenaGroundTexture);
 
 	ResetKeyStatus();
 }
@@ -533,7 +569,7 @@ void ResetGame() {
 
 	loadViewportSizeFromSvg(svgFilePath);
     
-	arena = new Arena(svgFilePath);
+	arena = new Arena(svgFilePath, arenaGroundTexture);
 }
 
 
@@ -693,12 +729,6 @@ int main(int argc, char *argv[]) {
 
 	svgFilePath = argv[1];
 
-	if (!loadViewportSizeFromSvg(svgFilePath)) {
-		exit(1);
-	}
-
-	arena = new Arena(svgFilePath);
-
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
@@ -714,7 +744,7 @@ int main(int argc, char *argv[]) {
 	glutMotionFunc(mouseMotion);
 	glutMouseFunc(mouseClick);
 	
-	init(Width);
+	init(Width, svgFilePath);
 
 	glutMainLoop();
 

@@ -15,6 +15,7 @@ ATALHOS
 - c: Habilita/Desabilita hitbox
 - x: Habilita o movimento da câmera em terceira pessoa
 - barra de espaço: Pula
+- n: Ativa/Desativa o modo noturno
 - +: Zoom in (câmera em terceira pessoa)
 - -: Zoom out (câmera em terceira pessoa)
 
