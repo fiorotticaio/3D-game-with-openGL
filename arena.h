@@ -53,9 +53,10 @@ private:
 
 
 public:
-    Arena(const char* svg_file_path, GLuint groundTexture) {
+    Arena(const char* svg_file_path, GLuint groundTexture, GLuint wallTexture) {
         LoadArena(svg_file_path);
         gGroundTexture = groundTexture;
+        gWallTexture = wallTexture;
     }
 
     void Draw() {

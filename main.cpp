@@ -65,7 +65,6 @@ void* font = GLUT_BITMAP_9_BY_15;
 int gameOver = 0;
 int playerWon = 0;
 int toggleCam = 3;
-GLuint arenaGroundTexture;
 
 // Feature flags
 int simulateSlowProcessingUbuntu = 0;
@@ -74,6 +73,11 @@ int opponentMoves = 0;
 int opponentShoots = 0;
 int moveThirdCamera = 0;
 int visibleHitboxes = 0;
+
+// Textures
+GLuint arenaGroundTexture;
+GLuint arenaWallTexture;
+GLuint arenaRoofTexture;
 
 
 
@@ -480,8 +484,9 @@ void init(int windowSize, char* svg_file_path) {
 	}
 
 	arenaGroundTexture = LoadTextureRAW("textures/ground.bmp");
+	arenaWallTexture = LoadTextureRAW("textures/wall.bmp");
 
-	arena = new Arena(svgFilePath, arenaGroundTexture);
+	arena = new Arena(svgFilePath, arenaGroundTexture, arenaWallTexture);
 
 	ResetKeyStatus();
 }
@@ -569,7 +574,7 @@ void ResetGame() {
 
 	loadViewportSizeFromSvg(svgFilePath);
     
-	arena = new Arena(svgFilePath, arenaGroundTexture);
+	arena = new Arena(svgFilePath, arenaGroundTexture, arenaWallTexture);
 }
 
 

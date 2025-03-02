@@ -119,50 +119,94 @@ void Arena::DrawRects(GLfloat width, GLfloat height, GLfloat thickness, GLfloat 
     // The coordenates givem in the svg file are the left bottom corner of the arena
 
     // 1º Face
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glBindTexture(GL_TEXTURE_2D, gWallTexture);
+    double textureS = 10;
     glBegin(GL_QUADS);
         glNormal3f(0, 0, -1);
+        glTexCoord2f(0, 0);
         glVertex3f(0, 0, 0);
+
         glNormal3f(0, 0, -1);
+        glTexCoord2f(0, textureS);
         glVertex3f(0, height, 0);
+
         glNormal3f(0, 0, -1);
+        glTexCoord2f(textureS, textureS);
         glVertex3f(width, height, 0);
+
         glNormal3f(0, 0, -1);
+        glTexCoord2f(textureS, 0);
         glVertex3f(width, 0, 0);
     glEnd();
 
     // 2º Face
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glBindTexture(GL_TEXTURE_2D, gWallTexture);
+    textureS = 1;
     glBegin(GL_QUADS);
         glNormal3f(-1, 0, 0);
+        glTexCoord2f(0, 0);
         glVertex3f(width, 0, 0);
+
         glNormal3f(-1, 0, 0);
+        glTexCoord2f(0, textureS);
         glVertex3f(width, height, 0);
+
         glNormal3f(-1, 0, 0);
+        glTexCoord2f(textureS, textureS);
         glVertex3f(width, height, -thickness);
+
         glNormal3f(-1, 0, 0);
+        glTexCoord2f(textureS, 0);
         glVertex3f(width, 0, -thickness);
     glEnd();
 
     // 3º Face
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glBindTexture(GL_TEXTURE_2D, gWallTexture);
+    textureS = 10;
     glBegin(GL_QUADS);
         glNormal3f(0, 0, 1);
+        glTexCoord2f(0, 0);
         glVertex3f(width, 0, -thickness);
+
         glNormal3f(0, 0, 1);
+        glTexCoord2f(0, textureS);
         glVertex3f(width, height, -thickness);
+
         glNormal3f(0, 0, 1);
+        glTexCoord2f(textureS, textureS);
         glVertex3f(0, height, -thickness);
+
         glNormal3f(0, 0, 1);
+        glTexCoord2f(textureS, 0);
         glVertex3f(0, 0, -thickness);
     glEnd();
 
     // 4º Face
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glBindTexture(GL_TEXTURE_2D, gWallTexture);
+    textureS = 1;
     glBegin(GL_QUADS);
         glNormal3f(1, 0, 0);
+        glTexCoord2f(0, 0);
         glVertex3f(0, 0, -thickness);
+
         glNormal3f(1, 0, 0);
+        glTexCoord2f(0, textureS);
         glVertex3f(0, height, -thickness);
+
         glNormal3f(1, 0, 0);
+        glTexCoord2f(textureS, textureS);
         glVertex3f(0, height, 0);
+
         glNormal3f(1, 0, 0);
+        glTexCoord2f(textureS, 0);
         glVertex3f(0, 0, 0);
     glEnd();
 
@@ -170,7 +214,7 @@ void Arena::DrawRects(GLfloat width, GLfloat height, GLfloat thickness, GLfloat 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glBindTexture(GL_TEXTURE_2D, gGroundTexture);
-    double textureS = 3;
+    textureS = 5;
     glBegin(GL_QUADS);
         glNormal3f(0, 1, 0);
         glTexCoord2f(0, 0);
