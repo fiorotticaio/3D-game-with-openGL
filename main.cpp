@@ -313,11 +313,15 @@ void renderScene(void) {
 			glRotatef(camXYAngle, 0, 1, 0);
 		}
 
+		
 		// Rotate camera to point to x positive
 		glRotatef(90, 0, 1, 0);
-
+		
 		// Rotate angle in y negative
 		if (!moveThirdCamera) glRotatef(angle, 0, 0, 1);
+		
+		// Foloow player rotation
+		glRotatef(-arena->GetPlayerXZAngle(), 0, 1, 0);
 
 		// We want that this next translation do not interfere with the camera rotation
 		glTranslatef(-arena->GetPlayerGx(), -arena->GetPlayerGy(), -arena->GetPlayerGz());
