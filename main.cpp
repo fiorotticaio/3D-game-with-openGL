@@ -65,6 +65,7 @@ void* font = GLUT_BITMAP_9_BY_15;
 int gameOver = 0;
 int playerWon = 0;
 int toggleCam = 3;
+int lastCam = 3;
 
 // Feature flags
 int simulateSlowProcessingUbuntu = 0;
@@ -388,12 +389,15 @@ void keyPress(unsigned char key, int x, int y) {
 	switch (key) {
 		case '1':
 			toggleCam = 1;
+			lastCam = 1;
 			break;
 		case '2':
 			toggleCam = 2;
+			lastCam = 2;
 			break;
 		case '3':
 			toggleCam = 3;
+			lastCam = 3;
 			break;
 		case '4':
 			simulateSlowProcessingUbuntu = !simulateSlowProcessingUbuntu;
@@ -562,8 +566,7 @@ void mouseClick(int button, int state, int x, int y) {
 		toggleCam = 2;
 	}
 	if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP && !gameOver && !playerWon) {
-		// toggleCam = 1;
-		toggleCam = 3;
+		toggleCam = lastCam;
 	}
 }
 
