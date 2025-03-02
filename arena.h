@@ -35,11 +35,11 @@ class Arena {
 private:
     void LoadArena(const char* svg_file_path);
     void DrawArena();
-    void DrawRect(GLfloat width, GLfloat height, GLfloat R, GLfloat G, GLfloat B);
-    bool PlayerCollidesWithObstacle(Player* player, Obstacle* obstacle, GLfloat dx, GLfloat dy);
-    bool PlayerLandsInObstacle(Player* player, Obstacle* obstacle, GLfloat dx, GLfloat dy);
+    void DrawRects(GLfloat width, GLfloat height, GLfloat thickness, GLfloat R, GLfloat G, GLfloat B);
+    bool PlayerCollidesWithObstacle(Obstacle* obstacle, GLdouble timeDifference);
+    bool PlayerLandsInObstacle(Obstacle* obstacle, GLdouble timeDifference);
     bool PlayerCollidesWithOpponent(Player* player, Opponent* opponent, GLfloat dx, GLfloat dy);
-    bool PlayerLandsInOpponent(Player* player, Opponent* opponent, GLfloat dx, GLfloat dy);
+    bool PlayerLandsInOpponent(Opponent* opponent, GLdouble timeDifference);
     bool PlayerCollidesWithGround(Player* player, GLfloat dx, GLfloat dy);
     bool OpponentCollidesWithObstacle(Opponent* opponent, Obstacle* obstacle, GLfloat dx, GLfloat dy);
     bool OpponentLandsInObstacle(Opponent* opponent, Obstacle* obstacle, GLfloat dx, GLfloat dy);
@@ -57,15 +57,20 @@ public:
         DrawArena();
     }
 
+    GLfloat GetGx();
+    GLfloat GetGy();
     GLfloat GetWidth();
     GLfloat GetHeight();
+    GLfloat GetThickness();
     GLfloat GetPlayerGx();
     GLfloat GetPlayerGy();
-    void MovePlayerInX(GLdouble timeDifference);
+    GLfloat GetPlayerGz();
+    void MovePlayerInXZ(GLdouble timeDifference);
     void MovePlayerInY(GLdouble timeDifference);
-    void RotatePlayerArm(GLfloat y, GLfloat WindowHeight, GLdouble timeDifference);
-    void SetPlayerXDirection(GLint xDirection);
-    GLint GetPlayerXDirection();
+    void RotatePlayer(bool clockwise, GLdouble timeDifference);
+    void RotatePlayerArm(GLfloat x, GLfloat y, GLfloat windowWidth, GLfloat windowHeight, GLdouble timeDifference);
+    void SetPlayerMovementDirection(GLint direction);
+    GLint GetPlayerMovementDirection();
     void SetPlayerYDirection(GLint yDirection);
     GLint GetPlayerYDirection();
     GLfloat GetPlayerFrontThighAngle();
@@ -85,13 +90,13 @@ public:
     GLfloat GetPlayerThighHeight();
     GLfloat GetPlayerShinHeight();
     bool PlayerReachedMaximumJumpHeight();
-    bool PlayerLanded();
+    bool PlayerLanded(GLdouble timeDifference);
     bool OpponentLanded(Opponent* opponent);
     std::vector<Obstacle*> GetObstacles();
     std::vector<Opponent*> GetOpponents();
     void EraseOpponent(Opponent* opponent);
     void MoveOpponentsInY(GLdouble timeDifference);
-	void MoveOpponentsInX(GLdouble timeDifference);
+	void MoveOpponentsInXZ(GLdouble timeDifference);
     bool ObstaclesCollidesWithShot(Shot* shot);
     bool OpponentsCollidesWithShot(Shot* shot);
     void MoveOpponentsArms(GLdouble timeDifference);
@@ -108,6 +113,13 @@ public:
     bool OpponentLandsInPlayer(Opponent* opponent, Player* player, GLfloat dx, GLfloat dy);
     bool OpponentCollidesWithOtherOpponent(Opponent* opponent, Opponent* otherOpponent, GLfloat dx, GLfloat dy);
     bool OpponentLandsInOtherOpponent(Opponent* opponent, Opponent* otherOpponent, GLfloat dx, GLfloat dy);
+    GLfloat CalculatePlayerHeadYPosition();
+    GLfloat GetPlayerXZAngle();
+    GLfloat GetPlayerXZArmAngle();
+    GLfloat GetPlayerXYArmAngle();
+    void CalculatePlayerArmTopPos(GLfloat* playerArmTopPos);
+    void CalculatePlayerArmLookAt(GLfloat* playerArmLookAt);
+    void DrawHitboxes();
 };
 
 
