@@ -42,12 +42,18 @@ void Player::DrawHeadAndArms() {
 void Player::DrawSphere(GLfloat radius, GLfloat R, GLfloat G, GLfloat B) {
     GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0 };
     GLfloat materialColor[] = { R, G, B, 1.0 };
+    GLfloat mat_diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
     GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
     GLfloat mat_shininess[] = { 50 };
+    // GLfloat materialEmission[] = { 0.1, 0.1, 0.1, 1.0 }; // Pequeno brilho próprio
+    // GLfloat materialColor[] = { R * 0.5f + 0.5f, G * 0.5f + 0.5f, B * 0.5f + 0.5f, 1.0 }; // Ajuste na iluminação ambiente
+    // GLfloat mat_diffuse[] = { R, G, B, 1.0 }; // Cor difusa para refletir a luz corretamente
+    // GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
+    // GLfloat mat_shininess[] = { 50 }; // Reduz o brilho excessivo
 
     glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
     glMaterialfv(GL_FRONT, GL_AMBIENT, materialColor);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, materialColor);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
     glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
     glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
     glColor3f(R, G, B);
@@ -91,14 +97,20 @@ void Player::DrawBackLeg() {
 void Player::DrawCuboid(GLfloat width, GLfloat height, GLfloat depth, GLfloat R, GLfloat G, GLfloat B) {
     GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0 };
     GLfloat materialColor[] = { R, G, B, 1.0 };
+    GLfloat mat_diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
     GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
-    GLfloat mat_shininess[] = { 50 };
+    GLfloat mat_shininess[] = { 100 };
+    // GLfloat materialEmission[] = { 0.1, 0.1, 0.1, 1.0 }; // Pequeno brilho próprio
+    // GLfloat materialColor[] = { R * 0.5f + 0.5f, G * 0.5f + 0.5f, B * 0.5f + 0.5f, 1.0 }; // Ajuste na iluminação ambiente
+    // GLfloat mat_diffuse[] = { R, G, B, 1.0 }; // Cor difusa para refletir a luz corretamente
+    // GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
+    // GLfloat mat_shininess[] = { 50 }; // Reduz o brilho excessivo
 
     
     glBegin(GL_QUADS);
         glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
         glMaterialfv(GL_FRONT, GL_AMBIENT, materialColor);
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, materialColor);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
         glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
         glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
         glColor3f(R, G, B);

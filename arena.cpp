@@ -86,13 +86,20 @@ void Arena::LoadArena(const char* svg_file_path) {
 void Arena::DrawArena() {
     GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0 };
     GLfloat materialColor[] = { 0.0, 0.0, 0.8, 1.0 };
+    GLfloat mat_diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
     GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
     GLfloat mat_shininess[] = { 50 };
+    // GLfloat materialEmission[] = { 0.05, 0.05, 0.2, 1.0 };  // Pequeno brilho azul
+    // GLfloat materialColor[] = { 0.2, 0.2, 0.9, 1.0 };       // Azul mais vibrante e iluminado
+    // GLfloat mat_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };         // Mantém boa resposta à luz
+    // GLfloat mat_specular[] = { 0.3, 0.3, 0.3, 1.0 };        // Reflexos mais suaves
+    // GLfloat mat_shininess[] = { 20 };                       // Reduz brilho especular
+
 
     glPushMatrix();
         glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
         glMaterialfv(GL_FRONT, GL_AMBIENT, materialColor);
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, materialColor);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
         glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
         glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
         glColor3f(0, 0, 1);
@@ -233,15 +240,26 @@ void Arena::DrawRects(GLfloat width, GLfloat height, GLfloat thickness, GLfloat 
         glVertex3f(0, 0, -thickness);
     glEnd();
 
-    // Ceiling
+    // Roof
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // glBindTexture(GL_TEXTURE_2D, gRoofTexture);
+    // textureS = 1;
     glBegin(GL_QUADS);
         glNormal3f(0, -1, 0);
+        // glTexCoord2f(0, 0);
         glVertex3f(0, height, 0);
+
         glNormal3f(0, -1, 0);
+        // glTexCoord2f(0, textureS);
         glVertex3f(0, height, -thickness);
+
         glNormal3f(0, -1, 0);
+        // glTexCoord2f(textureS, textureS);
         glVertex3f(width, height, -thickness);
+
         glNormal3f(0, -1, 0);
+        // glTexCoord2f(textureS, 0);
         glVertex3f(width, height, 0);
     glEnd();
 }

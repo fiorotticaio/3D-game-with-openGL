@@ -88,11 +88,12 @@ GLuint LoadTextureRAW(const char* filename) {
     GLuint texture;
     Image* image = loadBMP(filename);
 
-    glGenTextures( 1, &texture ); // Cria o container de textura
-    glBindTexture( GL_TEXTURE_2D, texture );
-    glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,GL_MODULATE );
-    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR );
-    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR );
+    glGenTextures(1, &texture); // Cria o container de textura
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,GL_MODULATE);
+	// glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D,                //Always GL_TEXTURE_2D
                              0,                            //0 for now
                              GL_RGB,                       //Format OpenGL uses for image
@@ -324,7 +325,7 @@ void renderScene(void) {
 	// A partir daqui estamos no sistema de coordenadas do mundo
 	
 	GLfloat light_position[] = {arena->GetGx()+arena->GetWidth()/2, 
-		                        arena->GetGy()+arena->GetHeight()-10, 
+		                        arena->GetGy()+arena->GetHeight()-20, 
 		                        -arena->GetThickness()/2, 
 		                        1.0}; // Last element 1.0 means it is a point light
 
@@ -485,8 +486,9 @@ void init(int windowSize, char* svg_file_path) {
 
 	arenaGroundTexture = LoadTextureRAW("textures/ground.bmp");
 	arenaWallTexture = LoadTextureRAW("textures/wall.bmp");
+	arenaRoofTexture = LoadTextureRAW("textures/roof.bmp");
 
-	arena = new Arena(svgFilePath, arenaGroundTexture, arenaWallTexture);
+	arena = new Arena(svgFilePath, arenaGroundTexture, arenaWallTexture, arenaRoofTexture);
 
 	ResetKeyStatus();
 }
@@ -574,7 +576,7 @@ void ResetGame() {
 
 	loadViewportSizeFromSvg(svgFilePath);
     
-	arena = new Arena(svgFilePath, arenaGroundTexture, arenaWallTexture);
+	arena = new Arena(svgFilePath, arenaGroundTexture, arenaWallTexture, arenaRoofTexture);
 }
 
 

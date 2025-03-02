@@ -53,10 +53,11 @@ private:
 
 
 public:
-    Arena(const char* svg_file_path, GLuint groundTexture, GLuint wallTexture) {
+    Arena(const char* svg_file_path, GLuint groundTexture, GLuint wallTexture, GLuint roofTexture) {
         LoadArena(svg_file_path);
         gGroundTexture = groundTexture;
         gWallTexture = wallTexture;
+        gRoofTexture = roofTexture;
     }
 
     void Draw() {
