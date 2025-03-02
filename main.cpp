@@ -519,7 +519,7 @@ void init(int windowSize, char* svg_file_path) {
 		exit(1);
 	}
 
-	arenaGroundTexture = LoadTextureRAW("textures/ground.bmp");
+	arenaGroundTexture = LoadTextureRAW("textures/ground2.bmp");
 	arenaWallTexture = LoadTextureRAW("textures/wall.bmp");
 	arenaRoofTexture = LoadTextureRAW("textures/roof.bmp");
 

@@ -228,15 +228,15 @@ void Arena::DrawRects(GLfloat width, GLfloat height, GLfloat thickness, GLfloat 
         glVertex3f(0, 0, 0);
 
         glNormal3f(0, 1, 0);
-        glTexCoord2f(0, textureS);
+        glTexCoord2f(textureS, 0);
         glVertex3f(width, 0, 0);
-
+        
         glNormal3f(0, 1, 0);
         glTexCoord2f(textureS, textureS);
         glVertex3f(width, 0, -thickness);
 
         glNormal3f(0, 1, 0);
-        glTexCoord2f(textureS, 0);
+        glTexCoord2f(0, textureS);
         glVertex3f(0, 0, -thickness);
     glEnd();
 
