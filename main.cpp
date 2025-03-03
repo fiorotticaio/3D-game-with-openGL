@@ -586,7 +586,7 @@ void ResetGame() {
         delete shot;
     }
     opponentsShots.clear();
-
+	
     arena->Delete();
 
 	// Reset global variables
