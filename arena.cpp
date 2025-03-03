@@ -863,6 +863,8 @@ bool Arena::ObstaclesCollidesWithShot(Shot* shot) {
 
 
 bool Arena::ObstacleCollidesWithShot(Obstacle* obstacle, Shot* shot) {
+    // Don't need to check the z axis
+
     GLfloat shotX = shot->GetGx();
     GLfloat shotY = shot->GetGy();
     GLfloat shotRadius = shot->GetRadius();
@@ -893,16 +895,30 @@ bool Arena::OpponentsCollidesWithShot(Shot* shot) {
 bool Arena::OpponentCollidesWithShot(Opponent* opponent, Shot* shot) {
     GLfloat shotX = shot->GetGx();
     GLfloat shotY = shot->GetGy();
+    GLfloat shotZ = shot->GetGz();
     GLfloat shotRadius = shot->GetRadius();
 
-    GLfloat closestX = std::max(opponent->GetGx() - opponent->GetHitboxRadius() / 2, std::min(shotX, opponent->GetGx() + opponent->GetHitboxRadius() / 2));
-    GLfloat closestY = std::max(opponent->GetGy() - opponent->GetThighHeight() - opponent->GetShinHeight(), std::min(shotY, opponent->GetGy() - opponent->GetThighHeight() - opponent->GetShinHeight() + opponent->GetHitboxHeight()));
+    GLfloat opponentX = opponent->GetGx();
+    GLfloat opponentY = opponent->GetGy();
+    GLfloat opponentZ = opponent->GetGz();
+    GLfloat hitboxRadius = opponent->GetHitboxRadius();
+    GLfloat hitboxHeight = opponent->GetHitboxHeight();
 
-    GLfloat distanceX = shotX - closestX;
-    GLfloat distanceY = shotY - closestY;
-    GLfloat distanceSquared = distanceX * distanceX + distanceY * distanceY;
+    GLfloat opponentTopY = opponentY - opponent->GetThighHeight() - opponent->GetShinHeight() + hitboxHeight;
+    GLfloat opponentBottomY = opponentY - opponent->GetThighHeight() - opponent->GetShinHeight();
 
-    return distanceSquared <= shotRadius * shotRadius;
+    // Distância do tiro ao eixo central do cilindro no plano XZ
+    GLfloat distanceX = shotX - opponentX;
+    GLfloat distanceZ = shotZ - opponentZ;
+    GLfloat distanceXZ = sqrt(distanceX * distanceX + distanceZ * distanceZ);
+
+    // Verifica se o tiro está dentro da altura do cilindro (considerando o raio do tiro)
+    bool insideHeight = (shotY + shotRadius >= opponentBottomY) && (shotY - shotRadius <= opponentTopY);
+
+    // Verifica se o tiro está dentro do raio do cilindro no plano XZ
+    bool insideRadius = (distanceXZ <= hitboxRadius + shotRadius);
+
+    return insideHeight && insideRadius;
 }
 
 
@@ -975,23 +991,30 @@ void Arena::UpdateOpponentsShots(std::vector<Shot*>& opponentsShots, GLfloat max
 bool Arena::PlayerCollidesWithShot(Shot* shot) {
     GLfloat shotX = shot->GetGx();
     GLfloat shotY = shot->GetGy();
+    GLfloat shotZ = shot->GetGz();
     GLfloat shotRadius = shot->GetRadius();
 
     GLfloat playerX = gPlayer->GetGx();
     GLfloat playerY = gPlayer->GetGy();
-    GLfloat playerTopY = playerY - gPlayer->GetThighHeight() - gPlayer->GetShinHeight() + gPlayer->GetHitboxHeight();
+    GLfloat playerZ = gPlayer->GetGz();
+    GLfloat hitboxRadius = gPlayer->GetHitboxRadius();
+    GLfloat hitboxHeight = gPlayer->GetHitboxHeight();
+
+    GLfloat playerTopY = playerY - gPlayer->GetThighHeight() - gPlayer->GetShinHeight() + hitboxHeight;
     GLfloat playerBottomY = playerY - gPlayer->GetThighHeight() - gPlayer->GetShinHeight();
-    GLfloat playerLeftX = playerX - gPlayer->GetHitboxRadius() / 2;
-    GLfloat playerRightX = playerX + gPlayer->GetHitboxRadius() / 2;
 
-    GLfloat closestX = std::max(playerLeftX, std::min(shotX, playerRightX));
-    GLfloat closestY = std::max(playerBottomY, std::min(shotY, playerTopY));
+    // Distância do tiro ao eixo central do cilindro no plano XZ
+    GLfloat distanceX = shotX - playerX;
+    GLfloat distanceZ = shotZ - playerZ;
+    GLfloat distanceXZ = sqrt(distanceX * distanceX + distanceZ * distanceZ);
 
-    GLfloat distanceX = shotX - closestX;
-    GLfloat distanceY = shotY - closestY;
-    GLfloat distanceSquared = distanceX * distanceX + distanceY * distanceY;
+    // Verifica se o tiro está dentro da altura do cilindro (considerando o raio do tiro)
+    bool insideHeight = (shotY + shotRadius >= playerBottomY) && (shotY - shotRadius <= playerTopY);
 
-    return distanceSquared <= shotRadius * shotRadius;
+    // Verifica se o tiro está dentro do raio do cilindro no plano XZ
+    bool insideRadius = (distanceXZ <= hitboxRadius + shotRadius);
+
+    return insideHeight && insideRadius;
 }
 
 bool Arena::PlayerHitsHead() {
