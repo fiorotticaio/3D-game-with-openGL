@@ -37,8 +37,8 @@ void Shot::Move(GLdouble timeDifference) {
 
 
 bool Shot::Valid() {
-    // Checks if the shot has already traveled a maximum distance
-    return sqrt(pow(gX - gXInit, 2) + pow(gY - gYInit, 2)) < gMaxDist;
+    // Verifica se o tiro já percorreu a distância máxima
+    return sqrt(pow(gX - gXInit, 2) + pow(gY - gYInit, 2) + pow(gZ - gZInit, 2)) < gMaxDist;
 }
 
 
