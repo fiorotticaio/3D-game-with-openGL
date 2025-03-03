@@ -4,7 +4,7 @@
 
 - [x] A janela de visualização deverá ter 500x500 pixels
 - [x] Jogador deve ganhar ao chegar ao final
-- [ ] Jogador deve perder ao encostar nos tiros ou nos oponentes
+- [x] Jogador deve perder ao encostar nos tiros ou nos oponentes
 
 ## Jogador
 
@@ -15,14 +15,12 @@
 - [x] O pulo agora deve ser feito com a barra de espaço
 - [ ] O jogador pode apenas se movimentar para frente e para trás enquanto pula
 - [x] O braço pode fazer o movimento de um cone imaginário e a bala deve seguir na direção em que a arma estiver apontando
-- [ ] (BONUS) Utilizar modelos avançados de jogador e suas partes. Referencia: https://www.mixamo.com/
-- [ ] (BONUS) Para quem for usar modelos avançados, será permitido usar a arma acoplada ao ombro para não ter que movimentar o braço do modelo. Neste caso, as funcionalidades referentes ao braço descritas nos itens anteriores deverão ser implementadas para a arma (ou seja, controle com o mouse, atirar, etc).
 
 ## Oponentes 
 
 - [x] Desenhar o oponente em 3D (usar criatividade)
 - [ ] Oponente deve se movimentar aleatoriamente
-- [ ] Oponente deve atirar de tempos em tempos
+- [x] Oponente deve atirar de tempos em tempos
 
 ## Arena
 
@@ -32,8 +30,6 @@
 - [x] O jogo deverá ter um modo noturno (fazer a troca de modos com a tecla “n”) em que todas as luzes da arena são apagadas, sendo ligado somente uma lanterna na arma (braço) do jogador apontando na mesma direção da arma (A lanterna será representada por uma iluminação spot que deverá ser vista na arena quando iluminada)
 - [x] As paredes, o chão e o teto da arena deverão ser texturizados
 - [ ] O jogador deve ser texturizado
-- [ ] (BONUS) Deve ter um minimapa com a visão 2D da arena igual no T2D, com um circulo verde p o player e vermelho para os oponentes. Deve ser transparente. O  mapa  deve  ficar  fixo  no  canto  inferior  direito  e  ocupar  1/4  da  largura  da  janela  (ou 
-seja, 1/16 da área).
 
 ## Camera
 
