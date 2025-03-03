@@ -219,9 +219,9 @@ void Character::Rotate(bool clockwise, GLdouble timeDifference) {
 
 void Character::RotateArm(GLfloat x, GLfloat y, GLfloat windowWidth, GLfloat windowHeight, GLdouble timeDifference) {
     GLfloat mouseXMin = 0;
-    GLfloat mouseXMax = windowWidth - mouseXMin;
+    GLfloat mouseXMax = windowWidth;
     GLfloat mouseYMin = 0;
-    GLfloat mouseYMax = windowHeight - mouseYMin;
+    GLfloat mouseYMax = windowHeight;
 
     GLfloat XYMaxAngle = -45.0f;
     GLfloat XYMinAngle = -135.0f;
@@ -230,17 +230,17 @@ void Character::RotateArm(GLfloat x, GLfloat y, GLfloat windowWidth, GLfloat win
     GLfloat XZMaxAngle = 45.0f;
     GLfloat XZMinAngle = -45.0f;
     GLfloat XZTargetAngle = XZMinAngle + ((x - mouseXMin) / (mouseXMax - mouseXMin)) * (XZMaxAngle - XZMinAngle);
-    
-    if (gXYArmAngle < XYTargetAngle) {
-        gXYArmAngle += gArmSpeed * timeDifference;
-    } else if (gXYArmAngle > XYTargetAngle) {
-        gXYArmAngle -= gArmSpeed * timeDifference;
+
+    GLfloat tolerance = 0.5f;
+
+    // Atualiza XYArmAngle sem ultrapassar o alvo
+    if (fabs(gXYArmAngle - XYTargetAngle) > tolerance) {
+        gXYArmAngle += std::min(static_cast<GLdouble>(gArmSpeed * timeDifference), static_cast<GLdouble>(fabs(gXYArmAngle - XYTargetAngle))) * (gXYArmAngle < XYTargetAngle ? 1 : -1);
     }
 
-    if (gXZArmAngle < XZTargetAngle) {
-        gXZArmAngle += gArmSpeed * timeDifference;
-    } else if (gXZArmAngle > XZTargetAngle) {
-        gXZArmAngle -= gArmSpeed * timeDifference;
+    // Atualiza XZArmAngle sem ultrapassar o alvo
+    if (fabs(gXZArmAngle - XZTargetAngle) > tolerance) {
+        gXZArmAngle += std::min(static_cast<GLdouble>(gArmSpeed * timeDifference), static_cast<GLdouble>(fabs(gXZArmAngle - XZTargetAngle))) * (gXZArmAngle < XZTargetAngle ? 1 : -1);
     }
 }
 
