@@ -664,7 +664,7 @@ void idle(void) {
 	if (keyStatus[(int)(' ')] && arena->PlayerLanded(timeDifference)) {
 		arena->PlayerJump();
 	}
-	if (keyStatus[(int)(' ')] && arena->PlayerLanded()) {
+	if (keyStatus[(int)(' ')] && arena->PlayerLanded(timeDifference)) {
 		arena->PlayerJump();
 	}
 

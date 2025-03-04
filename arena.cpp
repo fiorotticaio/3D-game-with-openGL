@@ -274,16 +274,6 @@ GLfloat Arena::GetGy() {
 }
 
 
-GLfloat Arena::GetGx() {
-    return gX;
-}
-
-
-GLfloat Arena::GetGy() {
-    return gY;
-}
-
-
 GLfloat Arena::GetWidth() {
     return gWidth;
 }
