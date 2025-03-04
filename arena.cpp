@@ -95,7 +95,6 @@ void Arena::DrawArena() {
     // GLfloat mat_specular[] = { 0.3, 0.3, 0.3, 1.0 };        // Reflexos mais suaves
     // GLfloat mat_shininess[] = { 20 };                       // Reduz brilho especular
 
-
     glPushMatrix();
         glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
         glMaterialfv(GL_FRONT, GL_AMBIENT, materialColor);
@@ -262,6 +261,16 @@ void Arena::DrawRects(GLfloat width, GLfloat height, GLfloat thickness, GLfloat 
         // glTexCoord2f(textureS, 0);
         glVertex3f(width, height, 0);
     glEnd();
+}
+
+
+GLfloat Arena::GetGx() {
+    return gX;
+}
+
+
+GLfloat Arena::GetGy() {
+    return gY;
 }
 
 

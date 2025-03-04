@@ -509,6 +509,7 @@ void init(int windowSize, char* svg_file_path) {
 	glDepthFunc(GL_LEQUAL);
     glEnable(GL_LIGHT0);
 
+
     glViewport(0, 0, (GLsizei) windowSize, (GLsizei) windowSize);
 
 	// Defining camera parameters
@@ -528,6 +529,7 @@ void init(int windowSize, char* svg_file_path) {
 	arenaRoofTexture = LoadTextureRAW("textures/roof.bmp");
 
 	arena = new Arena(svgFilePath, arenaGroundTexture, arenaWallTexture, arenaRoofTexture);
+
 
 	ResetKeyStatus();
 }
@@ -660,6 +662,9 @@ void idle(void) {
 
 	// Player jump
 	if (keyStatus[(int)(' ')] && arena->PlayerLanded(timeDifference)) {
+		arena->PlayerJump();
+	}
+	if (keyStatus[(int)(' ')] && arena->PlayerLanded()) {
 		arena->PlayerJump();
 	}
 
