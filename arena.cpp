@@ -966,10 +966,6 @@ void Arena::MoveOpponentsArms(GLdouble timeDifference) {
         } else {
             XZangle = atan2(zResVector, xResVector) * 180.0f / M_PI;
 
-            // Adjust the angle to the arm limits
-            XZangle = XZangle - 90.0f;
-            if (XZangle > 0) XZangle *= -1;
-
             if      (XZangle > XZmaxAngle) XZangle = XZmaxAngle;
             else if (XZangle < XZminAngle) XZangle = XZminAngle;
         }
