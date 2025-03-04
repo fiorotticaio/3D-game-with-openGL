@@ -13,7 +13,8 @@
 #include <string>
 #include "arena.h"
 #include "shot.h"
-#include "camera.h"
+#include "imageloader.h"
+
 
 using namespace tinyxml2;
 
@@ -58,11 +59,13 @@ float cameraHeightOffset = 5.0f;
 char* svgFilePath = NULL;
 float positionTolerance = 0.5f;
 float mouseY = 0.0f;
+float mouseX = 0.0f;
 GLfloat timeAccumulator = 0.0f;
 void* font = GLUT_BITMAP_9_BY_15;
 int gameOver = 0;
 int playerWon = 0;
 int toggleCam = 3;
+int lastCam = 3;
 
 // Feature flags
 int simulateSlowProcessingUbuntu = 0;
@@ -70,31 +73,65 @@ int simulateSlowProcessingWindows = 0;
 int opponentMoves = 0;
 int opponentShoots = 0;
 int moveThirdCamera = 0;
+int visibleHitboxes = 0;
+int nightMode = 0;
+
+// Textures
+GLuint arenaGroundTexture;
+GLuint arenaWallTexture;
+GLuint arenaRoofTexture;
 
 
 
 /*****************************************************************************************/
 /************************************ AUX FUNCTIONS **************************************/
 /*****************************************************************************************/
-void normalize(float a[3]) {
-    double norm = sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]); 
-    a[0] /= norm;
-    a[1] /= norm;
-    a[2] /= norm;
+GLuint LoadTextureRAW(const char* filename) {
+    GLuint texture;
+    Image* image = loadBMP(filename);
+
+    glGenTextures(1, &texture); // Cria o container de textura
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,GL_MODULATE);
+	// glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D,                //Always GL_TEXTURE_2D
+                             0,                            //0 for now
+                             GL_RGB,                       //Format OpenGL uses for image
+                             image->width, image->height,  //Width and height pixels
+                             0,                            //The border of the image
+                             GL_RGB, //GL_RGB, because pixels are stored in RGB format
+                             GL_UNSIGNED_BYTE, //GL_UNSIGNED_BYTE, because pixels are stored
+                                               //as unsigned numbers
+                             image->pixels);               //The actual pixel data
+    delete image;
+
+    return texture;
 }
 
 
-void cross(float a[3], float b[3], float out[3]) {
-    out[0] = a[1]*b[2] - a[2]*b[1];
-    out[1] = a[2]*b[0] - a[0]*b[2];
-    out[2] = a[0]*b[1] - a[1]*b[0];
+void Normalize(GLfloat* v) {
+    GLfloat length = sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    if (length > 1e-6) { // Evita divisão por zero
+        v[0] /= length;
+        v[1] /= length;
+        v[2] /= length;
+    }
+}
+
+
+void CrossProduct(GLfloat* a, GLfloat* b, GLfloat* result) {
+    result[0] = a[1] * b[2] - a[2] * b[1];
+    result[1] = a[2] * b[0] - a[0] * b[2];
+    result[2] = a[0] * b[1] - a[1] * b[0];
 }
 
 
 void RasterChars(GLfloat x, GLfloat y, GLfloat z, const char* text, double r, double g, double b) {
     glPushAttrib(GL_ENABLE_BIT);
         glDisable(GL_LIGHTING);
-        // glDisable(GL_TEXTURE_2D);
+        glDisable(GL_TEXTURE_2D);
 
         glColor3f(r, g, b);
         glRasterPos3f(x, y, z);
@@ -218,9 +255,45 @@ void renderScene(void) {
 
 	if (toggleCam == 1){
         PrintText(0.1, 0.1, "First person camera", 0, 1, 0);
+		glRotatef(-arena->GetPlayerXZAngle(), 0, 1, 0);
+		glRotatef(90, 0, 1, 0); // Rotate to point to x positive
+		glTranslatef(-arena->GetPlayerGx(), -arena->CalculatePlayerHeadYPosition(), -arena->GetPlayerGz());
  
     } else if (toggleCam == 2){
         PrintText(0.1, 0.1, "Gun sight camera", 0, 1, 0);
+
+		GLfloat playerArmTopPos[3];
+		arena->CalculatePlayerArmTopPos(playerArmTopPos);
+
+		GLfloat playerArmLookAt[3];
+		arena->CalculatePlayerArmLookAt(playerArmLookAt); // It is already a normalized direction vector
+
+		// Define a generic worldUp vector
+		GLfloat worldUp[3] = {0.0f, 1.0f, 0.0f};
+
+		// Calculate the "right" vector (perpendicular between worldUp and playerArmLookAt)
+		GLfloat right[3];
+		CrossProduct(worldUp, playerArmLookAt, right);
+		Normalize(right);
+
+		// If "right" is null (rare case when the arm is perfectly aligned with the Y axis)
+		if (fabs(right[0]) < 1e-6 && fabs(right[1]) < 1e-6 && fabs(right[2]) < 1e-6) {
+			worldUp[0] = 1.0f; worldUp[1] = 0.0f; worldUp[2] = 0.0f; // Ajuste alternativo
+			CrossProduct(worldUp, playerArmLookAt, right);
+			Normalize(right);
+		}
+
+		// Calculate "up" (perpendicular to "right" and "playerArmLookAt")
+		GLfloat upVector[3];
+		CrossProduct(playerArmLookAt, right, upVector);
+		Normalize(upVector);
+
+		gluLookAt(playerArmTopPos[0], playerArmTopPos[1], playerArmTopPos[2],
+				playerArmTopPos[0] + playerArmLookAt[0], 
+				playerArmTopPos[1] + playerArmLookAt[1], 
+				playerArmTopPos[2] + playerArmLookAt[2], 
+				upVector[0], upVector[1], upVector[2]);
+
 
     } else if (toggleCam == 3){
         PrintText(0.1, 0.1, "Third person camera", 0, 1, 0);
@@ -240,31 +313,68 @@ void renderScene(void) {
 			glRotatef(camXYAngle, 0, 1, 0);
 		}
 
+		
 		// Rotate camera to point to x positive
 		glRotatef(90, 0, 1, 0);
-
+		
 		// Rotate angle in y negative
 		if (!moveThirdCamera) glRotatef(angle, 0, 0, 1);
+		
+		// Foloow player rotation
+		glRotatef(-arena->GetPlayerXZAngle(), 0, 1, 0);
 
 		// We want that this next translation do not interfere with the camera rotation
 		glTranslatef(-arena->GetPlayerGx(), -arena->GetPlayerGy(), -arena->GetPlayerGz());
     }
 
-	// A partir daqui estamos no sistema de coordenadas do mundo
+
+	// FROM HERE ON, WE ARE IN THE WORLD COORDINATE SYSTEM
 	
-	GLfloat light_position[] = {arena->GetGx()+arena->GetWidth()/2, 
-		arena->GetGy()+arena->GetHeight(), 
-		-arena->GetThickness()/2, 
-		1.0}; // Last element 1.0 means it is a point light
+
+	GLfloat light_position[4];
+	GLfloat light_direction[3];
+
+	if (nightMode) {
+		GLfloat playerArmTopPos[3];
+		arena->CalculatePlayerArmTopPos(playerArmTopPos);
+		light_position[0] = playerArmTopPos[0];
+		light_position[1] = playerArmTopPos[1];
+		light_position[2] = playerArmTopPos[2];
+		light_position[3] = 1.0;
+
+		GLfloat playerArmLookAt[3];
+		arena->CalculatePlayerArmLookAt(playerArmLookAt);
+		light_direction[0] = playerArmLookAt[0];
+		light_direction[1] = playerArmLookAt[1];
+		light_direction[2] = playerArmLookAt[2];
+	
+	} else {
+		light_position[0] = arena->GetGx() + arena->GetWidth() / 2;
+		light_position[1] = arena->GetGy() + arena->GetHeight() - 20;
+		light_position[2] = -arena->GetThickness() / 2;
+		light_position[3] = 1.0;
+	}
 
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-	
+
+	if (nightMode) {
+		glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light_direction);
+		glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 30.0); // Light cone angle (0° to 90°)
+		glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 10.0); // Intensity within the cone (0 = uniform, 128 = strong in the center)
+	} else {
+		glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 180.0); // Light cone angle (0° to 90°)
+	}
+
 	glPushMatrix();
 		glTranslatef(arena->GetPlayerGx(), arena->GetPlayerGy(), arena->GetPlayerGz());
 		DrawAxes();
 	glPopMatrix();
 
 	arena->Draw();
+
+	if (visibleHitboxes){
+		arena->DrawHitboxes();
+	}
 
 	for (Shot* shot : playerShots) {
 		if (shot) shot->Draw();
@@ -283,12 +393,15 @@ void keyPress(unsigned char key, int x, int y) {
 	switch (key) {
 		case '1':
 			toggleCam = 1;
+			lastCam = 1;
 			break;
 		case '2':
 			toggleCam = 2;
+			lastCam = 2;
 			break;
 		case '3':
 			toggleCam = 3;
+			lastCam = 3;
 			break;
 		case '4':
 			simulateSlowProcessingUbuntu = !simulateSlowProcessingUbuntu;
@@ -321,6 +434,10 @@ void keyPress(unsigned char key, int x, int y) {
 		case 'S':
 			keyStatus[(int)('s')] = 1;
 			break;
+		case 'n':
+		case 'N':
+		    nightMode = !nightMode;
+			break;
 		case 'f':
 		case 'F':
 			keyStatus[(int)('f')] = 1;
@@ -341,6 +458,10 @@ void keyPress(unsigned char key, int x, int y) {
 		case 'H':
 			keyStatus[(int)('h')] = 1;
 			break;
+		case 'c':
+		case 'C':
+			visibleHitboxes = !visibleHitboxes;
+			break;
 		case 'x':
 		case 'X':
 			moveThirdCamera = !moveThirdCamera;
@@ -353,10 +474,10 @@ void keyPress(unsigned char key, int x, int y) {
 			keyStatus[(int)(' ')] = 1;
 			break;
 		case '+':
-			if (thirdCameraZoom > 5) thirdCameraZoom--;
+			if (thirdCameraZoom > 5 && moveThirdCamera) thirdCameraZoom--;
 			break;
 		case '-':
-			if (thirdCameraZoom < 10) thirdCameraZoom++;
+			if (thirdCameraZoom < 10 && moveThirdCamera) thirdCameraZoom++;
 			break;
 		case 27:
 			exit(0);
@@ -379,14 +500,15 @@ void ResetKeyStatus() {
 }
 
 
-void init(int windowSize) {
+void init(int windowSize, char* svg_file_path) {
     glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
     glEnable(GL_LIGHTING);
     glShadeModel(GL_SMOOTH);
-    glEnable(GL_LIGHT0);
-	// glEnable(GL_TEXTURE_2D)
+	glEnable(GL_TEXTURE_2D);
 	glDepthFunc(GL_LEQUAL);
+    glEnable(GL_LIGHT0);
+
 
     glViewport(0, 0, (GLsizei) windowSize, (GLsizei) windowSize);
 
@@ -395,7 +517,18 @@ void init(int windowSize) {
     glLoadIdentity();
     gluPerspective(90, (GLfloat) windowSize / (GLfloat) windowSize, 1, 150);
 
+
 	glMatrixMode(GL_MODELVIEW);
+	
+	if (!loadViewportSizeFromSvg(svgFilePath)) {
+		exit(1);
+	}
+
+	arenaGroundTexture = LoadTextureRAW("textures/ground2.bmp");
+	arenaWallTexture = LoadTextureRAW("textures/wall.bmp");
+	arenaRoofTexture = LoadTextureRAW("textures/roof.bmp");
+
+	arena = new Arena(svgFilePath, arenaGroundTexture, arenaWallTexture, arenaRoofTexture);
 
 
 	ResetKeyStatus();
@@ -405,6 +538,7 @@ void init(int windowSize) {
 void passiveMotion(int x, int y) {
 	// Invert the y position
 	mouseY = Height - y;
+	mouseX = x;
 
 	if (moveThirdCamera) {
 		camXYAngle += x - lastX;
@@ -421,8 +555,10 @@ void passiveMotion(int x, int y) {
 }
 
 
-void rotateThirdCamera() {
-
+void mouseMotion(int x, int y) {
+	// Invert the y position
+	mouseY = Height - y;
+	mouseX = x;
 }
 
 
@@ -434,8 +570,7 @@ void mouseClick(int button, int state, int x, int y) {
 		toggleCam = 2;
 	}
 	if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP && !gameOver && !playerWon) {
-		// toggleCam = 1;
-		toggleCam = 3;
+		toggleCam = lastCam;
 	}
 }
 
@@ -453,7 +588,7 @@ void ResetGame() {
         delete shot;
     }
     opponentsShots.clear();
-
+	
     arena->Delete();
 
 	// Reset global variables
@@ -481,7 +616,7 @@ void ResetGame() {
 
 	loadViewportSizeFromSvg(svgFilePath);
     
-	arena = new Arena(svgFilePath);
+	arena = new Arena(svgFilePath, arenaGroundTexture, arenaWallTexture, arenaRoofTexture);
 }
 
 
@@ -497,43 +632,63 @@ void idle(void) {
 
 	// Avoids the program to crash when the difference is too high
 	if (timeDifference <= 0.0f || timeDifference > 200.0f) timeDifference = 1.0f;
-
 	timeAccumulator += timeDifference;
 	
+	// Check for reset game call
 	if (keyStatus[(int)('r')] && (gameOver || playerWon)) {
 		ResetGame();
 	}
 
+	// Check for end of the game
 	if (gameOver || playerWon) return;
 
-
+	// Player movement forwards and backwards
+	if (keyStatus[(int)('w')]) {
+		arena->SetPlayerMovementDirection(1);
+		arena->MovePlayerInXZ(timeDifference);
+	}
+	if (keyStatus[(int)('s')]) {
+		arena->SetPlayerMovementDirection(-1);
+		arena->MovePlayerInXZ(timeDifference);
+	}
+	
+	// Player rotational movement
 	if (keyStatus[(int)('a')]) {
-		arena->SetPlayerXDirection(-1);
-		arena->MovePlayerInX(timeDifference);
+		arena->RotatePlayer(true, timeDifference);
 	}
 	if (keyStatus[(int)('d')]) {
-		arena->SetPlayerXDirection(1);
-		arena->MovePlayerInX(timeDifference);
+		arena->RotatePlayer(false, timeDifference);
+	}
+
+	// Player jump
+	if (keyStatus[(int)(' ')] && arena->PlayerLanded(timeDifference)) {
+		arena->PlayerJump();
 	}
 	if (keyStatus[(int)(' ')] && arena->PlayerLanded()) {
 		arena->PlayerJump();
 	}
 
-	arena->RotatePlayerArm(mouseY, Height, timeDifference);
+	// Player arm movement
+	arena->RotatePlayerArm(mouseX, mouseY, Width, Height, timeDifference);
+	
+	// Applying 'gravity' to player and opponents
 	arena->MovePlayerInY(timeDifference);
 	arena->MoveOpponentsInY(timeDifference);
-	if (opponentMoves) arena->MoveOpponentsInX(timeDifference);
+	if (!keyStatus[(int)(' ')] || arena->PlayerReachedMaximumJumpHeight() || arena->PlayerHitsHead()) {
+		arena->SetPlayerYDirection(-1);
+	}
+
+	// Moving opponents	randomly
+	if (opponentMoves) arena->MoveOpponentsInXZ(timeDifference);
 	arena->MoveOpponentsArms(timeDifference);
 
+	// Firing opponents shots
 	if (timeAccumulator >= 1000.0f) {
 		if (opponentShoots) arena->UpdateOpponentsShots(opponentsShots, arenaWidth, timeDifference);
 		timeAccumulator = 0.0f;
 	}
 	
-	if (!keyStatus[(int)(' ')] || arena->PlayerReachedMaximumJumpHeight() || arena->PlayerHitsHead()) {
-		arena->SetPlayerYDirection(-1);
-	}
-	
+	// Updating player shots
 	for (size_t i = 0; i < playerShots.size(); ++i) {
         Shot* shot = playerShots[i];
         if (shot) {
@@ -567,6 +722,7 @@ void idle(void) {
         }
     }
 
+	// Updating opponents shots
 	for (size_t i = 0; i < opponentsShots.size(); ++i) {
 		Shot* shot = opponentsShots[i];
 
@@ -602,8 +758,10 @@ void idle(void) {
 		}
 	}
 
+	// Check if the player won
 	if (arena->PlayerWon()) { playerWon = 1; }
 
+	// Redraw the scene
 	glutPostRedisplay();
 }
 
@@ -621,12 +779,6 @@ int main(int argc, char *argv[]) {
 
 	svgFilePath = argv[1];
 
-	if (!loadViewportSizeFromSvg(svgFilePath)) {
-		exit(1);
-	}
-
-	arena = new Arena(svgFilePath);
-
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
@@ -639,9 +791,10 @@ int main(int argc, char *argv[]) {
 	glutIdleFunc(idle);
 	glutKeyboardUpFunc(keyUp);
 	glutPassiveMotionFunc(passiveMotion);
+	glutMotionFunc(mouseMotion);
 	glutMouseFunc(mouseClick);
 	
-	init(Width);
+	init(Width, svgFilePath);
 
 	glutMainLoop();
 
