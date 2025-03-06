@@ -14,6 +14,7 @@
 #include "arena.h"
 #include "shot.h"
 #include "imageloader.h"
+#include "text.h"
 
 
 using namespace tinyxml2;
@@ -128,35 +129,6 @@ void CrossProduct(GLfloat* a, GLfloat* b, GLfloat* result) {
 }
 
 
-void RasterChars(GLfloat x, GLfloat y, GLfloat z, const char* text, double r, double g, double b) {
-    glPushAttrib(GL_ENABLE_BIT);
-        glDisable(GL_LIGHTING);
-        glDisable(GL_TEXTURE_2D);
-
-        glColor3f(r, g, b);
-        glRasterPos3f(x, y, z);
-        const char* tmpStr;
-        tmpStr = text;
-
-        while (*tmpStr) {
-            glutBitmapCharacter(GLUT_BITMAP_9_BY_15, *tmpStr);
-            tmpStr++;
-        }
-    glPopAttrib();
-}
-
-
-void PrintText(GLfloat x, GLfloat y, const char* text, double r, double g, double b) {
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-        glLoadIdentity ();
-        glOrtho(0, 1, 0, 1, -1, 1);
-        RasterChars(x, y, 0, text, r, g, b);    
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-}
-
-
 void DrawAxes() {
     GLfloat color_r[] = { 1.0, 0.0, 0.0, 1.0 };
     GLfloat color_g[] = { 0.0, 1.0, 0.0, 1.0 };
@@ -246,21 +218,21 @@ void renderScene(void) {
 	glLoadIdentity();
 
 	if (gameOver) {
-		PrintText(0.5, 0.8, "Game Over", 1, 0, 0);		
+		PrintTextUI(0.5, 0.8, "Game Over", 1, 0, 0);
 	}
 	
 	if (playerWon) {
-		PrintText(0.5, 0.8, "Player Won", 1, 1, 1);
+		PrintTextUI(0.5, 0.8, "Player Won", 1, 1, 1);
 	}
 
 	if (toggleCam == 1){
-        PrintText(0.1, 0.1, "First person camera", 0, 1, 0);
+        PrintTextUI(0.1, 0.1, "First person camera", 0, 1, 0);
 		glRotatef(-arena->GetPlayerXZAngle(), 0, 1, 0);
 		glRotatef(90, 0, 1, 0); // Rotate to point to x positive
 		glTranslatef(-arena->GetPlayerGx(), -arena->CalculatePlayerHeadYPosition(), -arena->GetPlayerGz());
  
     } else if (toggleCam == 2){
-        PrintText(0.1, 0.1, "Gun sight camera", 0, 1, 0);
+        PrintTextUI(0.1, 0.1, "Gun sight camera", 0, 1, 0);
 
 		GLfloat playerArmTopPos[3];
 		arena->CalculatePlayerArmTopPos(playerArmTopPos);
@@ -296,7 +268,7 @@ void renderScene(void) {
 
 
     } else if (toggleCam == 3){
-        PrintText(0.1, 0.1, "Third person camera", 0, 1, 0);
+        PrintTextUI(0.1, 0.1, "Third person camera", 0, 1, 0);
 		
 		// Calculate the angle to point to player
 		float deltaY = cameraHeightOffset;
@@ -635,7 +607,8 @@ void idle(void) {
 	timeAccumulator += timeDifference;
 	
 	// Check for reset game call
-	if (keyStatus[(int)('r')] && (gameOver || playerWon)) {
+	// if (keyStatus[(int)('r')] && (gameOver || playerWon)) {
+	if (keyStatus[(int)('r')]) {
 		ResetGame();
 	}
 

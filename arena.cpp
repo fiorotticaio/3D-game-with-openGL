@@ -312,7 +312,7 @@ void Arena::MovePlayerInXZ(GLdouble timeDifference) {
     }
 
     for (Opponent* opponent : gOpponents) {
-        if (PlayerCollidesWithOpponent(opponent, timeDifference)) {
+        if (PlayerCollidesWithOpponent(opponent, timeDifference) && !PlayerLandsInOpponent(opponent, timeDifference)) {
             return;
         }
     }
@@ -408,19 +408,24 @@ bool Arena::PlayerLandsInObstacle(Obstacle* obstacle, GLdouble timeDifference) {
 
     bool playerLandedInObstacle = playerIsWithinX && playerIsAbove;
 
-    if (playerLandedInObstacle)
+    // Fixando o player encima do obstaculo para evitar bugs
+    if (playerLandedInObstacle) {
         gPlayer->SetGy(obstacleTopY + gPlayer->GetThighHeight() + gPlayer->GetShinHeight());
+    }
 
     return playerLandedInObstacle;
 }
 
 
 bool Arena::PlayerCollidesWithOpponent(Opponent* opponent, GLdouble timeDifference) {
+    // Ajustes de offset
+    GLfloat offsetXZ = 0.05f;
+    GLfloat offsetY = 0.05f;
 
     // Preview da posição do jogador após o movimento
     GLfloat playerAngleRad = gPlayer->GetXZAngle() * M_PI / 180.0f;
-    GLfloat playerGXPreview = gPlayer->GetGx() + gPlayer->GetXZSpeed() * timeDifference * gPlayer->GetMovementDirection() * cos(playerAngleRad);
-    GLfloat playerGZPreview = gPlayer->GetGz() + gPlayer->GetXZSpeed() * timeDifference  * gPlayer->GetMovementDirection() * sin(playerAngleRad);
+    GLfloat playerGXPreview = gPlayer->GetGx() + (gPlayer->GetXZSpeed() + offsetXZ) * timeDifference * gPlayer->GetMovementDirection() * cos(playerAngleRad);
+    GLfloat playerGZPreview = gPlayer->GetGz() + (gPlayer->GetXZSpeed() + offsetXZ) * timeDifference  * gPlayer->GetMovementDirection() * sin(playerAngleRad);
 
     // Pontos da hitbox do jogador
     GLfloat playerLeftX = playerGXPreview - gPlayer->GetHitboxRadius();
@@ -443,19 +448,25 @@ bool Arena::PlayerCollidesWithOpponent(Opponent* opponent, GLdouble timeDifferen
     bool collidesInY = playerTopY >= opponentBottomY && playerBottomY <= opponentTopY;
     bool collidesInZ = playerFrontZ >= opponentBackZ && playerBackZ <= opponentFrontZ;
 
+    // Evitar "travar na quina" verificando se o jogador está subindo
+    bool isMovingUp = gPlayer->GetYDirection() > 0;
+    if (isMovingUp && playerBottomY >= opponentTopY - offsetY) {
+        return false;  // Permite que o jogador continue subindo
+    }
+
     return collidesInX && collidesInY && collidesInZ;
 }
-
 
 bool Arena::PlayerLandsInOpponent(Opponent* opponent, GLdouble timeDifference) {
 
     // Ajustes de offset
+    GLfloat offsetXZ = 0.05f;
     GLfloat offsetY = 0.05f;
 
     // Preview da posição do jogador após o movimento
     GLfloat playerAngleRad = gPlayer->GetXZAngle() * M_PI / 180.0f;
-    GLfloat playerGXPreview = gPlayer->GetGx() + gPlayer->GetXZSpeed() * timeDifference * gPlayer->GetMovementDirection() * cos(playerAngleRad);
-    GLfloat playerGZPreview = gPlayer->GetGz() + gPlayer->GetXZSpeed() * timeDifference  * gPlayer->GetMovementDirection() * sin(playerAngleRad);
+    GLfloat playerGXPreview = gPlayer->GetGx() + (gPlayer->GetXZSpeed() + offsetXZ) * timeDifference * gPlayer->GetMovementDirection() * cos(playerAngleRad);
+    GLfloat playerGZPreview = gPlayer->GetGz() + (gPlayer->GetXZSpeed() + offsetXZ) * timeDifference  * gPlayer->GetMovementDirection() * sin(playerAngleRad);
 
     // Pontos da hitbox do jogador
     GLfloat playerBottomY = gPlayer->GetGy() - gPlayer->GetThighHeight() - gPlayer->GetShinHeight();
@@ -477,12 +488,14 @@ bool Arena::PlayerLandsInOpponent(Opponent* opponent, GLdouble timeDifference) {
     bool playerIsWithinZ = playerGZPreview >= opponentBackZ - auxOffset && playerGZPreview <= opponentFrontZ + auxOffset;
     bool playerIsAbove = playerTopY >= opponentTopY && playerBottomY <= opponentTopY && playerBottomY > opponentTopY - 50 * offsetY;
 
-    bool playerLandedInObstacle = playerIsWithinX && playerIsAbove && playerIsWithinZ;
+    bool playerLandsInOpponent = playerIsWithinX && playerIsAbove && playerIsWithinZ;
 
-    if (playerLandedInObstacle)
+    // Fixando o player encima do oponente para evitar bugs
+    if (playerLandsInOpponent) {
         gPlayer->SetGy(opponentTopY + gPlayer->GetThighHeight() + gPlayer->GetShinHeight());
+    }
 
-    return playerLandedInObstacle;
+    return playerLandsInOpponent;
 }
 
 
@@ -1175,6 +1188,7 @@ void Arena::CalculatePlayerArmLookAt(GLfloat* playerArmLookAt) {
 
 void Arena::DrawHitboxes(){
     gPlayer->DrawHitbox();
+
     for (Opponent* opponent : gOpponents) {
         opponent->DrawHitbox();
     }

@@ -1,5 +1,5 @@
 #include "character.h"
-
+#include "text.h"
 
 void Character::DrawHeadAndArms(GLfloat R, GLfloat G, GLfloat B) {
     glPushMatrix();
@@ -730,4 +730,22 @@ void Character::DrawHitbox() {
         glEnd();
 
     glPopMatrix();
+
+    char pos[50];
+    sprintf(pos, "Position: (x: %.2f, y: %.2f, z: %.2f)", gX, gY, gZ);
+    PrintTextWorld(gX, gY + gHitboxHeight, gZ, pos, 1, 1, 1);
+
+    GLfloat charLeftX = gX - gHitboxRadius;
+    GLfloat charRightX = gX + gHitboxRadius;
+    GLfloat charBottomY = gY - gThighHeight - gShinHeight;
+    GLfloat charTopY = charBottomY + gHitboxHeight;
+    GLfloat charFrontZ = gZ + gHitboxRadius;
+    GLfloat charBackZ = gZ - gHitboxRadius;
+    char hitbox[100];
+    sprintf(hitbox, "Hitbox: (X: %.2f, %.2f) (Y: %.2f, %.2f)", charLeftX, charRightX, charBottomY, charTopY);
+    PrintTextWorld(gX, gY + gHitboxHeight + 1.0, gZ, hitbox, 1, 1, 1);
+
+    char hitboxCont[100];
+    sprintf(hitboxCont, "(Z: %.2f, %.2f)", charBackZ, charFrontZ);
+    PrintTextWorld(gX, gY + gHitboxHeight + 0.5, gZ, hitboxCont, 1, 1, 1);
 }
