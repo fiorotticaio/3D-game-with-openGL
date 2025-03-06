@@ -42,7 +42,7 @@ private:
     void DrawRects(GLfloat width, GLfloat height, GLfloat thickness, GLfloat R, GLfloat G, GLfloat B);
     bool PlayerCollidesWithObstacle(Obstacle* obstacle, GLdouble timeDifference);
     bool PlayerLandsInObstacle(Obstacle* obstacle, GLdouble timeDifference);
-    bool PlayerCollidesWithOpponent(Player* player, Opponent* opponent, GLfloat dx, GLfloat dy);
+    bool PlayerCollidesWithOpponent(Opponent* opponent, GLdouble timeDifference);
     bool PlayerLandsInOpponent(Opponent* opponent, GLdouble timeDifference);
     bool PlayerCollidesWithGround(Player* player, GLfloat dx, GLfloat dy);
     bool OpponentCollidesWithObstacle(Opponent* opponent, Obstacle* obstacle, GLfloat dx, GLfloat dy);

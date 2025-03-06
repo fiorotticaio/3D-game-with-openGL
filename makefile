@@ -8,13 +8,17 @@ CXX = g++
 CFLAGS  = -g -Wall
 LINKING = -lglut -lGL -lGLU
 TARGET = *
-SVG_PATH = ./arena_teste.svg
+SVG_STANDARD_PATH = ./arena_teste.svg
+SVG_OPPONENT_TESTING_PATH = ./arena_unique_opponent.svg
 
 all:
 	$(CXX) $(CFLAGS) -o trabalhocg $(TARGET).cpp $(LINKING)
 
 run: all
-	./trabalhocg $(SVG_PATH)
+	./trabalhocg $(SVG_STANDARD_PATH)
+
+opponent: all
+	./trabalhocg $(SVG_OPPONENT_TESTING_PATH)
 
 run2: all
 	./trabalhocg ./arena_teste_2.svg

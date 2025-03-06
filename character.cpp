@@ -30,11 +30,6 @@ void Character::DrawSphere(GLfloat radius, GLfloat R, GLfloat G, GLfloat B) {
     GLfloat mat_diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
     GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
     GLfloat mat_shininess[] = { 50 };
-    // GLfloat materialEmission[] = { 0.1, 0.1, 0.1, 1.0 }; // Pequeno brilho próprio
-    // GLfloat materialColor[] = { R * 0.5f + 0.5f, G * 0.5f + 0.5f, B * 0.5f + 0.5f, 1.0 }; // Ajuste na iluminação ambiente
-    // GLfloat mat_diffuse[] = { R, G, B, 1.0 }; // Cor difusa para refletir a luz corretamente
-    // GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
-    // GLfloat mat_shininess[] = { 50 }; // Reduz o brilho excessivo
 
     glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
     glMaterialfv(GL_FRONT, GL_AMBIENT, materialColor);
@@ -85,12 +80,6 @@ void Character::DrawCuboid(GLfloat width, GLfloat height, GLfloat depth, GLfloat
     GLfloat mat_diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
     GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
     GLfloat mat_shininess[] = { 100 };
-    // GLfloat materialEmission[] = { 0.1, 0.1, 0.1, 1.0 }; // Pequeno brilho próprio
-    // GLfloat materialColor[] = { R * 0.5f + 0.5f, G * 0.5f + 0.5f, B * 0.5f + 0.5f, 1.0 }; // Ajuste na iluminação ambiente
-    // GLfloat mat_diffuse[] = { R, G, B, 1.0 }; // Cor difusa para refletir a luz corretamente
-    // GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
-    // GLfloat mat_shininess[] = { 50 }; // Reduz o brilho excessivo
-
     
     glBegin(GL_QUADS);
         glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
