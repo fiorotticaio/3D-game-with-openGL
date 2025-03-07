@@ -713,7 +713,7 @@ void idle(void) {
 
 			if (shotDeleted) continue;
 
-			if (arena->PlayerCollidesWithShot(shot)) {
+			if (arena->CharacterCollidesWithShot(arena->GetPlayer(), shot)) {
 				gameOver = 1;
 				delete shot;
 				opponentsShots.erase(opponentsShots.begin() + i);
