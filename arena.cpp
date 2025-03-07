@@ -782,8 +782,7 @@ void Arena::MoveOpponentsInXZ(GLdouble timeDifference) {
         }
 
         if (!directionChanged) {
-
-            // TODO: Randomize the direction of the opponent
+            // Randomize the direction of the opponent
             // std::random_device rd;  
             // std::mt19937 gen(rd()); 
             // std::uniform_real_distribution<GLfloat> dist(0, 1);

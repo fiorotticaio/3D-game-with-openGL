@@ -591,8 +591,7 @@ void idle(void) {
 	timeAccumulator += timeDifference;
 	
 	// Check for reset game call
-	// if (keyStatus[(int)('r')] && (gameOver || playerWon)) {
-	if (keyStatus[(int)('r')]) {
+	if (keyStatus[(int)('r')] && (gameOver || playerWon)) {
 		ResetGame();
 	}
 

@@ -112,7 +112,7 @@ public:
         gShinThickness = gShinWidth;
         gFrontShinAngle = 0.0f;
         gBackShinAngle = -50.0f;
-        gXZSpeed = 0.05f;
+        gXZSpeed = 0.03f;
         gYSpeed = 0.025f;
         gRotationSpeed = 0.5f;
 
