@@ -119,7 +119,7 @@ public:
         gHitboxHeight = gThighHeight + gShinHeight + gBodyHeight + 2 * gHeadCircleRadius;
         gHitboxRadius = gBodyWidth;
 
-        maxJumpHeight = 4 * gHitboxHeight; // 4 instead of 3 to make the game more playable
+        maxJumpHeight = 5 * gHitboxHeight; // 4 instead of 3 to make the game more playable
         jumpHeight = 0;
 
         gFrontThighAngleDir = 1;

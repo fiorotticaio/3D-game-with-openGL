@@ -430,10 +430,10 @@ void keyPress(unsigned char key, int x, int y) {
 			keyStatus[(int)(' ')] = 1;
 			break;
 		case '+':
-			if (thirdCameraZoom > 5 && moveThirdCamera) thirdCameraZoom--;
+			if (moveThirdCamera) thirdCameraZoom--;
 			break;
 		case '-':
-			if (thirdCameraZoom < 10 && moveThirdCamera) thirdCameraZoom++;
+			if (moveThirdCamera) thirdCameraZoom++;
 			break;
 		case 27:
 			exit(0);
@@ -464,6 +464,11 @@ void init(int windowSize, char* svg_file_path) {
 	glEnable(GL_TEXTURE_2D);
 	glDepthFunc(GL_LEQUAL);
     glEnable(GL_LIGHT0);
+
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);   // Remove as faces traseiras
+	glFrontFace(GL_CCW);   // Define que a frente dos polígonos é no sentido anti-horário (CCW)
+
 
 
     glViewport(0, 0, (GLsizei) windowSize, (GLsizei) windowSize);
