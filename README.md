@@ -5,7 +5,6 @@
 - [x] A janela de visualização deverá ter 500x500 pixels
 - [x] Jogador deve ganhar ao chegar ao final
 - [x] Jogador deve perder ao encostar nos tiros
-- [ ] Jogador deve perder ao encostar nos oponentes (confirmar isso)
 
 ## Jogador
 
