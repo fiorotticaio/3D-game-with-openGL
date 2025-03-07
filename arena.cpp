@@ -1019,7 +1019,7 @@ bool Arena::PlayerHitsHeadOpponent(Player* player, Opponent* opponent, GLfloat d
 
 
 bool Arena::PlayerWon() {
-    GLfloat offset = 10.0f;
+    GLfloat offset = 1.0f;
     GLfloat endArena = gX + gWidth - offset;
     GLfloat gXPreview = gPlayer->GetGx() + gPlayer->GetHitboxRadius(); 
     return gXPreview >= endArena;
