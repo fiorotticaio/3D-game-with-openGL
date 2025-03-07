@@ -13,6 +13,7 @@
 #include "tinyxml2.h"
 #include <string>
 #include "shot.h"
+#include <random>
 
 
 class Arena {
@@ -40,16 +41,12 @@ private:
     void LoadArena(const char* svg_file_path);
     void DrawArena();
     void DrawRects(GLfloat width, GLfloat height, GLfloat thickness, GLfloat R, GLfloat G, GLfloat B);
-    bool PlayerCollidesWithObstacle(Obstacle* obstacle, GLdouble timeDifference);
-    bool PlayerLandsInObstacle(Obstacle* obstacle, GLdouble timeDifference);
-    bool PlayerCollidesWithOpponent(Player* player, Opponent* opponent, GLfloat dx, GLfloat dy);
-    bool PlayerLandsInOpponent(Opponent* opponent, GLdouble timeDifference);
-    bool PlayerCollidesWithGround(Player* player, GLfloat dx, GLfloat dy);
-    bool OpponentCollidesWithObstacle(Opponent* opponent, Obstacle* obstacle, GLfloat dx, GLfloat dy);
-    bool OpponentLandsInObstacle(Opponent* opponent, Obstacle* obstacle, GLfloat dx, GLfloat dy);
-    bool OpponentCollidesWithGround(Opponent* opponent, GLfloat dx, GLfloat dy);
+    bool CharacterCollidesWithObstacle(Character * character, Obstacle* obstacle, GLdouble timeDifference);
+    bool CharacterLandsInObstacle(Character * character, Obstacle* obstacle, GLdouble timeDifference);
+    bool CharacterCollidesWithOpponent(Character * character, Opponent* opponent, GLdouble timeDifference);
+    bool CharacterLandsInOpponent(Character * character, Opponent* opponent, GLdouble timeDifference);
+    bool CharacterCollidesWithGround(Character * character, GLfloat dx, GLfloat dy);
     bool ObstacleCollidesWithShot(Obstacle* obstacle, Shot* shot);
-    bool OpponentCollidesWithShot(Opponent* opponent, Shot* shot);
 
 
 public:
@@ -69,6 +66,7 @@ public:
     GLfloat GetWidth();
     GLfloat GetHeight();
     GLfloat GetThickness();
+    Character* GetPlayer();
     GLfloat GetPlayerGx();
     GLfloat GetPlayerGy();
     GLfloat GetPlayerGz();
@@ -98,7 +96,7 @@ public:
     GLfloat GetPlayerShinHeight();
     bool PlayerReachedMaximumJumpHeight();
     bool PlayerLanded(GLdouble timeDifference);
-    bool OpponentLanded(Opponent* opponent);
+    bool OpponentLanded(Opponent* opponent, GLdouble timeDifference);
     std::vector<Obstacle*> GetObstacles();
     std::vector<Opponent*> GetOpponents();
     void EraseOpponent(Opponent* opponent);
@@ -108,7 +106,7 @@ public:
     bool OpponentsCollidesWithShot(Shot* shot);
     void MoveOpponentsArms(GLdouble timeDifference);
     void UpdateOpponentsShots(std::vector<Shot*>& opponentsShots, GLfloat maxDist, GLdouble timeDifference);
-    bool PlayerCollidesWithShot(Shot* shot);
+    bool CharacterCollidesWithShot(Character * character, Shot* shot);
     bool PlayerHitsHead();
     bool PlayerHitsHeadRoof(Player* player, GLfloat dx, GLfloat dy);
     bool PlayerHitsHeadObstacle(Player* player, Obstacle* obstacle, GLfloat dx, GLfloat dy);
@@ -118,8 +116,6 @@ public:
     void AnimatePlayerLegs(GLdouble timeDifference);
     void AnimateOpponentsLegs(GLdouble timeDifference);
     bool OpponentLandsInPlayer(Opponent* opponent, Player* player, GLfloat dx, GLfloat dy);
-    bool OpponentCollidesWithOtherOpponent(Opponent* opponent, Opponent* otherOpponent, GLfloat dx, GLfloat dy);
-    bool OpponentLandsInOtherOpponent(Opponent* opponent, Opponent* otherOpponent, GLfloat dx, GLfloat dy);
     GLfloat CalculatePlayerHeadYPosition();
     GLfloat GetPlayerXZAngle();
     GLfloat GetPlayerXZArmAngle();
@@ -127,6 +123,7 @@ public:
     void CalculatePlayerArmTopPos(GLfloat* playerArmTopPos);
     void CalculatePlayerArmLookAt(GLfloat* playerArmLookAt);
     void DrawHitboxes();
+    void DrawCrosshair();
 };
 
 

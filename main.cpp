@@ -14,6 +14,7 @@
 #include "arena.h"
 #include "shot.h"
 #include "imageloader.h"
+#include "text.h"
 
 
 using namespace tinyxml2;
@@ -75,6 +76,7 @@ int opponentShoots = 0;
 int moveThirdCamera = 0;
 int visibleHitboxes = 0;
 int nightMode = 0;
+int axisEnabled = 0;
 
 // Textures
 GLuint arenaGroundTexture;
@@ -86,30 +88,6 @@ GLuint arenaRoofTexture;
 /*****************************************************************************************/
 /************************************ AUX FUNCTIONS **************************************/
 /*****************************************************************************************/
-GLuint LoadTextureRAW(const char* filename) {
-    GLuint texture;
-    Image* image = loadBMP(filename);
-
-    glGenTextures(1, &texture); // Cria o container de textura
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,GL_MODULATE);
-	// glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D,                //Always GL_TEXTURE_2D
-                             0,                            //0 for now
-                             GL_RGB,                       //Format OpenGL uses for image
-                             image->width, image->height,  //Width and height pixels
-                             0,                            //The border of the image
-                             GL_RGB, //GL_RGB, because pixels are stored in RGB format
-                             GL_UNSIGNED_BYTE, //GL_UNSIGNED_BYTE, because pixels are stored
-                                               //as unsigned numbers
-                             image->pixels);               //The actual pixel data
-    delete image;
-
-    return texture;
-}
-
 
 void Normalize(GLfloat* v) {
     GLfloat length = sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
@@ -125,35 +103,6 @@ void CrossProduct(GLfloat* a, GLfloat* b, GLfloat* result) {
     result[0] = a[1] * b[2] - a[2] * b[1];
     result[1] = a[2] * b[0] - a[0] * b[2];
     result[2] = a[0] * b[1] - a[1] * b[0];
-}
-
-
-void RasterChars(GLfloat x, GLfloat y, GLfloat z, const char* text, double r, double g, double b) {
-    glPushAttrib(GL_ENABLE_BIT);
-        glDisable(GL_LIGHTING);
-        glDisable(GL_TEXTURE_2D);
-
-        glColor3f(r, g, b);
-        glRasterPos3f(x, y, z);
-        const char* tmpStr;
-        tmpStr = text;
-
-        while (*tmpStr) {
-            glutBitmapCharacter(GLUT_BITMAP_9_BY_15, *tmpStr);
-            tmpStr++;
-        }
-    glPopAttrib();
-}
-
-
-void PrintText(GLfloat x, GLfloat y, const char* text, double r, double g, double b) {
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-        glLoadIdentity ();
-        glOrtho(0, 1, 0, 1, -1, 1);
-        RasterChars(x, y, 0, text, r, g, b);    
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
 }
 
 
@@ -246,21 +195,21 @@ void renderScene(void) {
 	glLoadIdentity();
 
 	if (gameOver) {
-		PrintText(0.5, 0.8, "Game Over", 1, 0, 0);		
+		PrintTextUI(0.5, 0.8, "Game Over", 1, 0, 0);
 	}
 	
 	if (playerWon) {
-		PrintText(0.5, 0.8, "Player Won", 1, 1, 1);
+		PrintTextUI(0.5, 0.8, "Player Won", 1, 1, 1);
 	}
 
 	if (toggleCam == 1){
-        PrintText(0.1, 0.1, "First person camera", 0, 1, 0);
+        PrintTextUI(0.1, 0.1, "First person camera", 0, 1, 0);
 		glRotatef(-arena->GetPlayerXZAngle(), 0, 1, 0);
 		glRotatef(90, 0, 1, 0); // Rotate to point to x positive
 		glTranslatef(-arena->GetPlayerGx(), -arena->CalculatePlayerHeadYPosition(), -arena->GetPlayerGz());
  
     } else if (toggleCam == 2){
-        PrintText(0.1, 0.1, "Gun sight camera", 0, 1, 0);
+        PrintTextUI(0.1, 0.1, "Gun sight camera", 0, 1, 0);
 
 		GLfloat playerArmTopPos[3];
 		arena->CalculatePlayerArmTopPos(playerArmTopPos);
@@ -294,9 +243,10 @@ void renderScene(void) {
 				playerArmTopPos[2] + playerArmLookAt[2], 
 				upVector[0], upVector[1], upVector[2]);
 
+		arena->DrawCrosshair();
 
     } else if (toggleCam == 3){
-        PrintText(0.1, 0.1, "Third person camera", 0, 1, 0);
+        PrintTextUI(0.1, 0.1, "Third person camera", 0, 1, 0);
 		
 		// Calculate the angle to point to player
 		float deltaY = cameraHeightOffset;
@@ -365,10 +315,12 @@ void renderScene(void) {
 		glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 180.0); // Light cone angle (0° to 90°)
 	}
 
-	glPushMatrix();
-		glTranslatef(arena->GetPlayerGx(), arena->GetPlayerGy(), arena->GetPlayerGz());
-		DrawAxes();
-	glPopMatrix();
+	if (axisEnabled) {
+		glPushMatrix();
+			glTranslatef(arena->GetPlayerGx(), arena->GetPlayerGy(), arena->GetPlayerGz());
+			DrawAxes();
+		glPopMatrix();
+	}
 
 	arena->Draw();
 
@@ -461,6 +413,10 @@ void keyPress(unsigned char key, int x, int y) {
 		case 'c':
 		case 'C':
 			visibleHitboxes = !visibleHitboxes;
+			break;
+		case 'e':
+		case 'E':
+			axisEnabled = !axisEnabled;
 			break;
 		case 'x':
 		case 'X':
@@ -635,7 +591,8 @@ void idle(void) {
 	timeAccumulator += timeDifference;
 	
 	// Check for reset game call
-	if (keyStatus[(int)('r')] && (gameOver || playerWon)) {
+	// if (keyStatus[(int)('r')] && (gameOver || playerWon)) {
+	if (keyStatus[(int)('r')]) {
 		ResetGame();
 	}
 
@@ -740,7 +697,7 @@ void idle(void) {
 
 			if (shotDeleted) continue;
 
-			if (arena->PlayerCollidesWithShot(shot)) {
+			if (arena->CharacterCollidesWithShot(arena->GetPlayer(), shot)) {
 				gameOver = 1;
 				delete shot;
 				opponentsShots.erase(opponentsShots.begin() + i);

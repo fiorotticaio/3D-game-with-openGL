@@ -1,11 +1,11 @@
 #include "character.h"
-
+#include "text.h"
 
 void Character::DrawHeadAndArms(GLfloat R, GLfloat G, GLfloat B) {
     glPushMatrix();
         // Draw the head
         glTranslatef(0, gBodyHeight + gHeadCircleRadius, 0);
-        DrawSphere(gHeadCircleRadius, R, G, B);
+        DrawSphereHead(gHeadCircleRadius, R, G, B);
 
         // Draw front arm (the one that moves)
         glTranslatef(0, -(gHeadCircleRadius + (gBodyHeight/2)), gBodyThickness/2);
@@ -13,28 +13,32 @@ void Character::DrawHeadAndArms(GLfloat R, GLfloat G, GLfloat B) {
         glPushMatrix(); // The angle dont interfear in the angle of the other arm
             glRotatef(gXYArmAngle, 0, 0, 1);
             glRotatef(gXZArmAngle, 1, 0, 0);
-            DrawCuboid(gArmWidth, gArmHeight, gArmThickness, 1.0f, 1.0f, 0.0f);
+            DrawCuboid(gArmWidth, gArmHeight, gArmThickness, R, G, B);
         glPopMatrix();
 
         // Draw back arm (the one that doesn't move)
         glTranslatef(0, 0, -gBodyThickness);
         glRotatef(-150, 0, 0, 1); // Fixed angle
-        DrawCuboid(gArmWidth, gArmHeight, gArmThickness, 1.0f, 1.0f, 0.0f);
+        DrawCuboid(gArmWidth, gArmHeight, gArmThickness, R, G, B);
     glPopMatrix();
 }
 
 
-void Character::DrawSphere(GLfloat radius, GLfloat R, GLfloat G, GLfloat B) {
+void Character::DrawSphereHead(GLfloat radius, GLfloat R, GLfloat G, GLfloat B) {
+    static bool texturesLoaded = false;
+    static GLuint playerTexture, opponentTexture;
+
+    if (!texturesLoaded) {
+        playerTexture = LoadTextureRAW("textures/head-player.bmp");
+        opponentTexture = LoadTextureRAW("textures/head-opponent.bmp");
+        texturesLoaded = true;
+    }
+
     GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0 };
     GLfloat materialColor[] = { R, G, B, 1.0 };
     GLfloat mat_diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
-    GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
-    GLfloat mat_shininess[] = { 50 };
-    // GLfloat materialEmission[] = { 0.1, 0.1, 0.1, 1.0 }; // Pequeno brilho próprio
-    // GLfloat materialColor[] = { R * 0.5f + 0.5f, G * 0.5f + 0.5f, B * 0.5f + 0.5f, 1.0 }; // Ajuste na iluminação ambiente
-    // GLfloat mat_diffuse[] = { R, G, B, 1.0 }; // Cor difusa para refletir a luz corretamente
-    // GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
-    // GLfloat mat_shininess[] = { 50 }; // Reduz o brilho excessivo
+    GLfloat mat_specular[] = { 0, 0, 0, 1.0 };
+    GLfloat mat_shininess[] = { 0 };
 
     glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
     glMaterialfv(GL_FRONT, GL_AMBIENT, materialColor);
@@ -44,8 +48,11 @@ void Character::DrawSphere(GLfloat radius, GLfloat R, GLfloat G, GLfloat B) {
     glColor3f(R, G, B);
 
     GLUquadric* quad = gluNewQuadric();
+    gluQuadricTexture(quad, GL_TRUE);
+    glBindTexture(GL_TEXTURE_2D, gIsPlayer ? playerTexture : opponentTexture);
     gluSphere(quad, radius, 20, 20);
     gluDeleteQuadric(quad);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 
@@ -85,12 +92,6 @@ void Character::DrawCuboid(GLfloat width, GLfloat height, GLfloat depth, GLfloat
     GLfloat mat_diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
     GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
     GLfloat mat_shininess[] = { 100 };
-    // GLfloat materialEmission[] = { 0.1, 0.1, 0.1, 1.0 }; // Pequeno brilho próprio
-    // GLfloat materialColor[] = { R * 0.5f + 0.5f, G * 0.5f + 0.5f, B * 0.5f + 0.5f, 1.0 }; // Ajuste na iluminação ambiente
-    // GLfloat mat_diffuse[] = { R, G, B, 1.0 }; // Cor difusa para refletir a luz corretamente
-    // GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
-    // GLfloat mat_shininess[] = { 50 }; // Reduz o brilho excessivo
-
     
     glBegin(GL_QUADS);
         glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
@@ -185,18 +186,18 @@ GLfloat Character::GetGz() {
 
 void Character::MoveInXZ(GLfloat minPlayerPositionX, GLfloat maxPlayerPositionX, GLfloat minPlayerPositionZ, GLfloat maxPlayerPositionZ, GLdouble timeDifference) {
     GLfloat angleRad = gXZAngle * M_PI / 180.0f;
-    GLfloat gX_preview = gX + gXZSpeed * timeDifference * gMovementDirection * cos(angleRad);
-    GLfloat gZ_preview = gZ - (gXZSpeed * timeDifference * gMovementDirection * sin(angleRad));
+    GLfloat gXPreview = gX + gXZSpeed * timeDifference * gMovementDirection * cos(angleRad);
+    GLfloat gZPreview = gZ - (gXZSpeed * timeDifference * gMovementDirection * sin(angleRad));
 
-    bool playerViolatesXMIN = gX_preview <= minPlayerPositionX + gBodyWidth/2;
-    bool playerViolatesXMAX = gX_preview >= maxPlayerPositionX - gBodyWidth/2;
-    bool playerViolatesZMIN = gZ_preview <= minPlayerPositionZ + gBodyWidth/2;
-    bool playerViolatesZMAX = gZ_preview >= maxPlayerPositionZ - gBodyWidth/2;
+    bool playerViolatesXMIN = gXPreview <= minPlayerPositionX + gBodyWidth/2;
+    bool playerViolatesXMAX = gXPreview >= maxPlayerPositionX - gBodyWidth/2;
+    bool playerViolatesZMIN = gZPreview <= minPlayerPositionZ + gBodyWidth/2;
+    bool playerViolatesZMAX = gZPreview >= maxPlayerPositionZ - gBodyWidth/2;
 
     if (!playerViolatesXMIN && !playerViolatesXMAX && !playerViolatesZMIN && !playerViolatesZMAX) {
         AnimateLegs(timeDifference);
-        gX = gX_preview;
-        gZ = gZ_preview;
+        gX = gXPreview;
+        gZ = gZPreview;
     }
 }
 
@@ -505,6 +506,10 @@ GLfloat Character::GetXZSpeed() {
     return gXZSpeed;
 }
 
+void Character::setXZSpeed(GLfloat speed){
+    gXZSpeed = speed;
+}
+
 
 GLfloat Character::GetYSpeed() {
     return gYSpeed;
@@ -741,4 +746,22 @@ void Character::DrawHitbox() {
         glEnd();
 
     glPopMatrix();
+
+    char pos[50];
+    sprintf(pos, "Position: (x: %.2f, y: %.2f, z: %.2f)", gX, gY, gZ);
+    PrintTextWorld(gX, gY + gHitboxHeight, gZ, pos, 1, 1, 1);
+
+    GLfloat charLeftX = gX - gHitboxRadius;
+    GLfloat charRightX = gX + gHitboxRadius;
+    GLfloat charBottomY = gY - gThighHeight - gShinHeight;
+    GLfloat charTopY = charBottomY + gHitboxHeight;
+    GLfloat charFrontZ = gZ + gHitboxRadius;
+    GLfloat charBackZ = gZ - gHitboxRadius;
+    char hitbox[100];
+    sprintf(hitbox, "Hitbox: (X: %.2f, %.2f) (Y: %.2f, %.2f)", charLeftX, charRightX, charBottomY, charTopY);
+    PrintTextWorld(gX, gY + gHitboxHeight + 1.0, gZ, hitbox, 1, 1, 1);
+
+    char hitboxCont[100];
+    sprintf(hitboxCont, "(Z: %.2f, %.2f)", charBackZ, charFrontZ);
+    PrintTextWorld(gX, gY + gHitboxHeight + 0.5, gZ, hitboxCont, 1, 1, 1);
 }
