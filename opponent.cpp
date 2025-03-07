@@ -9,9 +9,9 @@ void Opponent::Draw() {
 
         DrawHeadAndArms(1.0f, 0.0f, 0.0f);
 
-        DrawBackLeg(0.0f, 1.0f, 0.0f);
+        DrawBackLeg(1.0f, 0.0f, 0.0f);
         
-        DrawFrontLeg(0.0f, 1.0f, 0.0f);
+        DrawFrontLeg(1.0f, 0.0f, 0.0f);
     glPopMatrix();
 }
 

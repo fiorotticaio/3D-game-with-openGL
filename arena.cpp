@@ -21,7 +21,7 @@ void Arena::LoadArena(const char* svg_file_path) {
         exit(1);
     }
 
-    // Pass trough <rect> and <circle> elements
+    // Searching for blue rect (arena dimensions)
     for (XMLElement* elem = root->FirstChildElement(); elem; elem = elem->NextSiblingElement()) {
         std::string tag = elem->Name();
         
@@ -40,20 +40,31 @@ void Arena::LoadArena(const char* svg_file_path) {
                     gRed = 0.0f;
                     gGreen = 0.0f;
                     gBlue = 1.0f;
+                }
+            }
+        }
+    }
 
-                } else if (fillStr == "black") {
+    // Pass trough <rect> and <circle> elements
+    for (XMLElement* elem = root->FirstChildElement(); elem; elem = elem->NextSiblingElement()) {
+        std::string tag = elem->Name();
+        
+        if (tag == "rect") {
+            const char* fill = elem->Attribute("fill");
+
+            if (fill) {
+                std::string fillStr = fill;
+                if (fillStr == "black") {
                     // Obstacle parameters
                     GLfloat obstacleX = elem->FloatAttribute("x");
                     GLfloat obstacleY = elem->FloatAttribute("y");
                     GLfloat obstacleWidth = elem->FloatAttribute("width");
                     GLfloat obstacleHeight = elem->FloatAttribute("height");
-
                     obstacleY = MapYCoordinate(obstacleY, gY, gHeight);
-                    
-                    // TODO: Cases when an obstacle is defined in the svg before the arena
                     gObstacles.push_back(new Obstacle(obstacleX, obstacleY, obstacleWidth, obstacleHeight, gThickness));
                 }
             }
+
         } else if (tag == "circle") {
             const char* fill = elem->Attribute("fill");
 
@@ -66,10 +77,8 @@ void Arena::LoadArena(const char* svg_file_path) {
                 cy = MapYCoordinate(cy, gY, gHeight);
 
                 if (fillStr == "green") {
-                    // TODO: Cases when an obstacle is defined in the svg before the arena
                     gPlayer = new Player(cx, cy, radius, gThickness);
                 } else if (fillStr == "red") {
-                    // TODO: Cases when an obstacle is defined in the svg before the arena
                     gOpponents.push_back(new Opponent(cx, cy, radius, gThickness));
                 }
             }
@@ -773,6 +782,15 @@ void Arena::MoveOpponentsInXZ(GLdouble timeDifference) {
         }
 
         if (!directionChanged) {
+
+            // TODO: Randomize the direction of the opponent
+            // std::random_device rd;  
+            // std::mt19937 gen(rd()); 
+            // std::uniform_real_distribution<GLfloat> dist(0, 1);
+            // bool clockwise = dist(gen) > 0.5;
+            // opponent->setXZSpeed(0.02f);
+            // opponent->Rotate(clockwise, timeDifference);
+            
             opponent->MoveInXZ(gX, gX + gWidth, -gThickness, 0, timeDifference);
         }
     }

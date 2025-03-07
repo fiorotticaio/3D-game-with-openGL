@@ -13,6 +13,7 @@
 #include "tinyxml2.h"
 #include <string>
 #include "shot.h"
+#include <random>
 
 
 class Arena {

@@ -61,9 +61,10 @@ protected:
 
     GLfloat maxJumpHeight;
     GLfloat jumpHeight;
+    bool gIsPlayer;
 
     void DrawCuboid(GLfloat width, GLfloat height, GLfloat depth, GLfloat R, GLfloat G, GLfloat B);
-    void DrawSphere(GLfloat radius, GLfloat R, GLfloat G, GLfloat B);
+    void DrawSphereHead(GLfloat radius, GLfloat R, GLfloat G, GLfloat B);
     void DrawHeadAndArms(GLfloat R, GLfloat G, GLfloat B);
     void DrawFrontLeg(GLfloat R, GLfloat G, GLfloat B);
     void DrawBackLeg(GLfloat R, GLfloat G, GLfloat B);
@@ -125,6 +126,8 @@ public:
         gBackThighAngleDir = 1;
         gFrontShinAngleDir = -1;
         gBackShinAngleDir = -1;
+
+        gIsPlayer = false;
     }
 
     virtual void Draw() = 0;
@@ -154,6 +157,7 @@ public:
     void SetBackShinAngle(GLfloat angle);
     Shot* Shoot(GLfloat maxDist);
     GLfloat GetXZSpeed();
+    void setXZSpeed(GLfloat speed);
     GLfloat GetYSpeed();
     void Jump();
     GLfloat GetMaxJumpHeight();

@@ -20,7 +20,7 @@
 ## Oponentes 
 
 - [x] Desenhar o oponente em 3D (usar criatividade)
-- [ ] Oponente deve se movimentar aleatoriamente
+- [x] Oponente deve se movimentar aleatoriamente
 - [x] Oponente deve atirar de tempos em tempos
 
 ## Arena
