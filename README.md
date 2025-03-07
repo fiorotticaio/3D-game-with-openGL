@@ -13,7 +13,7 @@
 - [x] 'a' e 'd' giram o jogador no sentido horário e anti-horário (respectivamente), enquanto as teclas 'w' e 's' servem para mover o jogador para frente e para trás (respectivamente)
 - [x] A colisão também deve ser calculada para as novas paredes da arena (que agora tem um formato de paralelepípedo, ou um corredor)
 - [x] O pulo agora deve ser feito com a barra de espaço
-- [ ] O jogador pode apenas se movimentar para frente e para trás enquanto pula
+- [x] O jogador pode apenas se movimentar para frente e para trás enquanto pula
 - [x] O braço pode fazer o movimento de um cone imaginário e a bala deve seguir na direção em que a arma estiver apontando
 
 ## Oponentes 

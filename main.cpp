@@ -608,18 +608,13 @@ void idle(void) {
 		arena->MovePlayerInXZ(timeDifference);
 	}
 	
-	// Player rotational movement
-	if (keyStatus[(int)('a')]) {
+	if (keyStatus[(int)('a')] && arena->PlayerLanded(timeDifference)) {
 		arena->RotatePlayer(true, timeDifference);
 	}
-	if (keyStatus[(int)('d')]) {
+	if (keyStatus[(int)('d')] && arena->PlayerLanded(timeDifference)) {
 		arena->RotatePlayer(false, timeDifference);
 	}
 
-	// Player jump
-	if (keyStatus[(int)(' ')] && arena->PlayerLanded(timeDifference)) {
-		arena->PlayerJump();
-	}
 	if (keyStatus[(int)(' ')] && arena->PlayerLanded(timeDifference)) {
 		arena->PlayerJump();
 	}
