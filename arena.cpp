@@ -1087,3 +1087,38 @@ void Arena::DrawHitboxes(){
         opponent->DrawHitbox();
     }
 }
+
+void Arena::DrawCrosshair(){
+    // Switch to orthographic projection
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(-1.0, 1.0, -1.0, 1.0); // NDC coordinates
+
+    // Switch to modelview matrix
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    // Disable lighting for the crosshair
+    glDisable(GL_LIGHTING);
+
+    // Draw the crosshair
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glLineWidth(2.0f);
+    glBegin(GL_LINES);
+        glVertex2f(-0.05f, 0.0f);
+        glVertex2f(0.05f, 0.0f);
+        glVertex2f(0.0f, -0.05f);
+        glVertex2f(0.0f, 0.05f);
+    glEnd();
+
+    // Re-enable lighting
+    glEnable(GL_LIGHTING);
+
+    // Restore the original projection and modelview matrices
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+}

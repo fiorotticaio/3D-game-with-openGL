@@ -21,6 +21,8 @@
 
 - [x] Desenhar o oponente em 3D (usar criatividade)
 - [x] Oponente deve se movimentar aleatoriamente
+- [ ] Adaptar o movimento para ser em XZ e não apenas em X (confirmar isso)
+    - ja tem um prototipo disso comentado no codigo
 - [x] Oponente deve atirar de tempos em tempos
 
 ## Arena
@@ -30,7 +32,7 @@
 - [x] O jogo deverá conter pelo menos um modelo de luz na arena (pontual ou direcional)
 - [x] O jogo deverá ter um modo noturno (fazer a troca de modos com a tecla “n”) em que todas as luzes da arena são apagadas, sendo ligado somente uma lanterna na arma (braço) do jogador apontando na mesma direção da arma (A lanterna será representada por uma iluminação spot que deverá ser vista na arena quando iluminada)
 - [x] As paredes, o chão e o teto da arena deverão ser texturizados
-- [ ] O jogador deve ser texturizado
+- [x] O jogador deve ser texturizado
 
 ## Camera
 

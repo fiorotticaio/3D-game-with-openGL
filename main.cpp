@@ -76,6 +76,7 @@ int opponentShoots = 0;
 int moveThirdCamera = 0;
 int visibleHitboxes = 0;
 int nightMode = 0;
+int axisEnabled = 0;
 
 // Textures
 GLuint arenaGroundTexture;
@@ -242,6 +243,7 @@ void renderScene(void) {
 				playerArmTopPos[2] + playerArmLookAt[2], 
 				upVector[0], upVector[1], upVector[2]);
 
+		arena->DrawCrosshair();
 
     } else if (toggleCam == 3){
         PrintTextUI(0.1, 0.1, "Third person camera", 0, 1, 0);
@@ -313,10 +315,12 @@ void renderScene(void) {
 		glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 180.0); // Light cone angle (0° to 90°)
 	}
 
-	glPushMatrix();
-		glTranslatef(arena->GetPlayerGx(), arena->GetPlayerGy(), arena->GetPlayerGz());
-		DrawAxes();
-	glPopMatrix();
+	if (axisEnabled) {
+		glPushMatrix();
+			glTranslatef(arena->GetPlayerGx(), arena->GetPlayerGy(), arena->GetPlayerGz());
+			DrawAxes();
+		glPopMatrix();
+	}
 
 	arena->Draw();
 
@@ -409,6 +413,10 @@ void keyPress(unsigned char key, int x, int y) {
 		case 'c':
 		case 'C':
 			visibleHitboxes = !visibleHitboxes;
+			break;
+		case 'e':
+		case 'E':
+			axisEnabled = !axisEnabled;
 			break;
 		case 'x':
 		case 'X':

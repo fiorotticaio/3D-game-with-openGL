@@ -123,6 +123,7 @@ public:
     void CalculatePlayerArmTopPos(GLfloat* playerArmTopPos);
     void CalculatePlayerArmLookAt(GLfloat* playerArmLookAt);
     void DrawHitboxes();
+    void DrawCrosshair();
 };
 
 
