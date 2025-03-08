@@ -213,7 +213,10 @@ void Character::MoveInY(GLfloat minPlayerPositionY, GLfloat maxPlayerPositionY, 
 
 void Character::Rotate(bool clockwise, GLdouble timeDifference) {
     gXZAngle += gRotationSpeed * (clockwise ? 1 : -1) * timeDifference; 
-    gXZAngle = gXZAngle % 360;
+    
+    // Keep the angle between 0 and 360
+    if (gXZAngle > 360.0f) gXZAngle -= 360.0f;
+    if (gXZAngle < 0.0f) gXZAngle += 360.0f;
 }
 
 

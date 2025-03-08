@@ -56,7 +56,7 @@ protected:
     GLfloat gYSpeed;
     GLint gMovementDirection; // 1 for right (front), -1 for left (back)
     GLint gYDirection; // 1 for up, -1 for down
-    GLint gXZAngle;
+    GLfloat gXZAngle;
     GLfloat gRotationSpeed;
 
     GLfloat maxJumpHeight;
@@ -114,7 +114,7 @@ public:
         gBackShinAngle = -50.0f;
         gXZSpeed = 0.03f;
         gYSpeed = 0.025f;
-        gRotationSpeed = 0.5f;
+        gRotationSpeed = 0.15f;
 
         gHitboxHeight = gThighHeight + gShinHeight + gBodyHeight + 2 * gHeadCircleRadius;
         gHitboxRadius = gBodyWidth;
