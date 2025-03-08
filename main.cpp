@@ -283,6 +283,9 @@ void renderScene(void) {
 
 	GLfloat light_position[4];
 	GLfloat light_direction[3];
+	GLfloat light_diffuse[] = {1.0, 1.0, 1.0, 1.0};  // Luz branca intensa
+	GLfloat light_specular[] = {1.0, 1.0, 1.0, 1.0}; // Reflexo especular forte
+	GLfloat light_ambient[] = {0.2, 0.2, 0.2, 1.0};  // Aumenta a iluminação geral
 
 	if (nightMode) {
 		GLfloat playerArmTopPos[3];
@@ -305,7 +308,13 @@ void renderScene(void) {
 		light_position[3] = 1.0;
 	}
 
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+	// glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.0);
+	// glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.1);
+	// glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.01);
 
 	if (nightMode) {
 		glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light_direction);
@@ -465,9 +474,10 @@ void init(int windowSize, char* svg_file_path) {
 	glDepthFunc(GL_LEQUAL);
     glEnable(GL_LIGHT0);
 
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);   // Remove as faces traseiras
-	glFrontFace(GL_CCW);   // Define que a frente dos polígonos é no sentido anti-horário (CCW)
+	// Remove as faces traseiras
+	// glEnable(GL_CULL_FACE);
+	// glCullFace(GL_BACK);   
+	// glFrontFace(GL_CCW);
 
 
 
@@ -476,7 +486,7 @@ void init(int windowSize, char* svg_file_path) {
 	// Defining camera parameters
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(90, (GLfloat) windowSize / (GLfloat) windowSize, 1, 150);
+    gluPerspective(90, (GLfloat) windowSize / (GLfloat) windowSize, 1, 300);
 
 
 	glMatrixMode(GL_MODELVIEW);
