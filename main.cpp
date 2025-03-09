@@ -88,6 +88,23 @@ GLuint arenaRoofTexture;
 /*****************************************************************************************/
 /************************************ AUX FUNCTIONS **************************************/
 /*****************************************************************************************/
+void DrawSphere(GLfloat radius, GLfloat R, GLfloat G, GLfloat B) {
+    GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0 };
+    GLfloat materialColor[] = { R, G, B, 1.0 };
+    GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
+    GLfloat mat_shininess[] = { 50 };
+
+    glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
+    glMaterialfv(GL_FRONT, GL_AMBIENT, materialColor);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, materialColor);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+    glColor3f(R, G, B);
+
+    GLUquadric* quad = gluNewQuadric();
+    gluSphere(quad, radius, 20, 20);
+    gluDeleteQuadric(quad);
+}
 
 void Normalize(GLfloat* v) {
     GLfloat length = sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
@@ -204,12 +221,23 @@ void renderScene(void) {
 
 	if (toggleCam == 1){
         PrintTextUI(0.1, 0.1, "First person camera", 0, 1, 0);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective(90, (GLfloat) Width / (GLfloat) Width, 1, 300);
+		glMatrixMode(GL_MODELVIEW);
+
 		glRotatef(-arena->GetPlayerXZAngle(), 0, 1, 0);
 		glRotatef(90, 0, 1, 0); // Rotate to point to x positive
 		glTranslatef(-arena->GetPlayerGx(), -arena->CalculatePlayerHeadYPosition(), -arena->GetPlayerGz());
  
     } else if (toggleCam == 2){
         PrintTextUI(0.1, 0.1, "Gun sight camera", 0, 1, 0);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective(45, (GLfloat) Width / (GLfloat) Width, 1, 300);
+		glMatrixMode(GL_MODELVIEW);
 
 		GLfloat playerArmTopPos[3];
 		arena->CalculatePlayerArmTopPos(playerArmTopPos);
@@ -246,7 +274,12 @@ void renderScene(void) {
 		arena->DrawCrosshair();
 
     } else if (toggleCam == 3){
-        PrintTextUI(0.1, 0.1, "Third person camera", 0, 1, 0);
+		PrintTextUI(0.1, 0.1, "Third person camera", 0, 1, 0);
+		
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective(90, (GLfloat) Width / (GLfloat) Width, 1, 300);
+		glMatrixMode(GL_MODELVIEW);
 		
 		// Calculate the angle to point to player
 		float deltaY = cameraHeightOffset;

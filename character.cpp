@@ -611,21 +611,23 @@ void Character::CalculateArmTopPos(GLfloat* armTopPos) {
         GLfloat x = 0.0, y = 0.0, z = 0.0;
         GLfloat xOut = 0.0, yOut = 0.0, zOut = 0.0;
 
-        TranslatePoint(x, y, z, 0, gArmHeight, 0, xOut, yOut, zOut);
+        TranslatePoint(x, y, z, -gArmThickness*2.2, 0, 0, xOut, yOut, zOut);
         x = xOut; y = yOut, z = zOut;
 
-        RotatePoint(x, y, z, (gXYArmAngle * M_PI / 180), (gXZArmAngle * M_PI / 180), 0, xOut, yOut, zOut);
-        x = xOut; y = yOut, z = zOut;
-
-        TranslatePoint(x, y, z, 0, gBodyHeight/2, gBodyThickness/2, xOut, yOut, zOut);
-        x = xOut; y = yOut, z = zOut;
-
-        RotatePoint(x, y, z, 0, 0, (gXZAngle * M_PI / 180), xOut, yOut, zOut);
-        x = xOut; y = yOut, z = zOut;
-
-        TranslatePoint(x, y, z, gX, gY, gZ, xOut, yOut, zOut);
+        TranslatePoint(x, y, z, 0, gArmHeight/8, 0, xOut, yOut, zOut);
         x = xOut; y = yOut, z = zOut;
         
+        RotatePoint(x, y, z, (gXYArmAngle * M_PI / 180), (gXZArmAngle * M_PI / 180), 0, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+        
+        TranslatePoint(x, y, z, 0, gBodyHeight/2, gBodyThickness/2, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+        
+        RotatePoint(x, y, z, 0, 0, (gXZAngle * M_PI / 180), xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+        
+        TranslatePoint(x, y, z, gX, gY, gZ, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
 
         xTopArm = x;
         yTopArm = y;
