@@ -186,7 +186,7 @@ bool loadViewportSizeFromSvg(const char* svg_file_path) {
 				printf("Width or height attribute missing in blue rect.\n");
 				return false;
 			}
-
+			
 			viewingWidth = arenaWidth;
 			viewingHeight = arenaHeight;
 
@@ -568,7 +568,7 @@ void mouseMotion(int x, int y) {
 
 void mouseClick(int button, int state, int x, int y) {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && !gameOver && !playerWon) {
-        playerShots.push_back(arena->PlayerShoot(viewingWidth));
+        playerShots.push_back(arena->PlayerShoot(arenaWidth));
     }
 	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN && !gameOver && !playerWon) {
 		toggleCam = 2;
