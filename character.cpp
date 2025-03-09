@@ -611,10 +611,7 @@ void Character::CalculateArmTopPos(GLfloat* armTopPos) {
         GLfloat x = 0.0, y = 0.0, z = 0.0;
         GLfloat xOut = 0.0, yOut = 0.0, zOut = 0.0;
 
-        TranslatePoint(x, y, z, -gArmThickness*2.2, 0, 0, xOut, yOut, zOut);
-        x = xOut; y = yOut, z = zOut;
-
-        TranslatePoint(x, y, z, 0, gArmHeight/8, 0, xOut, yOut, zOut);
+        TranslatePoint(x, y, z, 0, gArmHeight, 0, xOut, yOut, zOut);
         x = xOut; y = yOut, z = zOut;
         
         RotatePoint(x, y, z, (gXYArmAngle * M_PI / 180), (gXZArmAngle * M_PI / 180), 0, xOut, yOut, zOut);
@@ -713,6 +710,81 @@ void Character::CalculateArmLookAt(GLfloat* armLookAt) {
     armLookAt[1] = shotDirection[1];
     armLookAt[2] = shotDirection[2];
 }
+
+
+void Character::CalculateGunSightPos(GLfloat* gunSightPos) {
+    GLfloat xGunSight = 0.0, yGunSight = 0.0, zGunSight = 0.0;
+
+    glPushMatrix();
+        // Getting top position
+        GLfloat x = 0.0, y = 0.0, z = 0.0;
+        GLfloat xOut = 0.0, yOut = 0.0, zOut = 0.0;
+
+        TranslatePoint(x, y, z, -gArmThickness*2.2, 0, 0, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+
+        TranslatePoint(x, y, z, 0, gArmHeight/8, 0, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+        
+        RotatePoint(x, y, z, (gXYArmAngle * M_PI / 180), (gXZArmAngle * M_PI / 180), 0, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+        
+        TranslatePoint(x, y, z, 0, gBodyHeight/2, gBodyThickness/2, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+        
+        RotatePoint(x, y, z, 0, 0, (gXZAngle * M_PI / 180), xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+        
+        TranslatePoint(x, y, z, gX, gY, gZ, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+
+        xGunSight = x;
+        yGunSight = y;
+        zGunSight = z;
+    glPopMatrix();
+
+    gunSightPos[0] = xGunSight;
+    gunSightPos[1] = yGunSight;
+    gunSightPos[2] = zGunSight;
+}
+
+
+void Character::CalculateFlashlightPos(GLfloat* flashlightPos) {
+    GLfloat xflashlight = 0.0, yflashlight = 0.0, zflashlight = 0.0;
+
+    glPushMatrix();
+        // Getting top position
+        GLfloat x = 0.0, y = 0.0, z = 0.0;
+        GLfloat xOut = 0.0, yOut = 0.0, zOut = 0.0;
+
+        TranslatePoint(x, y, z, -gArmThickness, 0, 0, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+
+        TranslatePoint(x, y, z, 0, gArmHeight/1.5, 0, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+        
+        RotatePoint(x, y, z, (gXYArmAngle * M_PI / 180), (gXZArmAngle * M_PI / 180), 0, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+        
+        TranslatePoint(x, y, z, 0, gBodyHeight/2, gBodyThickness/2, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+        
+        RotatePoint(x, y, z, 0, 0, (gXZAngle * M_PI / 180), xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+        
+        TranslatePoint(x, y, z, gX, gY, gZ, xOut, yOut, zOut);
+        x = xOut; y = yOut, z = zOut;
+
+        xflashlight = x;
+        yflashlight = y;
+        zflashlight = z;
+    glPopMatrix();
+
+    flashlightPos[0] = xflashlight;
+    flashlightPos[1] = yflashlight;
+    flashlightPos[2] = zflashlight;
+}
+
 
 void Character::DrawHitbox() {
     glPushMatrix();

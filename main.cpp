@@ -239,8 +239,8 @@ void renderScene(void) {
 		gluPerspective(45, (GLfloat) Width / (GLfloat) Width, 1, 300);
 		glMatrixMode(GL_MODELVIEW);
 
-		GLfloat playerArmTopPos[3];
-		arena->CalculatePlayerArmTopPos(playerArmTopPos);
+		GLfloat gunSightPos[3];
+		arena->CalculatePlayerGunSightPos(gunSightPos);
 
 		GLfloat playerArmLookAt[3];
 		arena->CalculatePlayerArmLookAt(playerArmLookAt); // It is already a normalized direction vector
@@ -265,10 +265,10 @@ void renderScene(void) {
 		CrossProduct(playerArmLookAt, right, upVector);
 		Normalize(upVector);
 
-		gluLookAt(playerArmTopPos[0], playerArmTopPos[1], playerArmTopPos[2],
-				playerArmTopPos[0] + playerArmLookAt[0], 
-				playerArmTopPos[1] + playerArmLookAt[1], 
-				playerArmTopPos[2] + playerArmLookAt[2], 
+		gluLookAt(gunSightPos[0], gunSightPos[1], gunSightPos[2],
+				gunSightPos[0] + playerArmLookAt[0], 
+				gunSightPos[1] + playerArmLookAt[1], 
+				gunSightPos[2] + playerArmLookAt[2], 
 				upVector[0], upVector[1], upVector[2]);
 
 		arena->DrawCrosshair();
@@ -321,11 +321,11 @@ void renderScene(void) {
 	GLfloat light_ambient[] = {0.2, 0.2, 0.2, 1.0};  // Aumenta a iluminação geral
 
 	if (nightMode) {
-		GLfloat playerArmTopPos[3];
-		arena->CalculatePlayerArmTopPos(playerArmTopPos);
-		light_position[0] = playerArmTopPos[0];
-		light_position[1] = playerArmTopPos[1];
-		light_position[2] = playerArmTopPos[2];
+		GLfloat flashlightPos[3];
+		arena->CalculatePlayerFlashlightPos(flashlightPos);
+		light_position[0] = flashlightPos[0];
+		light_position[1] = flashlightPos[1];
+		light_position[2] = flashlightPos[2];
 		light_position[3] = 1.0;
 
 		GLfloat playerArmLookAt[3];
@@ -333,6 +333,12 @@ void renderScene(void) {
 		light_direction[0] = playerArmLookAt[0];
 		light_direction[1] = playerArmLookAt[1];
 		light_direction[2] = playerArmLookAt[2];
+
+		// Draw flashlight (sphere)
+		glPushMatrix();
+			glTranslatef(light_position[0], light_position[1], light_position[2]);
+			DrawSphere(0.2, 1.0, 1.0, 0.0);
+		glPopMatrix();
 	
 	} else {
 		light_position[0] = arena->GetGx() + arena->GetWidth() / 2;

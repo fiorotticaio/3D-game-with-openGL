@@ -1079,6 +1079,17 @@ void Arena::CalculatePlayerArmLookAt(GLfloat* playerArmLookAt) {
     gPlayer->CalculateArmLookAt(playerArmLookAt);
 }
 
+
+void Arena::CalculatePlayerGunSightPos(GLfloat* playerGunSightPos) {
+    gPlayer->CalculateGunSightPos(playerGunSightPos);
+}
+
+
+void Arena::CalculatePlayerFlashlightPos(GLfloat* playerFlashlightPos) {
+    gPlayer->CalculateFlashlightPos(playerFlashlightPos);
+}
+
+
 void Arena::DrawHitboxes(){
     gPlayer->DrawHitbox();
 

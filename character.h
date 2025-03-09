@@ -173,6 +173,8 @@ public:
     GLfloat GetXYArmAngle();
     void CalculateArmTopPos(GLfloat* armTopPos);
     void CalculateArmLookAt(GLfloat* armLookAt);
+    void CalculateGunSightPos(GLfloat* gunSightPos);
+    void CalculateFlashlightPos(GLfloat* flashlightPos);
     void DrawHitbox();
 };
 

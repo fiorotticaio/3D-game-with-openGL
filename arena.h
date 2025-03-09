@@ -122,6 +122,8 @@ public:
     GLfloat GetPlayerXYArmAngle();
     void CalculatePlayerArmTopPos(GLfloat* playerArmTopPos);
     void CalculatePlayerArmLookAt(GLfloat* playerArmLookAt);
+    void CalculatePlayerGunSightPos(GLfloat* playerGunSightPos);
+    void CalculatePlayerFlashlightPos(GLfloat* playerFlashlightPos);
     void DrawHitboxes();
     void DrawCrosshair();
 };
