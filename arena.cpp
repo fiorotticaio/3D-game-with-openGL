@@ -100,6 +100,7 @@ void Arena::DrawArena() {
     GLfloat mat_shininess[] = { 50 };
 
     glPushAttrib(GL_ENABLE_BIT);
+        // Dont draw the back face
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);   
         glFrontFace(GL_CCW);
