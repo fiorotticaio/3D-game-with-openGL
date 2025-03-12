@@ -1,5 +1,11 @@
 #include "opponent.h"
 
+
+Opponent::Opponent(GLfloat x, GLfloat y, GLfloat baseCircleRadius, GLfloat arenaThickness)
+    : Character(x, y, baseCircleRadius, arenaThickness) {
+}
+
+
 void Opponent::Draw() {
     glPushMatrix();
         // Draw the body

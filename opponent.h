@@ -8,15 +8,7 @@
 
 class Opponent : public Character {
 public:
-    Opponent(
-        GLfloat x, 
-        GLfloat y, 
-        GLfloat baseCircleRadius, 
-        GLfloat arenaThickness
-    ) : Character(x, y, baseCircleRadius, arenaThickness) 
-    {
-        // Heritage from character class
-    };
+    Opponent(GLfloat x, GLfloat y, GLfloat baseCircleRadius, GLfloat arenaThickness);
     
     void Draw() override;
     void RotateArmToTargetAngle(GLdouble timeDifference, GLfloat XZtargetAngle , GLfloat XYtargetAngle);
