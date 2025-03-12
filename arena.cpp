@@ -96,13 +96,8 @@ void Arena::DrawArena() {
     GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0 };
     GLfloat materialColor[] = { 0.0, 0.0, 0.8, 1.0 };
     GLfloat mat_diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
-    GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
+    GLfloat mat_specular[] = { 0.1, 0.1, 0.1, 1.0 };
     GLfloat mat_shininess[] = { 50 };
-    // GLfloat materialEmission[] = { 0.05, 0.05, 0.2, 1.0 };  // Pequeno brilho azul
-    // GLfloat materialColor[] = { 0.2, 0.2, 0.9, 1.0 };       // Azul mais vibrante e iluminado
-    // GLfloat mat_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };         // Mantém boa resposta à luz
-    // GLfloat mat_specular[] = { 0.3, 0.3, 0.3, 1.0 };        // Reflexos mais suaves
-    // GLfloat mat_shininess[] = { 20 };                       // Reduz brilho especular
 
     glPushMatrix();
         glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);

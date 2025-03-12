@@ -3,7 +3,7 @@
 void Obstacle::DrawObstacle() {
     GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0};
     GLfloat materialColor[] = { 0.0, 0.0, 0.0, 1.0};
-    GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
+    GLfloat mat_specular[] = { 0.1, 0.1, 0.1, 1.0 };
     GLfloat mat_shininess[] = { 50 };
     
     glPushMatrix();
