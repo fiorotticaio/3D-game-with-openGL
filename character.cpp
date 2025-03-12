@@ -93,15 +93,15 @@ void Character::DrawCuboid(GLfloat width, GLfloat height, GLfloat depth, GLfloat
     GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
     GLfloat mat_shininess[] = { 100 };
     
+    glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
+    glMaterialfv(GL_FRONT, GL_AMBIENT, materialColor);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+    glColor3f(R, G, B);
+    
+    // Front face
     glBegin(GL_QUADS);
-        glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
-        glMaterialfv(GL_FRONT, GL_AMBIENT, materialColor);
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-        glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-        glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-        glColor3f(R, G, B);
-
-        // Front face
         glNormal3f(0, 0, 1);
         glVertex3f(-width/2, 0, depth/2);
         glNormal3f(0, 0, 1);
@@ -110,8 +110,10 @@ void Character::DrawCuboid(GLfloat width, GLfloat height, GLfloat depth, GLfloat
         glVertex3f(width/2, height, depth/2);
         glNormal3f(0, 0, 1);
         glVertex3f(-width/2, height, depth/2);
+    glEnd();
 
-        // Back face
+    // Back face
+    glBegin(GL_QUADS);
         glNormal3f(0, 0, -1);
         glVertex3f(-width/2, 0, -depth/2);
         glNormal3f(0, 0, -1);
@@ -120,8 +122,10 @@ void Character::DrawCuboid(GLfloat width, GLfloat height, GLfloat depth, GLfloat
         glVertex3f(width/2, height, -depth/2);
         glNormal3f(0, 0, -1);
         glVertex3f(width/2, 0, -depth/2);
+        glEnd();
 
-        // Right face
+    // Right face
+    glBegin(GL_QUADS);
         glNormal3f(1, 0, 0);
         glVertex3f(width/2, 0, depth/2);
         glNormal3f(1, 0, 0);
@@ -130,8 +134,10 @@ void Character::DrawCuboid(GLfloat width, GLfloat height, GLfloat depth, GLfloat
         glVertex3f(width/2, height, -depth/2);
         glNormal3f(1, 0, 0);
         glVertex3f(width/2, height, depth/2);
+        glEnd();
 
-        // Left face
+    // Left face
+    glBegin(GL_QUADS);
         glNormal3f(-1, 0, 0);
         glVertex3f(-width/2, 0, depth/2);
         glNormal3f(-1, 0, 0);
@@ -140,8 +146,10 @@ void Character::DrawCuboid(GLfloat width, GLfloat height, GLfloat depth, GLfloat
         glVertex3f(-width/2, height, -depth/2);
         glNormal3f(-1, 0, 0);
         glVertex3f(-width/2, 0, -depth/2);
+        glEnd();
 
-        // Top face
+    // Top face
+    glBegin(GL_QUADS);
         glNormal3f(0, 1, 0);
         glVertex3f(-width/2, height, depth/2);
         glNormal3f(0, 1, 0);
@@ -150,8 +158,10 @@ void Character::DrawCuboid(GLfloat width, GLfloat height, GLfloat depth, GLfloat
         glVertex3f(width/2, height, -depth/2);
         glNormal3f(0, 1, 0);
         glVertex3f(-width/2, height, -depth/2);
+        glEnd();
 
-        // Bottom face
+    // Bottom face
+    glBegin(GL_QUADS);
         glNormal3f(0, -1, 0);
         glVertex3f(-width/2, 0, depth/2);
         glNormal3f(0, -1, 0);
