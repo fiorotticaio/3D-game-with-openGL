@@ -315,19 +315,21 @@ void renderScene(void) {
 	// FROM HERE ON, WE ARE IN THE WORLD COORDINATE SYSTEM
 	
 
-	GLfloat light_position[4];
+	GLfloat light_position0[4];
+	GLfloat light_position1[4];
 	GLfloat light_direction[3];
 	GLfloat light_diffuse[] = {1.0, 1.0, 1.0, 1.0};  // Luz branca intensa
 	GLfloat light_specular[] = {1.0, 1.0, 1.0, 1.0}; // Reflexo especular forte
 	GLfloat light_ambient[] = {0.2, 0.2, 0.2, 1.0};  // Aumenta a iluminação geral
 
 	if (nightMode) {
+		// Configuração da lanterna
 		GLfloat flashlightPos[3];
 		arena->CalculatePlayerFlashlightPos(flashlightPos);
-		light_position[0] = flashlightPos[0];
-		light_position[1] = flashlightPos[1];
-		light_position[2] = flashlightPos[2];
-		light_position[3] = 1.0;
+		light_position0[0] = flashlightPos[0];
+		light_position0[1] = flashlightPos[1];
+		light_position0[2] = flashlightPos[2];
+		light_position0[3] = 1.0;
 
 		GLfloat playerArmLookAt[3];
 		arena->CalculatePlayerArmLookAt(playerArmLookAt);
@@ -335,34 +337,63 @@ void renderScene(void) {
 		light_direction[1] = playerArmLookAt[1];
 		light_direction[2] = playerArmLookAt[2];
 
-		// Draw flashlight (sphere)
+		// Desenhar a lanterna (esfera)
 		glPushMatrix();
-			glTranslatef(light_position[0], light_position[1], light_position[2]);
+			glTranslatef(light_position0[0], light_position0[1], light_position0[2]);
 			DrawSphere(0.2, 1.0, 1.0, 0.0);
 		glPopMatrix();
-	
 	} else {
-		light_position[0] = arena->GetGx() + arena->GetWidth() / 2;
-		light_position[1] = arena->GetGy() + arena->GetHeight() - 20;
-		light_position[2] = -arena->GetThickness() / 2;
-		light_position[3] = 1.0;
+		// Primeira luz no primeiro terço da arena
+		light_position0[0] = arena->GetGx() + arena->GetWidth() / 3;
+		light_position0[1] = arena->GetGy() + arena->GetHeight() - 10;
+		light_position0[2] = -arena->GetThickness() / 2;
+		light_position0[3] = 1.0;
+
+		// Draw the first light (GL_LIGHT0)
+		glPushMatrix();
+			glTranslatef(light_position0[0], light_position0[1], light_position0[2]);
+			DrawSphere(1, 1.0, 1.0, 1.0);
+		glPopMatrix();
+
+		// Segunda luz no segundo terço da arena
+		light_position1[0] = arena->GetGx() + 2 * (arena->GetWidth() / 3);
+		light_position1[1] = arena->GetGy() + arena->GetHeight() - 10;
+		light_position1[2] = -arena->GetThickness() / 2;
+		light_position1[3] = 1.0;
+
+		// Draw the second light (GL_LIGHT1)
+		glPushMatrix();
+			glTranslatef(light_position1[0], light_position1[1], light_position1[2]);
+			DrawSphere(1, 1.0, 1.0, 1.0);
+		glPopMatrix();
 	}
 
+	// Configurar primeira luz (GL_LIGHT0)
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position0);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-	// glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.0);
-	// glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.1);
-	// glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.01);
 
+	// Configurar segunda luz (GL_LIGHT1) se não estiver no modo noturno
+	if (!nightMode) {
+		glEnable(GL_LIGHT1);
+		glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
+		glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
+		glLightfv(GL_LIGHT1, GL_POSITION, light_position1);
+		glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
+	} else {
+		glDisable(GL_LIGHT1);
+	}
+
+	// Configuração específica para modo noturno
 	if (nightMode) {
 		glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light_direction);
-		glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 30.0); // Light cone angle (0° to 90°)
-		glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 10.0); // Intensity within the cone (0 = uniform, 128 = strong in the center)
+		glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 30.0); // Ângulo do cone (0° a 90°)
+		glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 10.0); // Intensidade dentro do cone
 	} else {
-		glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 180.0); // Light cone angle (0° to 90°)
+		glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 180.0); // Luz pontual
 	}
+
 
 	if (axisEnabled) {
 		glPushMatrix();
