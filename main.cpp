@@ -54,6 +54,7 @@ double camXZAngle = 0;
 int lastX = 0;
 int lastY = 0;
 int thirdCameraZoom = 10;
+int moveThirdCameraZoom = 10;
 float cameraHeightOffset = 5.0f;
 
 // Flags and aux variables
@@ -288,7 +289,7 @@ void renderScene(void) {
 
 		// Move away from the player
 		if (!moveThirdCamera) glTranslatef(0, -cameraHeightOffset, -thirdCameraZoom);
-		else                  glTranslatef(0, 0, -thirdCameraZoom);
+		else                  glTranslatef(0, 0, -moveThirdCameraZoom);
 
 		// Mouse rotation
 		if (moveThirdCamera) {
@@ -469,6 +470,9 @@ void keyPress(unsigned char key, int x, int y) {
 		case 'x':
 		case 'X':
 			moveThirdCamera = !moveThirdCamera;
+			if (!moveThirdCamera) {
+				moveThirdCameraZoom = thirdCameraZoom;
+			}
 			break;
 		case 'y':
 		case 'Y':
@@ -478,10 +482,10 @@ void keyPress(unsigned char key, int x, int y) {
 			keyStatus[(int)(' ')] = 1;
 			break;
 		case '+':
-			if (moveThirdCamera) thirdCameraZoom--;
+			if (moveThirdCamera) moveThirdCameraZoom--;
 			break;
 		case '-':
-			if (moveThirdCamera) thirdCameraZoom++;
+			if (moveThirdCamera) moveThirdCameraZoom++;
 			break;
 		case 27:
 			exit(0);
