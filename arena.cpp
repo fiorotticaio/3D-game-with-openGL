@@ -99,27 +99,33 @@ void Arena::DrawArena() {
     GLfloat mat_specular[] = { 0.1, 0.1, 0.1, 1.0 };
     GLfloat mat_shininess[] = { 50 };
 
-    glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
-        glMaterialfv(GL_FRONT, GL_AMBIENT, materialColor);
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-        glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-        glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-        glColor3f(0, 0, 1);
+    glPushAttrib(GL_ENABLE_BIT);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);   
+        glFrontFace(GL_CCW);
 
-        glTranslatef(gX, gY, 0);
-        DrawRects(gWidth, gHeight, gThickness, gRed, gGreen, gBlue);
-    glPopMatrix();
+        glPushMatrix();
+            glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
+            glMaterialfv(GL_FRONT, GL_AMBIENT, materialColor);
+            glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+            glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+            glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+            glColor3f(0, 0, 1);
 
-    for (Obstacle* obstacle : gObstacles) {
-        obstacle->Draw();
-    }
+            glTranslatef(gX, gY, 0);
+            DrawRects(gWidth, gHeight, gThickness, gRed, gGreen, gBlue);
+        glPopMatrix();
+    glPopAttrib();
 
-    gPlayer->Draw();
+        for (Obstacle* obstacle : gObstacles) {
+            obstacle->Draw();
+        }
 
-    for (Opponent* opponent : gOpponents) {
-        opponent->Draw();
-    }
+        gPlayer->Draw();
+
+        for (Opponent* opponent : gOpponents) {
+            opponent->Draw();
+        }
 }
 
 

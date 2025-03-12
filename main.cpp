@@ -513,13 +513,6 @@ void init(int windowSize, char* svg_file_path) {
 	glDepthFunc(GL_LEQUAL);
     glEnable(GL_LIGHT0);
 
-	// Remove as faces traseiras
-	// glEnable(GL_CULL_FACE);
-	// glCullFace(GL_BACK);   
-	// glFrontFace(GL_CCW);
-
-
-
     glViewport(0, 0, (GLsizei) windowSize, (GLsizei) windowSize);
 
 	// Defining camera parameters
