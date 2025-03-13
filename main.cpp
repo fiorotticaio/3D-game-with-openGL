@@ -207,13 +207,8 @@ void renderScene(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
-	if (gameOver) {
-		PrintTextUI(0.5, 0.8, "Game Over", 1, 0, 0);
-	}
-	
-	if (playerWon) {
-		PrintTextUI(0.5, 0.8, "Player Won", 1, 1, 1);
-	}
+	if (gameOver)  PrintTextUI(0.42, 0.7, "Game Over", 1, 0, 0);
+	if (playerWon) PrintTextUI(0.42, 0.7, "Player Won", 1, 1, 1);
 
 	if (toggleCam == 1){
         PrintTextUI(0.1, 0.1, "First person camera", 0, 1, 0);
@@ -548,7 +543,7 @@ void init(int windowSize, char* svg_file_path) {
 	// Defining camera parameters
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(90, (GLfloat) windowSize / (GLfloat) windowSize, 1, 300);
+    gluPerspective(90, (GLfloat) windowSize / (GLfloat) windowSize, 1, 500);
 
 
 	glMatrixMode(GL_MODELVIEW);
