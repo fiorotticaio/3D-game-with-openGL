@@ -86,7 +86,7 @@ void Character::DrawBackLeg(GLfloat R, GLfloat G, GLfloat B) {
 }
 
 
-void Character::DrawCuboid(GLfloat width, GLfloat height, GLfloat depth, GLfloat R, GLfloat G, GLfloat B) {
+void Character::DrawCuboid(GLfloat width, GLfloat height, GLfloat depth, GLfloat R, GLfloat G, GLfloat B, GLuint tShirtFrontTexture) {
     GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0 };
     GLfloat materialColor[] = { R, G, B, 1.0 };
     GLfloat mat_diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
@@ -104,10 +104,13 @@ void Character::DrawCuboid(GLfloat width, GLfloat height, GLfloat depth, GLfloat
     glBegin(GL_QUADS);
         glNormal3f(0, 0, 1);
         glVertex3f(-width/2, 0, depth/2);
+
         glNormal3f(0, 0, 1);
         glVertex3f(width/2, 0, depth/2);
+
         glNormal3f(0, 0, 1);
         glVertex3f(width/2, height, depth/2);
+
         glNormal3f(0, 0, 1);
         glVertex3f(-width/2, height, depth/2);
     glEnd();
@@ -116,58 +119,85 @@ void Character::DrawCuboid(GLfloat width, GLfloat height, GLfloat depth, GLfloat
     glBegin(GL_QUADS);
         glNormal3f(0, 0, -1);
         glVertex3f(-width/2, 0, -depth/2);
+
         glNormal3f(0, 0, -1);
         glVertex3f(-width/2, height, -depth/2);
+
         glNormal3f(0, 0, -1);
         glVertex3f(width/2, height, -depth/2);
+
         glNormal3f(0, 0, -1);
         glVertex3f(width/2, 0, -depth/2);
-        glEnd();
+    glEnd();
 
     // Right face
+    if (tShirtFrontTexture) {
+        glBindTexture(GL_TEXTURE_2D, tShirtFrontTexture);
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE); // Use just texture, ignore materials
+    }
     glBegin(GL_QUADS);
         glNormal3f(1, 0, 0);
+        if (tShirtFrontTexture) glTexCoord2f(0, 0);
         glVertex3f(width/2, 0, depth/2);
+
         glNormal3f(1, 0, 0);
+        if (tShirtFrontTexture) glTexCoord2f(1, 0);
         glVertex3f(width/2, 0, -depth/2);
+
         glNormal3f(1, 0, 0);
+        if (tShirtFrontTexture) glTexCoord2f(1, 1);
         glVertex3f(width/2, height, -depth/2);
+
         glNormal3f(1, 0, 0);
+        if (tShirtFrontTexture) glTexCoord2f(0, 1);
         glVertex3f(width/2, height, depth/2);
-        glEnd();
+    glEnd();
+    if (tShirtFrontTexture) {
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,GL_MODULATE);
+    }
 
     // Left face
     glBegin(GL_QUADS);
         glNormal3f(-1, 0, 0);
         glVertex3f(-width/2, 0, depth/2);
+
         glNormal3f(-1, 0, 0);
         glVertex3f(-width/2, height, depth/2);
+
         glNormal3f(-1, 0, 0);
         glVertex3f(-width/2, height, -depth/2);
+
         glNormal3f(-1, 0, 0);
         glVertex3f(-width/2, 0, -depth/2);
-        glEnd();
+    glEnd();
 
     // Top face
     glBegin(GL_QUADS);
         glNormal3f(0, 1, 0);
         glVertex3f(-width/2, height, depth/2);
+
         glNormal3f(0, 1, 0);
         glVertex3f(width/2, height, depth/2);
+
         glNormal3f(0, 1, 0);
         glVertex3f(width/2, height, -depth/2);
+
         glNormal3f(0, 1, 0);
         glVertex3f(-width/2, height, -depth/2);
-        glEnd();
+    glEnd();
 
     // Bottom face
     glBegin(GL_QUADS);
         glNormal3f(0, -1, 0);
         glVertex3f(-width/2, 0, depth/2);
+
         glNormal3f(0, -1, 0);
         glVertex3f(-width/2, 0, -depth/2);
+
         glNormal3f(0, -1, 0);
         glVertex3f(width/2, 0, -depth/2);
+
         glNormal3f(0, -1, 0);
         glVertex3f(width/2, 0, depth/2);
     glEnd();

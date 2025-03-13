@@ -4,6 +4,7 @@
 
 
 #include "character.h"
+#include "imageloader.h"
 
 
 class Player : public Character {
