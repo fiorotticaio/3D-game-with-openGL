@@ -46,7 +46,7 @@ private:
         GLfloat width, GLfloat height, GLfloat thickness,
         GLfloat normalX, GLfloat normalY, GLfloat normalZ, 
         int divisionsX, int divisionsY, int divisionsZ,
-        GLuint texture);
+        GLuint texture, double textureS);
     bool CharacterCollidesWithObstacle(Character * character, Obstacle* obstacle, GLdouble timeDifference);
     bool CharacterLandsInObstacle(Character * character, Obstacle* obstacle, GLdouble timeDifference);
     bool CharacterCollidesWithOpponent(Character * character, Opponent* opponent, GLdouble timeDifference);

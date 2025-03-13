@@ -134,13 +134,13 @@ void Arena::DrawSubdividedFace(GLfloat x, GLfloat y, GLfloat z,
                                GLfloat width, GLfloat height, GLfloat thickness,
                                GLfloat normalX, GLfloat normalY, GLfloat normalZ, 
                                int divisionsX, int divisionsY, int divisionsZ,
-                               GLuint texture) {
+                               GLuint texture, double textureS) {
     GLfloat stepX = width / divisionsX;
     GLfloat stepY = height / divisionsY;
     GLfloat stepZ = thickness / divisionsZ;
-    GLfloat texStepX = 1.0 / divisionsX;
-    GLfloat texStepY = 1.0 / divisionsY;
-    GLfloat texStepZ = 1.0 / divisionsZ;
+    GLfloat texStepX = (textureS * 1.0) / divisionsX;
+    GLfloat texStepY = (textureS * 1.0) / divisionsY;
+    GLfloat texStepZ = (textureS * 1.0) / divisionsZ;
 
     glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -223,22 +223,22 @@ void Arena::DrawRects(GLfloat width, GLfloat height, GLfloat thickness, GLfloat 
     glColor3f(R, G, B);
 
     // Frente
-    DrawSubdividedFace(0, 0, 0, width, height, 0, 0, 0, -1, 10, 10, 0, gWallTexture);
+    DrawSubdividedFace(0, 0, 0, width, height, 0, 0, 0, -1, 10, 10, 0, gWallTexture, 3);
 
     // Trás
-    DrawSubdividedFace(0, 0, -thickness, width, height, 0, 0, 0, 1, 10, 10, 0, gWallTexture);
+    DrawSubdividedFace(0, 0, -thickness, width, height, 0, 0, 0, 1, 10, 10, 0, gWallTexture, 3);
 
     // Direita
-    DrawSubdividedFace(width, 0, 0, 0, height, -thickness, -1, 0, 0, 0, 5, 5, gWallTexture);
+    DrawSubdividedFace(width, 0, 0, 0, height, -thickness, -1, 0, 0, 0, 5, 5, gWallTexture, 1);
 
     // Esquerda
-    DrawSubdividedFace(0, 0, 0, 0, height, -thickness, 1, 0, 0, 0, 5, 5, gWallTexture);
+    DrawSubdividedFace(0, 0, 0, 0, height, -thickness, 1, 0, 0, 0, 5, 5, gWallTexture, 1);
 
     // Chão
-    DrawSubdividedFace(0, 0, 0, width, 0, -thickness, 0, 1, 0, 10, 0, 10, gGroundTexture);
+    DrawSubdividedFace(0, 0, 0, width, 0, -thickness, 0, 1, 0, 10, 0, 10, gGroundTexture, 10);
 
     // Teto
-    DrawSubdividedFace(0, height, 0, width, 0, -thickness, 0, -1, 0, 10, 0, 10, gRoofTexture);
+    DrawSubdividedFace(0, height, 0, width, 0, -thickness, 0, -1, 0, 10, 0, 10, gRoofTexture, 1);
 }
 
 
