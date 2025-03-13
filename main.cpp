@@ -347,7 +347,7 @@ void renderScene(void) {
 		// Draw the first light (GL_LIGHT0)
 		glPushMatrix();
 			glTranslatef(light_position0[0], light_position0[1], light_position0[2]);
-			DrawSphere(1, 1.0, 1.0, 1.0);
+			DrawSphere(2, 1.0, 1.0, 0.0);
 		glPopMatrix();
 
 		// Segunda luz no segundo terço da arena
@@ -359,7 +359,7 @@ void renderScene(void) {
 		// Draw the second light (GL_LIGHT1)
 		glPushMatrix();
 			glTranslatef(light_position1[0], light_position1[1], light_position1[2]);
-			DrawSphere(1, 1.0, 1.0, 1.0);
+			DrawSphere(2, 1.0, 1.0, 0.0);
 		glPopMatrix();
 	}
 
