@@ -96,14 +96,14 @@ void Arena::DrawArena() {
     GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0 };
     GLfloat materialColor[] = { 0.0, 0.0, 0.8, 1.0 };
     GLfloat mat_diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
-    GLfloat mat_specular[] = { 0.1, 0.1, 0.1, 1.0 };
+    GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 1.0 };
     GLfloat mat_shininess[] = { 50 };
 
     glPushAttrib(GL_ENABLE_BIT);
         // Dont draw the back face
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);   
-        glFrontFace(GL_CCW);
+        // glEnable(GL_CULL_FACE);
+        // glCullFace(GL_BACK);   
+        // glFrontFace(GL_CCW);
 
         glPushMatrix();
             glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
@@ -130,85 +130,120 @@ void Arena::DrawArena() {
 }
 
 
+void Arena::DrawSubdividedFace(GLfloat x, GLfloat y, GLfloat z, 
+                               GLfloat width, GLfloat height, GLfloat thickness,
+                               GLfloat normalX, GLfloat normalY, GLfloat normalZ, 
+                               int divisionsX, int divisionsY, int divisionsZ) {
+    GLfloat stepX = width / divisionsX;
+    GLfloat stepY = height / divisionsY;
+    GLfloat stepZ = thickness / divisionsZ;
+    GLfloat texStepX = 1.0 / divisionsX;
+    GLfloat texStepY = 1.0 / divisionsY;
+    GLfloat texStepZ = 1.0 / divisionsZ;
+
+    glBindTexture(GL_TEXTURE_2D, gWallTexture);
+
+    if (divisionsZ == 0) {
+        for (int i = 0; i < divisionsX; i++) {
+            for (int j = 0; j < divisionsY; j++) {
+                GLfloat x0 = x + i * stepX;
+                GLfloat y0 = y + j * stepY;
+                GLfloat x1 = x0 + stepX;
+                GLfloat y1 = y0 + stepY;
+    
+                GLfloat texX0 = i * texStepX;
+                GLfloat texY0 = j * texStepY;
+                GLfloat texX1 = texX0 + texStepX;
+                GLfloat texY1 = texY0 + texStepY;
+    
+                glBegin(GL_QUADS);
+                    glNormal3f(normalX, normalY, normalZ);
+                    glTexCoord2f(texX0, texY0); glVertex3f(x0, y0, z);
+                    glTexCoord2f(texX0, texY1); glVertex3f(x0, y1, z);
+                    glTexCoord2f(texX1, texY1); glVertex3f(x1, y1, z);
+                    glTexCoord2f(texX1, texY0); glVertex3f(x1, y0, z);
+                glEnd();
+            }
+        }
+    }
+
+    if (divisionsX == 0) {
+        for (int i = 0; i < divisionsY; i++) {
+            for (int j = 0; j < divisionsZ; j++) {
+                GLfloat y0 = y + i * stepY;
+                GLfloat z0 = z + j * stepZ;
+                GLfloat y1 = y0 + stepY;
+                GLfloat z1 = z0 + stepZ;
+    
+                GLfloat texY0 = i * texStepY;
+                GLfloat texZ0 = j * texStepZ;
+                GLfloat texY1 = texY0 + texStepY;
+                GLfloat texZ1 = texZ0 + texStepZ;
+    
+                glBegin(GL_QUADS);
+                    glNormal3f(normalX, normalY, normalZ);
+                    glTexCoord2f(texY0, texZ0); glVertex3f(x, y0, z0);
+                    glTexCoord2f(texY0, texZ1); glVertex3f(x, y1, z0);
+                    glTexCoord2f(texY1, texZ1); glVertex3f(x, y1, z1);
+                    glTexCoord2f(texY1, texZ0); glVertex3f(x, y0, z1);
+                glEnd();
+            }
+        }
+    }
+
+    if (divisionsY == 0) {
+        for (int i = 0; i < divisionsX; i++) {
+            for (int j = 0; j < divisionsZ; j++) {
+                GLfloat x0 = x + i * stepX;
+                GLfloat z0 = z + j * stepZ;
+                GLfloat x1 = x0 + stepX;
+                GLfloat z1 = z0 + stepZ;
+    
+                GLfloat texX0 = i * texStepX;
+                GLfloat texZ0 = j * texStepZ;
+                GLfloat texX1 = texX0 + texStepX;
+                GLfloat texZ1 = texZ0 + texStepZ;
+    
+                glBegin(GL_QUADS);
+                    glNormal3f(normalX, normalY, normalZ);
+                    glTexCoord2f(texX0, texZ0); glVertex3f(x0, y, z0);
+                    glTexCoord2f(texX0, texZ1); glVertex3f(x0, y, z1);
+                    glTexCoord2f(texX1, texZ1); glVertex3f(x1, y, z1);
+                    glTexCoord2f(texX1, texZ0); glVertex3f(x1, y, z0);
+                glEnd();
+            }
+        }
+    }
+}
+
+
+
 void Arena::DrawRects(GLfloat width, GLfloat height, GLfloat thickness, GLfloat R, GLfloat G, GLfloat B) {
     glColor3f(R, G, B);
 
-    // The coordenates givem in the svg file are the left bottom corner of the arena
+    // Frente
+    DrawSubdividedFace(0, 0, 0, width, height, 0, 0, 0, -1, 10, 10, 0);
 
-    // 1º Face
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glBindTexture(GL_TEXTURE_2D, gWallTexture);
-    double textureS = 10;
-    glBegin(GL_QUADS);
-        glNormal3f(0, 0, -1);
-        glTexCoord2f(0, 0);
-        glVertex3f(0, 0, 0);
+    // Trás
+    DrawSubdividedFace(0, 0, -thickness, width, height, 0, 0, 0, 1, 10, 10, 0);
 
-        glNormal3f(0, 0, -1);
-        glTexCoord2f(0, textureS);
-        glVertex3f(0, height, 0);
+    // Direita
+    DrawSubdividedFace(width, 0, 0, 0, height, -thickness, -1, 0, 0, 0, 5, 5);
 
-        glNormal3f(0, 0, -1);
-        glTexCoord2f(textureS, textureS);
-        glVertex3f(width, height, 0);
+    // // Esquerda
+    // DrawSubdividedFace(0, 0, 0, 0, height, 1, 0, 0, divisionsX, divisionsY);
 
-        glNormal3f(0, 0, -1);
-        glTexCoord2f(textureS, 0);
-        glVertex3f(width, 0, 0);
-    glEnd();
+    // // Chão
+    // DrawSubdividedFace(0, 0, 0, width, thickness, 0, 1, 0, divisionsX, divisionsY);
 
-    // 2º Face
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glBindTexture(GL_TEXTURE_2D, gWallTexture);
-    textureS = 1;
-    glBegin(GL_QUADS);
-        glNormal3f(-1, 0, 0);
-        glTexCoord2f(0, 0);
-        glVertex3f(width, 0, 0);
-
-        glNormal3f(-1, 0, 0);
-        glTexCoord2f(0, textureS);
-        glVertex3f(width, height, 0);
-
-        glNormal3f(-1, 0, 0);
-        glTexCoord2f(textureS, textureS);
-        glVertex3f(width, height, -thickness);
-
-        glNormal3f(-1, 0, 0);
-        glTexCoord2f(textureS, 0);
-        glVertex3f(width, 0, -thickness);
-    glEnd();
-
-    // 3º Face
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glBindTexture(GL_TEXTURE_2D, gWallTexture);
-    textureS = 10;
-    glBegin(GL_QUADS);
-        glNormal3f(0, 0, 1);
-        glTexCoord2f(0, 0);
-        glVertex3f(width, 0, -thickness);
-
-        glNormal3f(0, 0, 1);
-        glTexCoord2f(0, textureS);
-        glVertex3f(width, height, -thickness);
-
-        glNormal3f(0, 0, 1);
-        glTexCoord2f(textureS, textureS);
-        glVertex3f(0, height, -thickness);
-
-        glNormal3f(0, 0, 1);
-        glTexCoord2f(textureS, 0);
-        glVertex3f(0, 0, -thickness);
-    glEnd();
+    // // Teto
+    // DrawSubdividedFace(0, height, 0, width, thickness, 0, -1, 0, divisionsX, divisionsY);
 
     // 4º Face
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glBindTexture(GL_TEXTURE_2D, gWallTexture);
-    textureS = 1;
+    double textureS = 1;
     glBegin(GL_QUADS);
         glNormal3f(1, 0, 0);
         glTexCoord2f(0, 0);
@@ -273,6 +308,7 @@ void Arena::DrawRects(GLfloat width, GLfloat height, GLfloat thickness, GLfloat 
         glVertex3f(width, height, 0);
     glEnd();
 }
+
 
 
 GLfloat Arena::GetGx() {
