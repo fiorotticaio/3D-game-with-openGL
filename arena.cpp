@@ -133,7 +133,8 @@ void Arena::DrawArena() {
 void Arena::DrawSubdividedFace(GLfloat x, GLfloat y, GLfloat z, 
                                GLfloat width, GLfloat height, GLfloat thickness,
                                GLfloat normalX, GLfloat normalY, GLfloat normalZ, 
-                               int divisionsX, int divisionsY, int divisionsZ) {
+                               int divisionsX, int divisionsY, int divisionsZ,
+                               GLuint texture) {
     GLfloat stepX = width / divisionsX;
     GLfloat stepY = height / divisionsY;
     GLfloat stepZ = thickness / divisionsZ;
@@ -141,7 +142,7 @@ void Arena::DrawSubdividedFace(GLfloat x, GLfloat y, GLfloat z,
     GLfloat texStepY = 1.0 / divisionsY;
     GLfloat texStepZ = 1.0 / divisionsZ;
 
-    glBindTexture(GL_TEXTURE_2D, gWallTexture);
+    glBindTexture(GL_TEXTURE_2D, texture);
 
     if (divisionsZ == 0) {
         for (int i = 0; i < divisionsX; i++) {
@@ -222,91 +223,22 @@ void Arena::DrawRects(GLfloat width, GLfloat height, GLfloat thickness, GLfloat 
     glColor3f(R, G, B);
 
     // Frente
-    DrawSubdividedFace(0, 0, 0, width, height, 0, 0, 0, -1, 10, 10, 0);
+    DrawSubdividedFace(0, 0, 0, width, height, 0, 0, 0, -1, 10, 10, 0, gWallTexture);
 
     // Trás
-    DrawSubdividedFace(0, 0, -thickness, width, height, 0, 0, 0, 1, 10, 10, 0);
+    DrawSubdividedFace(0, 0, -thickness, width, height, 0, 0, 0, 1, 10, 10, 0, gWallTexture);
 
     // Direita
-    DrawSubdividedFace(width, 0, 0, 0, height, -thickness, -1, 0, 0, 0, 5, 5);
+    DrawSubdividedFace(width, 0, 0, 0, height, -thickness, -1, 0, 0, 0, 5, 5, gWallTexture);
 
-    // // Esquerda
-    // DrawSubdividedFace(0, 0, 0, 0, height, 1, 0, 0, divisionsX, divisionsY);
+    // Esquerda
+    DrawSubdividedFace(0, 0, 0, 0, height, -thickness, 1, 0, 0, 0, 5, 5, gWallTexture);
 
-    // // Chão
-    // DrawSubdividedFace(0, 0, 0, width, thickness, 0, 1, 0, divisionsX, divisionsY);
+    // Chão
+    DrawSubdividedFace(0, 0, 0, width, 0, -thickness, 0, 1, 0, 10, 0, 10, gGroundTexture);
 
-    // // Teto
-    // DrawSubdividedFace(0, height, 0, width, thickness, 0, -1, 0, divisionsX, divisionsY);
-
-    // 4º Face
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glBindTexture(GL_TEXTURE_2D, gWallTexture);
-    double textureS = 1;
-    glBegin(GL_QUADS);
-        glNormal3f(1, 0, 0);
-        glTexCoord2f(0, 0);
-        glVertex3f(0, 0, -thickness);
-
-        glNormal3f(1, 0, 0);
-        glTexCoord2f(0, textureS);
-        glVertex3f(0, height, -thickness);
-
-        glNormal3f(1, 0, 0);
-        glTexCoord2f(textureS, textureS);
-        glVertex3f(0, height, 0);
-
-        glNormal3f(1, 0, 0);
-        glTexCoord2f(textureS, 0);
-        glVertex3f(0, 0, 0);
-    glEnd();
-
-    // Ground
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glBindTexture(GL_TEXTURE_2D, gGroundTexture);
-    textureS = 5;
-    glBegin(GL_QUADS);
-        glNormal3f(0, 1, 0);
-        glTexCoord2f(0, 0);
-        glVertex3f(0, 0, 0);
-
-        glNormal3f(0, 1, 0);
-        glTexCoord2f(textureS, 0);
-        glVertex3f(width, 0, 0);
-        
-        glNormal3f(0, 1, 0);
-        glTexCoord2f(textureS, textureS);
-        glVertex3f(width, 0, -thickness);
-
-        glNormal3f(0, 1, 0);
-        glTexCoord2f(0, textureS);
-        glVertex3f(0, 0, -thickness);
-    glEnd();
-
-    // Roof
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    // glBindTexture(GL_TEXTURE_2D, gRoofTexture);
-    // textureS = 1;
-    glBegin(GL_QUADS);
-        glNormal3f(0, -1, 0);
-        // glTexCoord2f(0, 0);
-        glVertex3f(0, height, 0);
-
-        glNormal3f(0, -1, 0);
-        // glTexCoord2f(0, textureS);
-        glVertex3f(0, height, -thickness);
-
-        glNormal3f(0, -1, 0);
-        // glTexCoord2f(textureS, textureS);
-        glVertex3f(width, height, -thickness);
-
-        glNormal3f(0, -1, 0);
-        // glTexCoord2f(textureS, 0);
-        glVertex3f(width, height, 0);
-    glEnd();
+    // Teto
+    DrawSubdividedFace(0, height, 0, width, 0, -thickness, 0, -1, 0, 10, 0, 10, gRoofTexture);
 }
 
 

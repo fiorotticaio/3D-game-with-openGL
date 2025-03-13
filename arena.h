@@ -45,7 +45,8 @@ private:
     void DrawSubdividedFace(GLfloat x, GLfloat y, GLfloat z, 
         GLfloat width, GLfloat height, GLfloat thickness,
         GLfloat normalX, GLfloat normalY, GLfloat normalZ, 
-        int divisionsX, int divisionsY, int divisionsZ);
+        int divisionsX, int divisionsY, int divisionsZ,
+        GLuint texture);
     bool CharacterCollidesWithObstacle(Character * character, Obstacle* obstacle, GLdouble timeDifference);
     bool CharacterLandsInObstacle(Character * character, Obstacle* obstacle, GLdouble timeDifference);
     bool CharacterCollidesWithOpponent(Character * character, Opponent* opponent, GLdouble timeDifference);
