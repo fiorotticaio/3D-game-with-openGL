@@ -3,6 +3,10 @@
 
 Opponent::Opponent(GLfloat x, GLfloat y, GLfloat baseCircleRadius, GLfloat arenaThickness)
     : Character(x, y, baseCircleRadius, arenaThickness) {
+    gCollideWithRightX = true;
+    gCollideWithLeftX = true;
+    gCollideWithRightZ = true;
+    gCollideWithLeftZ = true;
 }
 
 
@@ -34,4 +38,44 @@ void Opponent::RotateArmToTargetAngle(GLdouble timeDifference, GLfloat XZtargetA
     } else if (gXZArmAngle > XZtargetAngle) {
         gXZArmAngle -= gArmSpeed * timeDifference;
     }
+}
+
+
+bool Opponent::GetCollideWithRightX() {
+    return gCollideWithRightX;
+}
+
+
+bool Opponent::GetCollideWithLeftX() {
+    return gCollideWithLeftX;
+}
+
+
+bool Opponent::GetCollideWithRightZ() {
+    return gCollideWithRightZ;
+}
+
+
+bool Opponent::GetCollideWithLeftZ() {
+    return gCollideWithLeftZ;
+}
+
+
+void Opponent::SetCollideWithRightX(bool collideWithRightX) {
+    gCollideWithRightX = collideWithRightX;
+}
+
+
+void Opponent::SetCollideWithLeftX(bool collideWithLeftX) {
+    gCollideWithLeftX = collideWithLeftX;
+}
+
+
+void Opponent::SetCollideWithRightZ(bool collideWithRightZ) {
+    gCollideWithRightZ = collideWithRightZ;
+}
+
+
+void Opponent::SetCollideWithLeftZ(bool collideWithLeftZ) {
+    gCollideWithLeftZ = collideWithLeftZ;
 }

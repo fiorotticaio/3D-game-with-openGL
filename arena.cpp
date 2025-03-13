@@ -725,28 +725,132 @@ void Arena::MoveOpponentsInXZ(GLdouble timeDifference) {
     for (Opponent* opponent : gOpponents) {
         if (!OpponentLanded(opponent, timeDifference)) { continue; }
 
-        bool directionChanged = false;
-
-        // When opponent is landing on an obstacle
+        // Check collision with obstacles when landed in then
         for (Obstacle* obstacle : gObstacles) {
             if (CharacterLandsInObstacle(opponent, obstacle, timeDifference)) {
                 GLfloat obstacleLeftX = obstacle->GetGx();
                 GLfloat obstacleRightX = obstacle->GetGx() + obstacle->GetWidth();
-                
                 GLfloat obstacleRightZ = obstacle->GetGz();
                 GLfloat obstacleLeftZ = obstacle->GetGz() - obstacle->GetThickness();
-
-                // If the opponent reaches obstacle border, change direction
-                if ((opponent->GetGx() + (opponent->GetHitboxRadius() / 2) >= obstacleRightX - 2.0f) ||
-                    (opponent->GetGx() - (opponent->GetHitboxRadius() / 2) <= obstacleLeftX + 2.0f)  ||
-                    (opponent->GetGz() + (opponent->GetHitboxRadius() / 2) >= obstacleRightZ - 2.0f) ||
-                    (opponent->GetGz() - (opponent->GetHitboxRadius() / 2) <= obstacleLeftZ + 2.0f)
+                
+                if ((opponent->GetGx() + (opponent->GetHitboxRadius() / 2) >= obstacleRightX - 2.0f) &&
+                    (opponent->GetCollideWithRightX())
                 ) {
-                    opponent->SetXZAngle(opponent->GetXZAngle() + 180.0f);
-                    directionChanged = true;
+                    opponent->SetXZAngle(opponent->GetXZAngle() - 90.0f);
+                    opponent->SetCollideWithRightX(false);
+                    opponent->SetCollideWithLeftX(true);
                 }
+    
+                if ((opponent->GetGx() - (opponent->GetHitboxRadius() / 2) <= obstacleLeftX + 2.0f) &&
+                    (opponent->GetCollideWithLeftX())
+                ) {
+                    opponent->SetXZAngle(opponent->GetXZAngle() - 90.0f);
+                    opponent->SetCollideWithLeftX(false);
+                    opponent->SetCollideWithRightX(true);
+                }
+    
+                if ((opponent->GetGz() + (opponent->GetHitboxRadius() / 2) >= obstacleRightZ - 2.0f) &&
+                    (opponent->GetCollideWithRightZ())
+                ) {
+                    opponent->SetXZAngle(opponent->GetXZAngle() - 90.0f);
+                    opponent->SetCollideWithRightZ(false);
+                    opponent->SetCollideWithLeftZ(true);
+                }
+    
+                if ((opponent->GetGz() - (opponent->GetHitboxRadius() / 2) <= obstacleLeftZ + 2.0f) &&
+                    (opponent->GetCollideWithLeftZ())
+                ) {
+                    opponent->SetXZAngle(opponent->GetXZAngle() - 90.0f);
+                    opponent->SetCollideWithLeftZ(false);
+                    opponent->SetCollideWithRightZ(true);
+                }
+
                 break;
             }
+        }
+
+
+        if (CharacterCollidesWithGround(opponent, 0, opponent->GetYSpeed())) {
+            // Check collision with arena walls when loaned in the ground
+            if ((opponent->GetGx() + opponent->GetHitboxRadius() / 2 >= gX + gWidth - 2.0f) &&
+                (opponent->GetCollideWithRightX())
+            ) {
+                opponent->SetXZAngle(opponent->GetXZAngle() - 90.0f);
+                opponent->SetCollideWithRightX(false);
+                opponent->SetCollideWithLeftX(true);
+            }
+    
+            if ((opponent->GetGx() - opponent->GetHitboxRadius() / 2 <= gX + 2.0f) &&
+                (opponent->GetCollideWithLeftX())
+            ) {
+                opponent->SetXZAngle(opponent->GetXZAngle() - 90.0f);
+                opponent->SetCollideWithLeftX(false);
+                opponent->SetCollideWithRightX(true);
+            }
+    
+            if ((opponent->GetGz() + opponent->GetHitboxRadius() / 2 >= gZ - 2.0f) &&
+                (opponent->GetCollideWithRightZ())
+            ) {
+                opponent->SetXZAngle(opponent->GetXZAngle() - 90.0f);
+                opponent->SetCollideWithRightZ(false);
+                opponent->SetCollideWithLeftZ(true);
+            }
+    
+            if ((opponent->GetGz() - opponent->GetHitboxRadius() / 2 <= gZ - gThickness + 2.0f) &&
+                (opponent->GetCollideWithLeftZ())
+            ) {
+                opponent->SetXZAngle(opponent->GetXZAngle() - 90.0f);
+                opponent->SetCollideWithLeftZ(false);
+                opponent->SetCollideWithRightZ(true);
+            }
+
+            // Check collision with obstacles when landed in the ground
+            for (Obstacle* obstacle : gObstacles) {
+                if (CharacterCollidesWithObstacle(opponent, obstacle, timeDifference)) {
+                    // printf("Obstacle\n");
+                    GLfloat obstacleLeftX = obstacle->GetGx();
+                    GLfloat obstacleRightX = obstacle->GetGx() + obstacle->GetWidth();
+                    GLfloat obstacleRightZ = obstacle->GetGz();
+                    GLfloat obstacleLeftZ = obstacle->GetGz() - obstacle->GetThickness();
+
+                    // Swap right with left of obstacle
+                    
+                    if ((opponent->GetGx() + (opponent->GetHitboxRadius() / 2) >= obstacleLeftX - 2.0f) &&
+                        (opponent->GetCollideWithRightX())
+                    ) {
+                        opponent->SetXZAngle(opponent->GetXZAngle() - 90.0f);
+                        opponent->SetCollideWithRightX(false);
+                        opponent->SetCollideWithLeftX(true);
+                    }
+        
+                    else if ((opponent->GetGx() - (opponent->GetHitboxRadius() / 2) <= obstacleRightX + 2.0f) &&
+                        (opponent->GetCollideWithLeftX())
+                    ) {
+                        opponent->SetXZAngle(opponent->GetXZAngle() - 90.0f);
+                        opponent->SetCollideWithLeftX(false);
+                        opponent->SetCollideWithRightX(true);
+                    }
+        
+                    else if ((opponent->GetGz() + (opponent->GetHitboxRadius() / 2) >= obstacleRightZ - 2.0f) &&
+                        (opponent->GetCollideWithRightZ())
+                    ) {
+                        opponent->SetXZAngle(opponent->GetXZAngle() - 90.0f);
+                        opponent->SetCollideWithRightZ(false);
+                        opponent->SetCollideWithLeftZ(true);
+                    }
+        
+                    else if ((opponent->GetGz() - (opponent->GetHitboxRadius() / 2) <= obstacleLeftZ + 2.0f) &&
+                        (opponent->GetCollideWithLeftZ())
+                    ) {
+                        opponent->SetXZAngle(opponent->GetXZAngle() - 90.0f);
+                        opponent->SetCollideWithLeftZ(false);
+                        opponent->SetCollideWithRightZ(true);
+                    }
+
+                    break;
+                }
+            }
+            
         }
 
         // Check player collision
@@ -754,30 +858,7 @@ void Arena::MoveOpponentsInXZ(GLdouble timeDifference) {
             if (!CharacterLandsInOpponent(gPlayer, opponent, timeDifference)) {
                 continue; // Do not move
             }
-        }
-
-        // If the opponent is not on an obstacle, check for collisions on the ground
-        if (!directionChanged && CharacterCollidesWithGround(opponent, 0, opponent->GetYSpeed())) {
-            for (Obstacle* obstacle : gObstacles) {
-                if (CharacterCollidesWithObstacle(opponent, obstacle, timeDifference)) {
-                    opponent->SetXZAngle(opponent->GetXZAngle() + 180.0f);
-                    directionChanged = true;
-                    break;
-                }
-            }
-        }
-
-        if (!directionChanged) {
-            // Check collision with arena borders
-            if ((opponent->GetGx() + opponent->GetHitboxRadius() / 2 >= gX + gWidth -2.0f) ||
-                (opponent->GetGx() - opponent->GetHitboxRadius() / 2 <= gX + 2.0f) ||
-                (opponent->GetGz() + opponent->GetHitboxRadius() / 2 >= gZ - 2.0f) ||
-                (opponent->GetGz() - opponent->GetHitboxRadius() / 2 <= gZ - gThickness + 2.0f)
-            ) {
-                opponent->SetXZAngle(opponent->GetXZAngle() + 180.0f);
-                directionChanged = true;
-            }
-        }
+        }        
 
         opponent->MoveInXZ(gX, gX + gWidth, -gThickness, 0, timeDifference);
     }
