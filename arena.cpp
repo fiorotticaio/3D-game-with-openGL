@@ -95,9 +95,9 @@ void Arena::LoadArena(const char* svg_file_path) {
 void Arena::DrawArena() {
     GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0 };
     GLfloat materialColor[] = { 0.0, 0.0, 0.8, 1.0 };
-    GLfloat mat_diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
+    GLfloat mat_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 1.0 };
-    GLfloat mat_shininess[] = { 50 };
+    GLfloat mat_shininess[] = { 0 };
 
     glPushAttrib(GL_ENABLE_BIT);
         // Dont draw the back face
@@ -111,6 +111,7 @@ void Arena::DrawArena() {
             glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
             glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
             glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+
             glColor3f(0, 0, 1);
 
             glTranslatef(gX, gY, 0);
@@ -118,15 +119,15 @@ void Arena::DrawArena() {
         glPopMatrix();
     glPopAttrib();
 
-        for (Obstacle* obstacle : gObstacles) {
-            obstacle->Draw();
-        }
+    for (Obstacle* obstacle : gObstacles) {
+        obstacle->Draw();
+    }
 
-        gPlayer->Draw();
+    gPlayer->Draw();
 
-        for (Opponent* opponent : gOpponents) {
-            opponent->Draw();
-        }
+    for (Opponent* opponent : gOpponents) {
+        opponent->Draw();
+    }
 }
 
 

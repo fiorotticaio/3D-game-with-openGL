@@ -304,12 +304,11 @@ void renderScene(void) {
 
 	// FROM HERE ON, WE ARE IN THE WORLD COORDINATE SYSTEM
 	
-
 	GLfloat light_position0[4];
 	GLfloat light_position1[4];
 	GLfloat light_direction[3];
 	GLfloat light_diffuse[] = {1.0, 1.0, 1.0, 1.0};  // Luz branca intensa
-	GLfloat light_specular[] = {1.0, 1.0, 1.0, 1.0}; // Reflexo especular forte
+	GLfloat light_specular[] = {0.0, 0.0, 0.0, 1.0}; // Reflexo especular forte
 	GLfloat light_ambient[] = {0.2, 0.2, 0.2, 1.0};  // Aumenta a iluminação geral
 
 	if (nightMode) {
@@ -359,18 +358,18 @@ void renderScene(void) {
 	}
 
 	// Configurar primeira luz (GL_LIGHT0)
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position0);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
 
 	// Configurar segunda luz (GL_LIGHT1) se não estiver no modo noturno
 	if (!nightMode) {
 		glEnable(GL_LIGHT1);
-		glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
-		glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
 		glLightfv(GL_LIGHT1, GL_POSITION, light_position1);
 		glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
+		glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
+		glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
 	} else {
 		glDisable(GL_LIGHT1);
 	}
@@ -637,6 +636,7 @@ void ResetGame() {
 	simulateSlowProcessingWindows = 0;
 	opponentMoves = 0;
 	opponentShoots = 0;
+	moveThirdCamera = 0;
 
 	loadViewportSizeFromSvg(svgFilePath);
     
