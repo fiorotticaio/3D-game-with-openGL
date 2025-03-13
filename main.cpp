@@ -79,11 +79,6 @@ int visibleHitboxes = 0;
 int nightMode = 0;
 int axisEnabled = 0;
 
-// Textures
-GLuint arenaGroundTexture;
-GLuint arenaWallTexture;
-GLuint arenaRoofTexture;
-
 
 
 /*****************************************************************************************/
@@ -562,11 +557,7 @@ void init(int windowSize, char* svg_file_path) {
 		exit(1);
 	}
 
-	arenaGroundTexture = LoadTextureRAW("textures/ground2.bmp");
-	arenaWallTexture = LoadTextureRAW("textures/wall.bmp");
-	arenaRoofTexture = LoadTextureRAW("textures/roof.bmp");
-
-	arena = new Arena(svgFilePath, arenaGroundTexture, arenaWallTexture, arenaRoofTexture);
+	arena = new Arena(svgFilePath);
 
 
 	ResetKeyStatus();
@@ -654,7 +645,7 @@ void ResetGame() {
 
 	loadViewportSizeFromSvg(svgFilePath);
     
-	arena = new Arena(svgFilePath, arenaGroundTexture, arenaWallTexture, arenaRoofTexture);
+	arena = new Arena(svgFilePath);
 }
 
 
