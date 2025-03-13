@@ -19,6 +19,7 @@
 class Arena {
     GLfloat gX;
     GLfloat gY;
+    GLfloat gZ;
 
     GLfloat gWidth;
     GLfloat gHeight;
@@ -52,6 +53,7 @@ private:
 public:
     Arena(const char* svg_file_path) {
         LoadArena(svg_file_path);
+        gZ = 0.0f;
         gGroundTexture = LoadTextureRAW("textures/ground2.bmp");
         gWallTexture = LoadTextureRAW("textures/wall.bmp");
         gRoofTexture = LoadTextureRAW("textures/roof.bmp");

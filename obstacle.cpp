@@ -108,6 +108,11 @@ GLfloat Obstacle::GetGy() {
 }
 
 
+GLfloat Obstacle::GetGz() {
+    return gZ;
+}
+
+
 GLfloat Obstacle::GetWidth() {
     return gWidth;
 }
@@ -115,4 +120,9 @@ GLfloat Obstacle::GetWidth() {
 
 GLfloat Obstacle::GetHeight() {
     return gHeight;
+}
+
+
+GLfloat Obstacle::GetThickness() {
+    return gThickness;
 }

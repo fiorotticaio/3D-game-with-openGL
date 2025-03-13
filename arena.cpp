@@ -712,7 +712,6 @@ void Arena::MoveOpponentsInY(GLdouble timeDifference) {
 
         if (opponentCollided) continue;
 
-        // Opponent landed in the player //FIXME:
         if (OpponentLandsInPlayer(opponent, gPlayer, 0, opponent->GetYSpeed())) {
             continue;
         }
@@ -733,11 +732,17 @@ void Arena::MoveOpponentsInXZ(GLdouble timeDifference) {
             if (CharacterLandsInObstacle(opponent, obstacle, timeDifference)) {
                 GLfloat obstacleLeftX = obstacle->GetGx();
                 GLfloat obstacleRightX = obstacle->GetGx() + obstacle->GetWidth();
+                
+                GLfloat obstacleRightZ = obstacle->GetGz();
+                GLfloat obstacleLeftZ = obstacle->GetGz() - obstacle->GetThickness();
 
-                // If the opponent reaches the left or right side of the obstacle, change direction
-                if ((opponent->GetGx() + (opponent->GetHitboxRadius() / 2) >= obstacleRightX - 2.0f && opponent->GetMovementDirection() == 1) || // 1.0f offset
-                    (opponent->GetGx() - (opponent->GetHitboxRadius() / 2) <= obstacleLeftX + 2.0f && opponent->GetMovementDirection() == -1)) { // 1.0f offset
-                    opponent->SetMovementDirection(-opponent->GetMovementDirection());
+                // If the opponent reaches obstacle border, change direction
+                if ((opponent->GetGx() + (opponent->GetHitboxRadius() / 2) >= obstacleRightX - 2.0f) ||
+                    (opponent->GetGx() - (opponent->GetHitboxRadius() / 2) <= obstacleLeftX + 2.0f)  ||
+                    (opponent->GetGz() + (opponent->GetHitboxRadius() / 2) >= obstacleRightZ - 2.0f) ||
+                    (opponent->GetGz() - (opponent->GetHitboxRadius() / 2) <= obstacleLeftZ + 2.0f)
+                ) {
+                    opponent->SetXZAngle(opponent->GetXZAngle() + 180.0f);
                     directionChanged = true;
                 }
                 break;
@@ -755,7 +760,7 @@ void Arena::MoveOpponentsInXZ(GLdouble timeDifference) {
         if (!directionChanged && CharacterCollidesWithGround(opponent, 0, opponent->GetYSpeed())) {
             for (Obstacle* obstacle : gObstacles) {
                 if (CharacterCollidesWithObstacle(opponent, obstacle, timeDifference)) {
-                    opponent->SetMovementDirection(-opponent->GetMovementDirection());
+                    opponent->SetXZAngle(opponent->GetXZAngle() + 180.0f);
                     directionChanged = true;
                     break;
                 }
@@ -764,36 +769,17 @@ void Arena::MoveOpponentsInXZ(GLdouble timeDifference) {
 
         if (!directionChanged) {
             // Check collision with arena borders
-            if ((opponent->GetGx() + opponent->GetHitboxRadius() / 2 >= gX + gWidth -1.0f && opponent->GetMovementDirection() == 1) ||
-                (opponent->GetGx() - opponent->GetHitboxRadius() / 2 <= gX + 1.0f && opponent->GetMovementDirection() == -1)) {
-                opponent->SetMovementDirection(-opponent->GetMovementDirection());
+            if ((opponent->GetGx() + opponent->GetHitboxRadius() / 2 >= gX + gWidth -2.0f) ||
+                (opponent->GetGx() - opponent->GetHitboxRadius() / 2 <= gX + 2.0f) ||
+                (opponent->GetGz() + opponent->GetHitboxRadius() / 2 >= gZ - 2.0f) ||
+                (opponent->GetGz() - opponent->GetHitboxRadius() / 2 <= gZ - gThickness + 2.0f)
+            ) {
+                opponent->SetXZAngle(opponent->GetXZAngle() + 180.0f);
                 directionChanged = true;
             }
         }
 
-        if (!directionChanged) {
-            // If opponent collides with other opponent, both change direction
-            for (Opponent* otherOpponent : gOpponents) {
-                if (opponent != otherOpponent && CharacterCollidesWithOpponent(opponent, otherOpponent, timeDifference)) {
-                    opponent->SetMovementDirection(-opponent->GetMovementDirection());
-                    otherOpponent->SetMovementDirection(-otherOpponent->GetMovementDirection());
-                    directionChanged = true;
-                    break;
-                }
-            }
-        }
-
-        if (!directionChanged) {
-            // Randomize the direction of the opponent
-            // std::random_device rd;  
-            // std::mt19937 gen(rd()); 
-            // std::uniform_real_distribution<GLfloat> dist(0, 1);
-            // bool clockwise = dist(gen) > 0.5;
-            // opponent->setXZSpeed(0.02f);
-            // opponent->Rotate(clockwise, timeDifference);
-            
-            opponent->MoveInXZ(gX, gX + gWidth, -gThickness, 0, timeDifference);
-        }
+        opponent->MoveInXZ(gX, gX + gWidth, -gThickness, 0, timeDifference);
     }
 }
 

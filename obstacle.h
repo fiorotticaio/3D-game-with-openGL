@@ -46,8 +46,10 @@ public:
 
     GLfloat GetGx();
     GLfloat GetGy();
+    GLfloat GetGz();
     GLfloat GetWidth();
     GLfloat GetHeight();
+    GLfloat GetThickness();
 };
 
 

@@ -169,6 +169,7 @@ public:
     GLfloat GetHitboxRadius();
     void AnimateLegs(GLdouble timeDifference);
     GLfloat GetXZAngle();
+    void SetXZAngle(GLfloat angle);
     GLfloat GetXZArmAngle();
     GLfloat GetXYArmAngle();
     void CalculateArmTopPos(GLfloat* armTopPos);

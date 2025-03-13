@@ -633,6 +633,11 @@ GLfloat Character::GetXZAngle() {
 }
 
 
+void Character::SetXZAngle(GLfloat angle) {
+    gXZAngle = angle;
+}
+
+
 GLfloat Character::GetXZArmAngle() {
     return gXZArmAngle;
 }
