@@ -242,7 +242,6 @@ void Arena::DrawRects(GLfloat width, GLfloat height, GLfloat thickness, GLfloat 
 }
 
 
-
 GLfloat Arena::GetGx() {
     return gX;
 }

@@ -3,13 +3,14 @@
 void Obstacle::DrawObstacle() {
     GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0};
     GLfloat materialColor[] = { 0.0, 0.0, 0.0, 1.0};
-    GLfloat mat_specular[] = { 0.1, 0.1, 0.1, 1.0 };
+    GLfloat mat_diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
+    GLfloat mat_specular[] = { 0.3, 0.3, 0.3, 1.0 };
     GLfloat mat_shininess[] = { 50 };
     
     glPushMatrix();
         glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
         glMaterialfv(GL_FRONT, GL_AMBIENT, materialColor);
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, materialColor);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
         glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
         glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
         glColor3f(0, 0, 1);
