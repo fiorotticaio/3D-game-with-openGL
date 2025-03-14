@@ -63,7 +63,8 @@ protected:
     GLfloat jumpHeight;
     bool gIsPlayer;
 
-    void DrawCuboid(GLfloat width, GLfloat height, GLfloat depth, GLfloat R, GLfloat G, GLfloat B, GLuint tShirtFrontTexture = 0);
+    void DrawCuboid(GLfloat width, GLfloat height, GLfloat depth, GLfloat R, GLfloat G, GLfloat B, 
+                    GLuint tShirtFrontTexture = 0, GLuint tShirtBaseTexture = 0, GLuint tShirtBackTexture = 0);
     void DrawSphereHead(GLfloat radius, GLfloat R, GLfloat G, GLfloat B);
     void DrawHeadAndArms(GLfloat R, GLfloat G, GLfloat B);
     void DrawFrontLeg(GLfloat R, GLfloat G, GLfloat B);
