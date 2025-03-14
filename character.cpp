@@ -629,12 +629,16 @@ void Character::AnimateLegs(GLdouble timeDifference) {
 
 
 GLfloat Character::GetXZAngle() {
+    if (gXZAngle > 360.0f) gXZAngle -= 360.0f;
+    if (gXZAngle < 0.0f) gXZAngle += 360.0f;
     return gXZAngle;
 }
 
 
 void Character::SetXZAngle(GLfloat angle) {
     gXZAngle = angle;
+    if (gXZAngle > 360.0f) gXZAngle -= 360.0f;
+    if (gXZAngle < 0.0f) gXZAngle += 360.0f;
 }
 
 

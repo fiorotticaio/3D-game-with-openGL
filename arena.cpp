@@ -906,15 +906,17 @@ void Arena::MoveOpponentsArms(GLdouble timeDifference) {
         GLfloat opponentZ = opponent->GetGz();
 
         GLfloat xResVector = playerX - opponentX;
+        if (xResVector < 0) xResVector *= -1;
         GLfloat yResVector = playerY - opponentY;
         GLfloat zResVector = playerZ - opponentZ;
+        if (zResVector < 0) zResVector *= -1;
 
         GLfloat XYmaxAngle = -45.0f;
         GLfloat XYminAngle = -135.0f;
         GLfloat XYangle = 0.0f;
 
         // Special case: player and opponent at the same Y level
-        if (fabs(yResVector) < 0.001f) { // Tolerance for float equality
+        if (fabs(yResVector) < 0.1f) { // Tolerance for float equality
             XYangle = -90.0f;
         } else {
             XYangle = atan2(yResVector, xResVector) * 180.0f / M_PI;
@@ -932,10 +934,14 @@ void Arena::MoveOpponentsArms(GLdouble timeDifference) {
         GLfloat XZangle = 0.0f;
 
         // Special case: player and opponent at the same Z level
-        if (fabs(zResVector) < 0.001f) { // Tolerance for float equality
+        if (fabs(zResVector) < 0.1f) { // Tolerance for float equality
             XZangle = 0.0f;
         } else {
-            XZangle = atan2(zResVector, xResVector) * 180.0f / M_PI;
+            // The smaller angle dictates where the angle should come from
+            GLfloat smaller = std::min(xResVector, zResVector);
+            GLfloat bigger = std::max(xResVector, zResVector);
+
+            XZangle = atan2(smaller, bigger) * 180.0f / M_PI;
 
             if      (XZangle > XZmaxAngle) XZangle = XZmaxAngle;
             else if (XZangle < XZminAngle) XZangle = XZminAngle;
