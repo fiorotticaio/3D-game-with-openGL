@@ -637,6 +637,8 @@ void ResetGame() {
 	opponentMoves = 0;
 	opponentShoots = 0;
 	moveThirdCamera = 0;
+	toggleCam = 3;
+	lastCam = 3;
 
 	loadViewportSizeFromSvg(svgFilePath);
     
