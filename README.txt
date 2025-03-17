@@ -7,11 +7,13 @@ ATALHOS
 - 6: Move/Para os oponentes
 - 7: Ativa/Desativa o tiro dos oponentes
 - 8: Game Over
+- 9: Player Won
 
 - w: Movimenta para frente
 - s: Movimenta para trás
 - a: Rotaciona para a esquerda
 - d: Rotaciona para a direita
+- r: Reinicia o jogo depois de ganhar ou perder
 - c: Habilita/Desabilita hitbox
 - e: Habilita/Desabilita os eixos de referência espacial do personagem
 - x: Habilita o movimento da câmera em terceira pessoa
@@ -23,7 +25,3 @@ ATALHOS
 - mouse: Movimenta o braço que atira
 - botão esquerdo do mouse: Atira
 - botão direito do mouse: Mira (câmera na arma)
-
-
-FUNCIONALIDADES ADICIONAIS
--

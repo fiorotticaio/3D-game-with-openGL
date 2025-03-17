@@ -208,7 +208,7 @@ void renderScene(void) {
 	glLoadIdentity();
 
 	if (gameOver)  PrintTextUI(0.42, 0.7, "Game Over", 1, 0, 0);
-	if (playerWon) PrintTextUI(0.42, 0.7, "Player Won", 1, 1, 1);
+	if (playerWon) PrintTextUI(0.42, 0.7, "Player Won", 1, 0, 0);
 
 	if (toggleCam == 1){
         PrintTextUI(0.1, 0.1, "First person camera", 0, 1, 0);
@@ -223,7 +223,7 @@ void renderScene(void) {
 		glTranslatef(-arena->GetPlayerGx(), -arena->CalculatePlayerHeadYPosition(), -arena->GetPlayerGz());
  
     } else if (toggleCam == 2){
-        PrintTextUI(0.1, 0.1, "Gun sight camera", 0, 1, 0);
+        PrintTextUI(0.1, 0.1, "Gun camera", 0, 1, 0);
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -439,6 +439,9 @@ void keyPress(unsigned char key, int x, int y) {
 		case '8':
 			gameOver = 1;
 			break;
+		case '9':
+			playerWon = 1;
+			break;
 		case 'a':
 		case 'A':
 			keyStatus[(int)('a')] = 1;
@@ -631,6 +634,9 @@ void ResetGame() {
 	font = GLUT_BITMAP_9_BY_15;
 	gameOver = 0;
 	playerWon = 0;
+	nightMode = 0;
+	visibleHitboxes = 0;
+	axisEnabled = 0;
 
 	simulateSlowProcessingUbuntu = 0;
 	simulateSlowProcessingWindows = 0;

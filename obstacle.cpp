@@ -1,11 +1,11 @@
 #include "obstacle.h"
 
 void Obstacle::DrawObstacle() {
-    GLfloat materialEmission[] = { 0.00, 0.00, 0.00, 1.0};
+    GLfloat materialEmission[] = { 0.0, 0.0, 0.0, 1.0};
     GLfloat materialColor[] = { 0.0, 0.0, 0.0, 1.0};
-    GLfloat mat_diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
-    GLfloat mat_specular[] = { 0.3, 0.3, 0.3, 1.0 };
-    GLfloat mat_shininess[] = { 50 };
+    GLfloat mat_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
+    GLfloat mat_shininess[] = { 0 };
     
     glPushMatrix();
         glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
@@ -19,6 +19,7 @@ void Obstacle::DrawObstacle() {
         DrawReacts(gWidth, gHeight, gThickness, gRed, gGreen, gBlue);
     glPopMatrix();
 }
+
 
 void Obstacle::DrawReacts(GLfloat width, GLfloat height, GLfloat thickness, GLfloat R, GLfloat G, GLfloat B) {
     glColor3f(R, G, B);

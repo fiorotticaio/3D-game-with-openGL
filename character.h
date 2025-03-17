@@ -82,7 +82,7 @@ public:
         // Random number generator with uniform distribution between -1 and -(arenaThickness-1)
         std::random_device rd;  
         std::mt19937 gen(rd()); 
-        std::uniform_real_distribution<GLfloat> dist(-(arenaThickness-1), -1.0f);
+        std::uniform_real_distribution<GLfloat> dist(-(arenaThickness-3), -3.0f);
         gZ = dist(gen);
 
         gMovementDirection = 1;
